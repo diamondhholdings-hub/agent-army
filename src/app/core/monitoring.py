@@ -73,6 +73,81 @@ db_pool_size = Gauge(
     "Current database connection pool size",
 )
 
+# ── Agent Metrics ───────────────────────────────────────────────────────────
+
+agent_invocations_total = Counter(
+    "agent_invocations_total",
+    "Total agent invocations",
+    ["agent_id", "tenant_id", "status"],
+)
+
+agent_invocation_duration_seconds = Histogram(
+    "agent_invocation_duration_seconds",
+    "Agent invocation duration in seconds",
+    ["agent_id", "tenant_id"],
+    buckets=(0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0, 120.0),
+)
+
+handoff_validations_total = Counter(
+    "handoff_validations_total",
+    "Total handoff validations",
+    ["source_agent", "target_agent", "strictness", "result"],
+)
+
+supervisor_tasks_total = Counter(
+    "supervisor_tasks_total",
+    "Total supervisor tasks",
+    ["tenant_id", "decomposed", "status"],
+)
+
+context_compilation_duration_seconds = Histogram(
+    "context_compilation_duration_seconds",
+    "Context compilation duration in seconds",
+    ["tenant_id", "model_tier"],
+    buckets=(0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
+)
+
+
+# ── Agent Metrics Helper ──────────────────────────────────────────────────
+
+
+@asynccontextmanager
+async def track_agent_invocation(
+    agent_id: str,
+    tenant_id: str,
+) -> AsyncGenerator[dict[str, Any], None]:
+    """Context manager that tracks agent invocation metrics.
+
+    Usage:
+        async with track_agent_invocation("sales_agent", tenant_id) as tracker:
+            result = await agent.invoke(task, context)
+
+    Automatically records:
+    - Duration in histogram
+    - Invocation count (success/error)
+    """
+    start_time = time.perf_counter()
+    status = "success"
+
+    try:
+        yield {}
+    except Exception:
+        status = "error"
+        raise
+    finally:
+        duration = time.perf_counter() - start_time
+
+        agent_invocations_total.labels(
+            agent_id=agent_id,
+            tenant_id=tenant_id,
+            status=status,
+        ).inc()
+
+        agent_invocation_duration_seconds.labels(
+            agent_id=agent_id,
+            tenant_id=tenant_id,
+        ).observe(duration)
+
 
 # ── Metrics Middleware ───────────────────────────────────────────────────────
 
