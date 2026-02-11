@@ -1,0 +1,112 @@
+{
+  "product": "ESW Monetization Platform",
+  "pricing_model": "tiered_subscription",
+  "currency_default": "USD",
+  "tiers": {
+    "starter": {
+      "name": "Starter",
+      "monthly_price": 2500,
+      "annual_price": 27000,
+      "annual_discount_pct": 10,
+      "included_transactions": 100000,
+      "overage_rate_per_1k": 5.00,
+      "features": [
+        "Subscription Management",
+        "Basic Usage Metering",
+        "Standard Analytics Dashboard",
+        "Email Support",
+        "REST API Access",
+        "Up to 5 Pricing Plans"
+      ],
+      "limits": {
+        "api_calls_per_month": 500000,
+        "custom_plans": 5,
+        "team_members": 10,
+        "data_retention_months": 12
+      }
+    },
+    "professional": {
+      "name": "Professional",
+      "monthly_price": 7500,
+      "annual_price": 81000,
+      "annual_discount_pct": 10,
+      "included_transactions": 1000000,
+      "overage_rate_per_1k": 3.50,
+      "features": [
+        "Everything in Starter",
+        "Advanced Usage-Based Pricing",
+        "Revenue Recognition (ASC 606)",
+        "Pricing Intelligence & A/B Testing",
+        "Priority Support (4hr SLA)",
+        "Unlimited Pricing Plans",
+        "Custom Webhooks & Integrations",
+        "Multi-Currency Support"
+      ],
+      "limits": {
+        "api_calls_per_month": 5000000,
+        "custom_plans": -1,
+        "team_members": 50,
+        "data_retention_months": 24
+      }
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "monthly_price": null,
+      "annual_price": null,
+      "pricing_note": "Custom pricing based on volume and requirements",
+      "included_transactions": -1,
+      "overage_rate_per_1k": null,
+      "features": [
+        "Everything in Professional",
+        "Dedicated Customer Success Manager",
+        "Custom SLA (up to 99.99%)",
+        "Multi-Entity & Corporate Hierarchy",
+        "Advanced Revenue Analytics",
+        "SOC 2 Type II Compliance",
+        "Custom Integrations & API Priority",
+        "On-Premise Deployment Option",
+        "Dedicated Infrastructure"
+      ],
+      "limits": {
+        "api_calls_per_month": -1,
+        "custom_plans": -1,
+        "team_members": -1,
+        "data_retention_months": -1
+      }
+    }
+  },
+  "regional_pricing": {
+    "americas": {
+      "currency": "USD",
+      "adjustment_pct": 0,
+      "notes": "Standard pricing"
+    },
+    "emea": {
+      "currency": "EUR",
+      "adjustment_pct": 5,
+      "notes": "5% adjustment for EU compliance and data residency costs"
+    },
+    "apac": {
+      "currency": "USD",
+      "adjustment_pct": -10,
+      "notes": "10% discount for market competitiveness"
+    }
+  },
+  "add_ons": {
+    "premium_support": {
+      "name": "Premium Support",
+      "monthly_price": 1500,
+      "description": "24/7 phone support with 1-hour response SLA"
+    },
+    "data_warehouse_connector": {
+      "name": "Data Warehouse Connector",
+      "monthly_price": 500,
+      "description": "Direct sync to Snowflake, BigQuery, or Redshift"
+    },
+    "advanced_security": {
+      "name": "Advanced Security Package",
+      "monthly_price": 1000,
+      "description": "SSO, IP allowlisting, audit logs, encryption at rest"
+    }
+  }
+}
