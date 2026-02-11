@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-02, 03-05, 03-06 complete. Methodology frameworks, regional nuances, document ingestion, and conversation storage operational.
+**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-02, 03-03, 03-05, 03-06 complete. End-to-end ingestion pipeline, methodology frameworks, regional nuances, document ingestion, and conversation storage operational.
 
 ## Current Position
 
 Phase: 3 of 7 (Knowledge Base)
-Plan: 03-01, 03-02, 03-05, 03-06 complete; 7 total in phase
+Plan: 03-01, 03-02, 03-03, 03-05, 03-06 complete; 7 total in phase
 Status: In progress
-Last activity: 2026-02-11 -- Completed 03-05-PLAN.md (Sales Methodology and Regional Nuances)
+Last activity: 2026-02-11 -- Completed 03-03-PLAN.md (End-to-End Ingestion Pipeline)
 
-Progress: [###############-----] 76%
+Progress: [################----] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 8 min
-- Total execution time: ~1.9 hours
+- Total execution time: ~2 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [###############-----] 76%
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
-| 03-knowledge-base | 4/7 | ~43 min | 11 min |
+| 03-knowledge-base | 5/7 | ~47 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (~15 min), 03-06 (6 min), 03-02 (9 min), 03-05 (13 min)
-- Trend: Consistent ~10-13 min for Phase 3 plans
+- Last 5 plans: 03-06 (6 min), 03-02 (9 min), 03-05 (13 min), 03-03 (4 min)
+- Trend: Accelerating -- 03-03 completed in 4 min
 
 *Updated after each plan completion*
 
@@ -110,6 +110,10 @@ Recent decisions affecting current work:
 - [03-05]: Markdown chunked at ## heading level for optimal search granularity
 - [03-05]: Regional pricing modifiers: APAC=0.9, EMEA=1.0, Americas=1.0
 - [03-05]: FusionQuery(fusion=Fusion.RRF) replaces broken Query(fusion="rrf") for Python 3.13 compatibility
+- [03-03]: Qdrant scroll API for finding existing chunks by source_document during versioning
+- [03-03]: set_payload for marking old chunks is_current=False (preserves history, avoids re-upsert)
+- [03-03]: Version number stored as Qdrant payload integer field (no separate metadata store)
+- [03-03]: MockEmbeddingService with hash-based deterministic vectors for test reproducibility
 
 ### Pending Todos
 
@@ -124,6 +128,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-11T19:50:13Z
-Stopped at: Completed 03-05-PLAN.md (Sales Methodology and Regional Nuances)
+Last session: 2026-02-11T19:56:57Z
+Stopped at: Completed 03-03-PLAN.md (End-to-End Ingestion Pipeline)
 Resume file: None
