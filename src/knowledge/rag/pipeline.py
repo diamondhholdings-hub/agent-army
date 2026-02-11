@@ -20,11 +20,7 @@ from pydantic import BaseModel, Field
 from src.knowledge.models import ConversationMessage
 from src.knowledge.rag.decomposer import QueryDecomposer, SubQuery
 from src.knowledge.rag.retriever import MultiSourceRetriever, RetrievedChunk
-from src.knowledge.rag.synthesizer import (
-    ResponseSynthesizer,
-    SourceCitation,
-    SynthesizedResponse,
-)
+from src.knowledge.rag.synthesizer import ResponseSynthesizer, SourceCitation
 
 logger = logging.getLogger(__name__)
 

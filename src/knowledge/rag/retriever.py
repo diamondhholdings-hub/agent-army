@@ -124,13 +124,11 @@ class MultiSourceRetriever:
 
             chunks: list[RetrievedChunk] = []
             for i, chunk in enumerate(results):
-                # Assign a decaying relevance score based on position
-                score = max(0.1, 1.0 - (i * 0.1))
                 chunks.append(
                     RetrievedChunk(
                         chunk_id=chunk.id,
                         content=chunk.content,
-                        relevance_score=min(score, 1.0),
+                        relevance_score=self._position_score(i),
                         source_type=sub_query.source_type,
                         source_document=chunk.metadata.source_document,
                         sub_query=sub_query.query,
@@ -167,12 +165,11 @@ class MultiSourceRetriever:
 
             chunks: list[RetrievedChunk] = []
             for i, msg in enumerate(results):
-                score = max(0.1, 1.0 - (i * 0.1))
                 chunks.append(
                     RetrievedChunk(
                         chunk_id=msg.id,
                         content=msg.content,
-                        relevance_score=min(score, 1.0),
+                        relevance_score=self._position_score(i),
                         source_type="conversation",
                         source_document=f"conversation:{msg.session_id}",
                         sub_query=sub_query.query,
@@ -187,6 +184,22 @@ class MultiSourceRetriever:
                 exc_info=True,
             )
             return []
+
+    @staticmethod
+    def _position_score(index: int, decay: float = 0.1) -> float:
+        """Calculate a decaying relevance score based on result position.
+
+        Results earlier in the list get higher scores, decaying by
+        the specified amount per position.
+
+        Args:
+            index: Zero-based position in the result list.
+            decay: Score reduction per position.
+
+        Returns:
+            Float between 0.1 and 1.0.
+        """
+        return max(0.1, min(1.0, 1.0 - (index * decay)))
 
     @staticmethod
     def _deduplicate(chunks: list[RetrievedChunk]) -> list[RetrievedChunk]:
