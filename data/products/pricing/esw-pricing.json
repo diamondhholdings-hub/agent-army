@@ -1,0 +1,275 @@
+{
+  "pricing_version": "2026-Q1",
+  "currency": "USD",
+  "products": {
+    "monetization_platform": {
+      "name": "ESW Monetization Platform",
+      "product_category": "monetization",
+      "tiers": {
+        "starter": {
+          "name": "Starter",
+          "monthly_price": 5000,
+          "annual_price": 48000,
+          "annual_discount_pct": 20,
+          "included_features": [
+            "Subscription Management (up to 10 plans)",
+            "Usage-Based Pricing (basic metering)",
+            "REST API access",
+            "Standard reporting dashboards",
+            "Email support"
+          ],
+          "limits": {
+            "monthly_transactions": 500000,
+            "api_calls_per_month": 1000000,
+            "subscriber_accounts": 50000,
+            "concurrent_users": 10
+          },
+          "support_level": "Standard (business hours, 8-hour response SLA)"
+        },
+        "professional": {
+          "name": "Professional",
+          "monthly_price": 15000,
+          "annual_price": 144000,
+          "annual_discount_pct": 20,
+          "included_features": [
+            "Subscription Management (unlimited plans)",
+            "Usage-Based Pricing (advanced metering and rating)",
+            "Prepaid & Balance Management",
+            "Revenue Optimization (basic recommendations)",
+            "REST and GraphQL API access",
+            "Advanced analytics and custom reports",
+            "Priority email and phone support"
+          ],
+          "limits": {
+            "monthly_transactions": 5000000,
+            "api_calls_per_month": 10000000,
+            "subscriber_accounts": 500000,
+            "concurrent_users": 50
+          },
+          "support_level": "Priority (24x5, 4-hour response SLA)"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "monthly_price": null,
+          "annual_price": null,
+          "pricing_model": "custom",
+          "pricing_note": "Contact sales for custom pricing based on transaction volume, deployment model, and required SLAs",
+          "included_features": [
+            "All Monetization Platform modules",
+            "Revenue Optimization (full ML-powered recommendations)",
+            "Partner & Channel Management",
+            "Multi-tenant/white-label support",
+            "Custom API rate limits",
+            "Dedicated solution architect",
+            "Custom integration development",
+            "SLA-backed uptime guarantees"
+          ],
+          "limits": {
+            "monthly_transactions": "unlimited",
+            "api_calls_per_month": "unlimited",
+            "subscriber_accounts": "unlimited",
+            "concurrent_users": "unlimited"
+          },
+          "support_level": "Enterprise (24x7, 1-hour response SLA, dedicated TAM)"
+        }
+      }
+    },
+    "charging": {
+      "name": "ESW Charging",
+      "product_category": "charging",
+      "tiers": {
+        "starter": {
+          "name": "Starter",
+          "monthly_price": 8000,
+          "annual_price": 76800,
+          "annual_discount_pct": 20,
+          "included_features": [
+            "Real-Time Rating Engine (basic models)",
+            "Online charging (Diameter Ro)",
+            "Offline charging (Diameter Rf)",
+            "Basic balance management",
+            "Standard mediation adapters",
+            "REST API access"
+          ],
+          "limits": {
+            "transactions_per_second": 5000,
+            "subscriber_profiles": 1000000,
+            "rate_plans": 100,
+            "mediation_adapters": 5
+          },
+          "support_level": "Standard (business hours, 8-hour response SLA)"
+        },
+        "professional": {
+          "name": "Professional",
+          "monthly_price": 25000,
+          "annual_price": 240000,
+          "annual_discount_pct": 20,
+          "included_features": [
+            "Real-Time Rating Engine (all pricing models)",
+            "Convergent Charging (prepaid + postpaid)",
+            "Policy & Quota Management (basic)",
+            "Multi-Service Support (voice, data, messaging, content)",
+            "Advanced mediation with custom adapters",
+            "Rating simulation environment",
+            "REST API with bulk operations"
+          ],
+          "limits": {
+            "transactions_per_second": 25000,
+            "subscriber_profiles": 10000000,
+            "rate_plans": 1000,
+            "mediation_adapters": 20
+          },
+          "support_level": "Priority (24x5, 4-hour response SLA)"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "monthly_price": null,
+          "annual_price": null,
+          "pricing_model": "custom",
+          "pricing_note": "Contact sales for custom pricing based on TPS requirements, subscriber count, and deployment model",
+          "included_features": [
+            "All Charging modules",
+            "Policy & Quota Management (full 3GPP Gx/Rx)",
+            "Multi-Service Support (all service types including IoT and 5G slicing)",
+            "Full mediation suite with unlimited adapters",
+            "Geo-redundant active-active deployment",
+            "Custom protocol adapter development",
+            "Bare-metal and VNF deployment options",
+            "Dedicated performance engineering"
+          ],
+          "limits": {
+            "transactions_per_second": "50000+",
+            "subscriber_profiles": "100M+",
+            "rate_plans": "unlimited",
+            "mediation_adapters": "unlimited"
+          },
+          "support_level": "Enterprise (24x7, 15-minute P1 response, dedicated TAM)"
+        }
+      }
+    },
+    "billing": {
+      "name": "ESW Billing",
+      "product_category": "billing",
+      "tiers": {
+        "starter": {
+          "name": "Starter",
+          "monthly_price": 4000,
+          "annual_price": 38400,
+          "annual_discount_pct": 20,
+          "included_features": [
+            "Automated Invoice Generation (PDF, CSV)",
+            "Basic tax calculation (single jurisdiction)",
+            "Single payment processor integration",
+            "Standard financial reports",
+            "Basic dunning (email only)",
+            "REST API access"
+          ],
+          "limits": {
+            "invoices_per_cycle": 100000,
+            "payment_methods": 2,
+            "currencies": 1,
+            "tax_jurisdictions": 1
+          },
+          "support_level": "Standard (business hours, 8-hour response SLA)"
+        },
+        "professional": {
+          "name": "Professional",
+          "monthly_price": 12000,
+          "annual_price": 115200,
+          "annual_discount_pct": 20,
+          "included_features": [
+            "Automated Invoice Generation (all formats including e-invoicing)",
+            "Multi-Currency & Tax Management (up to 10 jurisdictions)",
+            "Multiple payment processor integration",
+            "Revenue Recognition (basic ASC 606)",
+            "Multi-channel dunning (email, SMS, postal)",
+            "ERP integration (standard connectors)",
+            "Advanced financial analytics"
+          ],
+          "limits": {
+            "invoices_per_cycle": 1000000,
+            "payment_methods": 10,
+            "currencies": 10,
+            "tax_jurisdictions": 10
+          },
+          "support_level": "Priority (24x5, 4-hour response SLA)"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "monthly_price": null,
+          "annual_price": null,
+          "pricing_model": "custom",
+          "pricing_note": "Contact sales for custom pricing based on invoice volume, payment processing volume, and regulatory requirements",
+          "included_features": [
+            "All Billing modules",
+            "Unlimited tax jurisdictions with Avalara/Vertex integration",
+            "Full Revenue Recognition (ASC 606/IFRS 15 with multi-element arrangements)",
+            "Advanced Dunning & Collections (agency integration, write-off processing)",
+            "Custom ERP connectors",
+            "Payment optimization and intelligent routing",
+            "SOX compliance audit support",
+            "Dedicated billing operations consultant"
+          ],
+          "limits": {
+            "invoices_per_cycle": "10M+",
+            "payment_methods": "unlimited",
+            "currencies": "unlimited",
+            "tax_jurisdictions": "unlimited"
+          },
+          "support_level": "Enterprise (24x7, 1-hour response SLA, dedicated TAM)"
+        }
+      }
+    }
+  },
+  "regional_pricing": {
+    "apac": {
+      "discount_pct": 10,
+      "note": "10% discount applied to all tiers for APAC region deployments"
+    },
+    "emea": {
+      "discount_pct": 0,
+      "note": "Standard pricing for EMEA region"
+    },
+    "americas": {
+      "discount_pct": 0,
+      "note": "Standard pricing for Americas region"
+    }
+  },
+  "add_ons": {
+    "premium_support": {
+      "name": "Premium Support Upgrade",
+      "monthly_price": 3000,
+      "description": "Upgrade any tier to 24x7 support with 1-hour P1 response SLA and dedicated technical account manager"
+    },
+    "dedicated_infrastructure": {
+      "name": "Dedicated Infrastructure",
+      "monthly_price": 5000,
+      "description": "Single-tenant dedicated infrastructure with custom scaling, enhanced security controls, and network isolation"
+    },
+    "custom_sla": {
+      "name": "Custom SLA Package",
+      "monthly_price": 2000,
+      "description": "Custom uptime SLA with financial penalties, enhanced monitoring, and priority incident management"
+    },
+    "data_migration": {
+      "name": "Data Migration Service",
+      "one_time_price": 25000,
+      "description": "Assisted data migration from legacy billing/charging systems including schema mapping, data cleansing, and validation"
+    },
+    "integration_accelerator": {
+      "name": "Integration Accelerator Pack",
+      "one_time_price": 15000,
+      "description": "Pre-built integration adapters and implementation support for connecting ESW products to existing BSS/OSS stack"
+    }
+  },
+  "bundle_discounts": {
+    "two_products": {
+      "discount_pct": 10,
+      "note": "10% discount when licensing any two ESW products together"
+    },
+    "full_suite": {
+      "discount_pct": 20,
+      "note": "20% discount when licensing all three ESW products (Monetization Platform + Charging + Billing)"
+    }
+  }
+}
