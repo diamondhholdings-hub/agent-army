@@ -24,11 +24,12 @@ from qdrant_client.models import (
     Distance,
     FieldCondition,
     Filter,
+    Fusion,
+    FusionQuery,
     MatchValue,
     PayloadSchemaType,
     PointStruct,
     Prefetch,
-    Query,
     SparseIndexParams,
     SparseVector,
     SparseVectorParams,
@@ -341,7 +342,7 @@ class QdrantKnowledgeStore:
                     filter=query_filter,
                 ),
             ],
-            query=Query(fusion="rrf"),
+            query=FusionQuery(fusion=Fusion.RRF),
             limit=k,
         )
 
