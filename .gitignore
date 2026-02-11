@@ -38,3 +38,6 @@ htmlcov/
 # Database
 *.db
 *.sqlite3
+
+# Qdrant local storage
+qdrant_data/
