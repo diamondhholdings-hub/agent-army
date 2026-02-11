@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-06 complete. Conversation storage and session management operational.
+**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-02, 03-06 complete. Document ingestion pipeline and conversation storage operational.
 
 ## Current Position
 
 Phase: 3 of 7 (Knowledge Base)
-Plan: 06 complete, 7 total in phase
+Plan: 03-01, 03-02, 03-06 complete; 7 total in phase
 Status: In progress
-Last activity: 2026-02-11 -- Completed 03-06-PLAN.md (Conversation History Storage)
+Last activity: 2026-02-11 -- Completed 03-02-PLAN.md (Document Ingestion)
 
-Progress: [#############-------] 69%
+Progress: [##############------] 72%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 8 min
-- Total execution time: ~1.6 hours
+- Total execution time: ~1.7 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [#############-------] 69%
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
-| 03-knowledge-base | 2/7 | ~21 min | 10 min |
+| 03-knowledge-base | 3/7 | ~30 min | 10 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-05 (6 min), 02-06 (5 min), 03-01 (~15 min), 03-06 (6 min)
-- Trend: Back to fast execution with tools available
+- Last 5 plans: 02-06 (5 min), 03-01 (~15 min), 03-06 (6 min), 03-02 (9 min)
+- Trend: Consistent ~8-10 min for Phase 3 plans
 
 *Updated after each plan completion*
 
@@ -96,6 +96,12 @@ Recent decisions affecting current work:
 - [03-01]: Lazy BM25 model init to avoid heavy import on startup
 - [03-01]: src/knowledge/ as separate top-level module (not under src/app/)
 - [03-01]: UUID string IDs for Qdrant points matching KnowledgeChunk.id pattern
+- [03-02]: RecursiveCharacterTextSplitter with ["\n\n", "\n", ". ", " "] separators for natural text boundaries
+- [03-02]: Token counting via tiktoken cl100k_base, 4.0 chars/token estimate for LangChain char-based splitter
+- [03-02]: Deepest-first hierarchy parsing for content_type inference (specific headers win over generic parents)
+- [03-02]: PDF/DOCX loaders use lazy imports; unstructured[all-docs] not yet installed
+- [03-02]: Cross-reference detection matches both full ("Charging Platform") and short ("Charging") product names
+- [03-02]: MetadataExtractor enrichment preserves version, cross_references, timestamps from chunker
 - [03-06]: Dense-only embeddings for conversations (no BM25 sparse) -- short natural language, semantic similarity is primary
 - [03-06]: Timestamp stored as epoch float for Qdrant Range queries on integer-indexed field
 - [03-06]: Cross-session context limited to 5 messages from prior sessions to avoid context bloat
@@ -114,6 +120,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-11T19:43:01Z
-Stopped at: Completed 03-06-PLAN.md (Conversation History Storage)
+Last session: 2026-02-11T19:44:49Z
+Stopped at: Completed 03-02-PLAN.md (Document Ingestion)
 Resume file: None
