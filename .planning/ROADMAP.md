@@ -12,7 +12,7 @@ Agent Army delivers a multi-tenant AI sales organization platform where a Sales 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Infrastructure Foundation** - Multi-tenant platform bedrock with tenant isolation, database, caching, LLM integration, deployment, and security
+- [x] **Phase 1: Infrastructure Foundation** - Multi-tenant platform bedrock with tenant isolation, database, caching, LLM integration, deployment, and security
 - [ ] **Phase 2: Agent Orchestration** - Supervisor topology, event-driven coordination, context management, and observability
 - [ ] **Phase 3: Knowledge Base** - Product knowledge, vector search, agentic RAG, methodology library, and conversation memory
 - [ ] **Phase 4: Sales Agent Core** - Text-based sales conversations with email, chat, persona adaptation, and methodology execution
@@ -35,9 +35,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 01-01-PLAN.md -- Multi-tenant database and tenant provisioning (Wave 1)
-- [ ] 01-02-PLAN.md -- API gateway, authentication, and LLM integration (Wave 2, depends on 01-01)
-- [ ] 01-03-PLAN.md -- Deployment pipeline, monitoring, and environment management (Wave 2, depends on 01-01)
+- [x] 01-01-PLAN.md -- Multi-tenant database and tenant provisioning (Wave 1)
+- [x] 01-02-PLAN.md -- API gateway, authentication, and LLM integration (Wave 2, depends on 01-01)
+- [x] 01-03-PLAN.md -- Deployment pipeline, monitoring, and environment management (Wave 2, depends on 01-01)
 
 ### Phase 2: Agent Orchestration
 **Goal**: Agents can be registered, coordinated through a supervisor topology, and communicate via events with validated handoffs -- preventing the "bag of agents" anti-pattern
