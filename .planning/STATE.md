@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 2 (Agent Orchestration) -- building context management, supervisor, handoffs, and observability
+**Current focus:** Phase 2 (Agent Orchestration) -- Wave 3 complete (supervisor orchestration), Wave 4 next (observability)
 
 ## Current Position
 
 Phase: 2 of 7 (Agent Orchestration)
-Plan: 4 of 6 in current phase (02-01, 02-02, 02-03, 02-04 complete)
+Plan: 5 of 6 in current phase (02-01, 02-02, 02-03, 02-04, 02-05 complete)
 Status: In progress
-Last activity: 2026-02-11 -- Completed 02-03-PLAN.md (Handoff validation protocol)
+Last activity: 2026-02-11 -- Completed 02-05-PLAN.md (Supervisor orchestration)
 
-Progress: [#######-------------] 33%
+Progress: [########------------] 38%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 9 min
-- Total execution time: 1.1 hours
+- Total execution time: 1.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
-| 02-agent-orchestration | 4/6 | 18 min | 4.5 min |
+| 02-agent-orchestration | 5/6 | 24 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (4 min), 02-01 (5 min), 02-04 (5 min), 02-03 (4 min)
-- Trend: Phase 2 plans consistently fast -- focused modules with clear boundaries
+- Last 5 plans: 02-01 (5 min), 02-02 (4 min), 02-04 (5 min), 02-03 (4 min), 02-05 (6 min)
+- Trend: Phase 2 plans consistently fast (4-6 min avg) -- focused modules with clear boundaries
 
 *Updated after each plan completion*
 
@@ -80,6 +80,10 @@ Recent decisions affecting current work:
 - [02-04]: cl100k_base tiktoken encoding as cross-model token counting approximation
 - [02-04]: IVFFlat index with lists=100 for cosine similarity (deferred on empty tables)
 - [02-04]: psycopg-binary installed for LangGraph AsyncPostgresSaver (requires psycopg3)
+- [02-05]: HandoffPayload for agent->supervisor uses [agent_id] call_chain (not full chain) to satisfy validation constraints
+- [02-05]: Conservative decomposition heuristic: only numbered lists or long descriptions with multiple action keywords
+- [02-05]: Agent instances attached to AgentRegistration via _agent_instance for supervisor execution
+- [02-05]: LLM routing uses model='fast', decomposition and synthesis use model='reasoning'
 
 ### Pending Todos
 
@@ -95,5 +99,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 02-03-PLAN.md (Handoff validation protocol)
+Stopped at: Completed 02-05-PLAN.md (Supervisor orchestration)
 Resume file: None
