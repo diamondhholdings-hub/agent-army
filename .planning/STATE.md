@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-02, 03-06 complete. Document ingestion pipeline and conversation storage operational.
+**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-02, 03-05, 03-06 complete. Methodology frameworks, regional nuances, document ingestion, and conversation storage operational.
 
 ## Current Position
 
 Phase: 3 of 7 (Knowledge Base)
-Plan: 03-01, 03-02, 03-06 complete; 7 total in phase
+Plan: 03-01, 03-02, 03-05, 03-06 complete; 7 total in phase
 Status: In progress
-Last activity: 2026-02-11 -- Completed 03-02-PLAN.md (Document Ingestion)
+Last activity: 2026-02-11 -- Completed 03-05-PLAN.md (Sales Methodology and Regional Nuances)
 
-Progress: [##############------] 72%
+Progress: [###############-----] 76%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 8 min
-- Total execution time: ~1.7 hours
+- Total execution time: ~1.9 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [##############------] 72%
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
-| 03-knowledge-base | 3/7 | ~30 min | 10 min |
+| 03-knowledge-base | 4/7 | ~43 min | 11 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-06 (5 min), 03-01 (~15 min), 03-06 (6 min), 03-02 (9 min)
-- Trend: Consistent ~8-10 min for Phase 3 plans
+- Last 5 plans: 03-01 (~15 min), 03-06 (6 min), 03-02 (9 min), 03-05 (13 min)
+- Trend: Consistent ~10-13 min for Phase 3 plans
 
 *Updated after each plan completion*
 
@@ -106,6 +106,10 @@ Recent decisions affecting current work:
 - [03-06]: Timestamp stored as epoch float for Qdrant Range queries on integer-indexed field
 - [03-06]: Cross-session context limited to 5 messages from prior sessions to avoid context bloat
 - [03-06]: Non-LLM session summarization via keyword extraction (Counter) -- LLM summarization deferred to RAG layer
+- [03-05]: Methodology frameworks pre-populated in MethodologyLibrary constructor (no external config)
+- [03-05]: Markdown chunked at ## heading level for optimal search granularity
+- [03-05]: Regional pricing modifiers: APAC=0.9, EMEA=1.0, Americas=1.0
+- [03-05]: FusionQuery(fusion=Fusion.RRF) replaces broken Query(fusion="rrf") for Python 3.13 compatibility
 
 ### Pending Todos
 
@@ -120,6 +124,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-11T19:44:49Z
-Stopped at: Completed 03-02-PLAN.md (Document Ingestion)
+Last session: 2026-02-11T19:50:13Z
+Stopped at: Completed 03-05-PLAN.md (Sales Methodology and Regional Nuances)
 Resume file: None
