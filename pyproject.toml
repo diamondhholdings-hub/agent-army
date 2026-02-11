@@ -27,6 +27,15 @@ dependencies = [
     "prometheus-client>=0.21.0",
     "sentry-sdk[fastapi]>=2.0.0",
     "psycopg2-binary>=2.9.11",
+    # Agent orchestration (Phase 2)
+    "langgraph>=1.0.8",
+    "langgraph-supervisor>=0.0.31",
+    "langgraph-checkpoint-postgres>=3.0.4",
+    "langfuse>=3.14.1",
+    "langchain-anthropic>=0.3.0",
+    "langchain-openai>=0.3.0",
+    "tiktoken>=0.7.0",
+    "pgvector>=0.3.0",
 ]
 
 [project.optional-dependencies]
