@@ -200,19 +200,77 @@ Explicitly excluded features with rationale to prevent scope creep.
 
 ## Traceability
 
-Requirement-to-phase mapping. Populated during roadmap creation.
+Requirement-to-phase mapping populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *To be populated by roadmapper* | | |
+| PLT-01 | Phase 1: Infrastructure Foundation | Pending |
+| PLT-02 | Phase 1: Infrastructure Foundation | Pending |
+| PLT-03 | Phase 2: Agent Orchestration | Pending |
+| PLT-04 | Phase 2: Agent Orchestration | Pending |
+| PLT-05 | Phase 2: Agent Orchestration | Pending |
+| PLT-06 | Phase 2: Agent Orchestration | Pending |
+| PLT-07 | Phase 2: Agent Orchestration | Pending |
+| PLT-08 | Phase 2: Agent Orchestration | Pending |
+| PLT-09 | Phase 2: Agent Orchestration | Pending |
+| PLT-10 | Phase 1: Infrastructure Foundation | Pending |
+| KB-01 | Phase 3: Knowledge Base | Pending |
+| KB-02 | Phase 3: Knowledge Base | Pending |
+| KB-03 | Phase 3: Knowledge Base | Pending |
+| KB-04 | Phase 3: Knowledge Base | Pending |
+| KB-05 | Phase 3: Knowledge Base | Pending |
+| KB-06 | Phase 3: Knowledge Base | Pending |
+| KB-07 | Phase 3: Knowledge Base | Pending |
+| SA-01 | Phase 4: Sales Agent Core | Pending |
+| SA-02 | Phase 4: Sales Agent Core | Pending |
+| SA-03 | Phase 4: Sales Agent Core | Pending |
+| SA-04 | Phase 4: Sales Agent Core | Pending |
+| SA-05 | Phase 4: Sales Agent Core | Pending |
+| SA-06 | Phase 4: Sales Agent Core | Pending |
+| SA-07 | Phase 4: Sales Agent Core | Pending |
+| SA-08 | Phase 4: Sales Agent Core | Pending |
+| SA-09 | Phase 4: Sales Agent Core | Pending |
+| SA-10 | Phase 4: Sales Agent Core | Pending |
+| SA-11 | Phase 6: Meeting Capabilities | Pending |
+| SA-12 | Phase 6: Meeting Capabilities | Pending |
+| SA-13 | Phase 6: Meeting Capabilities | Pending |
+| SA-14 | Phase 6: Meeting Capabilities | Pending |
+| SA-15 | Phase 6: Meeting Capabilities | Pending |
+| SA-16 | Phase 6: Meeting Capabilities | Pending |
+| SA-17 | Phase 6: Meeting Capabilities | Pending |
+| SA-18 | Phase 6: Meeting Capabilities | Pending |
+| SA-19 | Phase 5: Deal Management | Pending |
+| SA-20 | Phase 5: Deal Management | Pending |
+| SA-21 | Phase 5: Deal Management | Pending |
+| SA-22 | Phase 5: Deal Management | Pending |
+| SA-23 | Phase 5: Deal Management | Pending |
+| SA-24 | Phase 5: Deal Management | Pending |
+| SA-25 | Phase 7: Intelligence & Autonomy | Pending |
+| SA-26 | Phase 7: Intelligence & Autonomy | Pending |
+| SA-27 | Phase 7: Intelligence & Autonomy | Pending |
+| SA-28 | Phase 7: Intelligence & Autonomy | Pending |
+| SA-29 | Phase 7: Intelligence & Autonomy | Pending |
+| SA-30 | Phase 7: Intelligence & Autonomy | Pending |
+| INF-01 | Phase 1: Infrastructure Foundation | Pending |
+| INF-02 | Phase 1: Infrastructure Foundation | Pending |
+| INF-03 | Phase 1: Infrastructure Foundation | Pending |
+| INF-04 | Phase 1: Infrastructure Foundation | Pending |
+| INF-05 | Phase 1: Infrastructure Foundation | Pending |
+| INF-06 | Phase 1: Infrastructure Foundation | Pending |
+| INF-07 | Phase 1: Infrastructure Foundation | Pending |
+| INF-08 | Phase 1: Infrastructure Foundation | Pending |
+| INF-09 | Phase 1: Infrastructure Foundation | Pending |
+| INF-10 | Phase 1: Infrastructure Foundation | Pending |
 
 **Coverage:**
-- v1 requirements: 60 total (10 Platform, 7 Knowledge Base, 30 Sales Agent, 10 Infrastructure)
-- v2 requirements: 54 total (7 Sales Agent Advanced, 7 per agent × 7 agents, 7 Platform Advanced)
-- Total documented: 114 requirements
-- Mapped to phases: (pending roadmap)
-- Unmapped: (pending roadmap)
+- v1 requirements: 57 actual (10 Platform, 7 Knowledge Base, 30 Sales Agent, 10 Infrastructure)
+- v2 requirements: 54 total (7 Sales Agent Advanced, 7 per agent x 7 agents, 7 Platform Advanced)
+- Total documented: 111 requirements
+- Mapped to phases: 57/57
+- Unmapped: 0
+
+**Note:** Original count stated 60 v1 requirements. Actual enumerated count is 57 (PLT-01 to PLT-10 = 10, KB-01 to KB-07 = 7, SA-01 to SA-30 = 30, INF-01 to INF-10 = 10).
 
 ---
 *Requirements defined: 2025-02-10*
-*Last updated: 2025-02-10 after initial definition*
+*Last updated: 2026-02-10 after roadmap traceability mapping*

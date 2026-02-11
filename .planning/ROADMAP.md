@@ -1,0 +1,162 @@
+# Roadmap: Agent Army Platform
+
+## Overview
+
+Agent Army delivers a multi-tenant AI sales organization platform where a Sales Agent autonomously executes enterprise sales methodology at top-1% level. The build progresses from infrastructure foundation through agent orchestration, knowledge base, conversational capabilities, deal management, real-time meeting attendance, and finally autonomous intelligence -- each phase delivering a complete, verifiable capability that unblocks the next. The Sales Agent validated across all 7 phases becomes the template for the remaining 7 agent roles (v2).
+
+## Phases
+
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+Decimal phases appear between their surrounding integers in numeric order.
+
+- [ ] **Phase 1: Infrastructure Foundation** - Multi-tenant platform bedrock with tenant isolation, database, caching, LLM integration, deployment, and security
+- [ ] **Phase 2: Agent Orchestration** - Supervisor topology, event-driven coordination, context management, and observability
+- [ ] **Phase 3: Knowledge Base** - Product knowledge, vector search, agentic RAG, methodology library, and conversation memory
+- [ ] **Phase 4: Sales Agent Core** - Text-based sales conversations with email, chat, persona adaptation, and methodology execution
+- [ ] **Phase 5: Deal Management** - CRM integration, opportunity tracking, account/opportunity plans, and political mapping
+- [ ] **Phase 6: Meeting Capabilities** - Google Meet attendance with avatar, real-time response, recording, minutes, and distribution
+- [ ] **Phase 7: Intelligence & Autonomy** - Data consolidation, pattern recognition, self-directed goals, proactive outreach, and agent cloning
+
+## Phase Details
+
+### Phase 1: Infrastructure Foundation
+**Goal**: A multi-tenant platform exists where tenant-isolated services can be deployed, accessed securely, and monitored -- the bedrock for everything that follows
+**Depends on**: Nothing (first phase)
+**Requirements**: PLT-01, PLT-02, PLT-10, INF-01, INF-02, INF-03, INF-04, INF-05, INF-06, INF-07, INF-08, INF-09, INF-10
+**Success Criteria** (what must be TRUE):
+  1. A new tenant (e.g., Skyvera) can be provisioned and its data is completely isolated from other tenants at database, cache, and API levels
+  2. Tenant context propagates correctly through API requests -- a request for Tenant A never touches Tenant B's data
+  3. The API gateway authenticates requests, resolves tenant context, and routes to backend services
+  4. LLM calls can be made through the gateway with provider abstraction (Claude for reasoning, OpenAI for voice) and responses return correctly
+  5. The platform deploys to a staging environment via automated pipeline with secrets managed per tenant
+**Plans**: TBD
+
+Plans:
+- [ ] 01-01: Multi-tenant database and tenant provisioning
+- [ ] 01-02: API gateway, authentication, and LLM integration
+- [ ] 01-03: Deployment pipeline, monitoring, and environment management
+
+### Phase 2: Agent Orchestration
+**Goal**: Agents can be registered, coordinated through a supervisor topology, and communicate via events with validated handoffs -- preventing the "bag of agents" anti-pattern
+**Depends on**: Phase 1
+**Requirements**: PLT-03, PLT-04, PLT-05, PLT-06, PLT-07, PLT-08, PLT-09
+**Success Criteria** (what must be TRUE):
+  1. The supervisor orchestrator can receive a task, decompose it, route to specialist agent(s), and synthesize results
+  2. Agents communicate through the event bus (Redis Streams) with structured messages that include tenant context and source attribution
+  3. Agent handoffs include validation checkpoints that reject malformed or unattributed data (preventing cascading hallucination)
+  4. Three-tier context management works: working context compiles correctly per invocation, session state persists across turns, and long-term memory is searchable
+  5. Agent decisions are traceable through observability tooling (LangSmith or equivalent) with per-tenant per-agent cost tracking
+**Plans**: TBD
+
+Plans:
+- [ ] 02-01: Event bus and supervisor orchestration topology
+- [ ] 02-02: Agent registry, handoff protocol, and validation checkpoints
+- [ ] 02-03: Context management and observability infrastructure
+
+### Phase 3: Knowledge Base
+**Goal**: The platform has a rich, tenant-scoped knowledge foundation that agents can query -- product data, sales methodologies, regional nuances, and conversation history are all retrievable with high relevance
+**Depends on**: Phase 1, Phase 2
+**Requirements**: KB-01, KB-02, KB-03, KB-04, KB-05, KB-06, KB-07
+**Success Criteria** (what must be TRUE):
+  1. Product knowledge for Skyvera (offerings, pricing, positioning) is ingested and retrievable with tenant-scoped vector search
+  2. Agentic RAG pipeline decomposes complex queries, retrieves from multiple sources, and synthesizes coherent answers grounded in source documents
+  3. Sales methodology frameworks (MEDDIC, BANT) are structured and queryable -- an agent can retrieve the right framework guidance for a given deal situation
+  4. Conversation history persists across sessions and channels -- an agent can recall what was discussed in a previous email when preparing for a meeting
+  5. New product documents can be ingested through the pipeline (supporting future ESW acquisitions)
+**Plans**: TBD
+
+Plans:
+- [ ] 03-01: Vector database setup and product knowledge ingestion
+- [ ] 03-02: Agentic RAG pipeline and methodology library
+- [ ] 03-03: Conversation history, regional data, and document ingestion
+
+### Phase 4: Sales Agent Core
+**Goal**: The Sales Agent can conduct text-based sales interactions -- sending contextual emails and chats, adapting to customer personas, executing qualification frameworks, and knowing when to escalate to a human
+**Depends on**: Phase 2, Phase 3
+**Requirements**: SA-01, SA-02, SA-03, SA-04, SA-05, SA-06, SA-07, SA-08, SA-09, SA-10
+**Success Criteria** (what must be TRUE):
+  1. Sales Agent sends contextual emails via Gmail that reflect the current deal stage, account history, and appropriate persona tone (different for IC vs C-suite)
+  2. Sales Agent sends Google Chat messages to customers and internal team with relevant context pulled from account/deal data
+  3. Sales Agent executes BANT qualification naturally within conversations -- extracting budget, authority, need, and timeline signals without robotic interrogation
+  4. Sales Agent executes MEDDIC qualification -- identifying metrics, economic buyer, decision criteria, decision process, pain, and champion through conversational discovery
+  5. Sales Agent tracks conversation state across interactions and recommends next actions, escalating to human when confidence drops below threshold
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: Text conversation engine and GSuite integration (Gmail, Chat)
+- [ ] 04-02: Persona adaptation and sales methodology execution
+- [ ] 04-03: Conversation state tracking, next-action engine, and human escalation
+
+### Phase 5: Deal Management
+**Goal**: The Sales Agent manages the full deal lifecycle -- identifying opportunities from conversations, maintaining strategic account plans and tactical opportunity plans, mapping political structures, and keeping CRM in sync
+**Depends on**: Phase 4
+**Requirements**: SA-19, SA-20, SA-21, SA-22, SA-23, SA-24
+**Success Criteria** (what must be TRUE):
+  1. Sales Agent identifies opportunity signals (budget mentions, pain points, timeline urgency) from conversations and creates qualified opportunities
+  2. Sales Agent creates and maintains account plans (strategic relationship view) and opportunity plans (tactical deal view) that update as new information emerges
+  3. Sales Agent maps political structures within accounts -- identifying decision makers, influencers, champions, and blockers with power dynamics
+  4. CRM integration (Salesforce or HubSpot) works bidirectionally -- agent creates/updates opportunities, contacts, and activities; CRM changes flow back to agent context
+  5. Deal stages progress automatically based on qualification signals -- agent moves opportunities through the pipeline when evidence supports advancement
+**Plans**: TBD
+
+Plans:
+- [ ] 05-01: CRM integration and opportunity identification
+- [ ] 05-02: Account plans, opportunity plans, and political mapping
+- [ ] 05-03: Deal stage progression and pipeline automation
+
+### Phase 6: Meeting Capabilities
+**Goal**: The Sales Agent attends Google Meet meetings with an avatar representation, participates in real-time conversation, and produces meeting minutes distributed to stakeholders -- the "wow" differentiator
+**Depends on**: Phase 4
+**Requirements**: SA-11, SA-12, SA-13, SA-14, SA-15, SA-16, SA-17, SA-18
+**Success Criteria** (what must be TRUE):
+  1. Sales Agent creates meeting briefings before scheduled calls -- including account context, attendee profiles, objectives, and suggested talk tracks
+  2. Sales Agent joins Google Meet via meeting bot (Recall.ai) with avatar representation (HeyGen LiveAvatar) that is visually present to attendees
+  3. Real-time speech-to-text captures the meeting conversation and the agent generates responses within the latency budget (target under 1 second end-to-end)
+  4. Meeting recordings are captured, stored, and searchable -- feeding back into the agent's knowledge of the account
+  5. Structured meeting minutes (summary, action items, decisions) are generated and automatically distributed to stakeholders within minutes of meeting end
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: Meeting briefing generation and Google Meet bot integration
+- [ ] 06-02: Avatar representation and real-time response pipeline
+- [ ] 06-03: Recording capture, minutes generation, and stakeholder distribution
+
+### Phase 7: Intelligence & Autonomy
+**Goal**: The Sales Agent operates with autonomous intelligence -- consolidating data across all channels, recognizing patterns, pursuing revenue goals self-directedly, adapting to geographic norms, and being clonable per sales rep
+**Depends on**: Phase 4, Phase 5, Phase 6
+**Requirements**: SA-25, SA-26, SA-27, SA-28, SA-29, SA-30
+**Success Criteria** (what must be TRUE):
+  1. Sales Agent consolidates data across emails, chats, meetings, and CRM into a unified customer view -- no information silo between channels
+  2. Sales Agent recognizes patterns within accounts (e.g., "champion has mentioned budget freeze in 3 separate conversations") and surfaces actionable insights
+  3. Sales Agent tracks its own performance metrics (dollars identified, dollars sold, average deal time, closing rate) and self-directs toward revenue targets without human prompting
+  4. Sales Agent adapts behavior for geographic context -- different communication styles, relationship expectations, and decision-making norms for APAC, EMEA, and Americas
+  5. Agent cloning system allows replication with different persona per sales rep -- each regional director gets their own Sales Agent tuned to their style
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: Cross-channel data consolidation and pattern recognition
+- [ ] 07-02: Self-directed goal tracking and proactive outreach
+- [ ] 07-03: Geographic customization and agent cloning system
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Infrastructure Foundation | 0/3 | Not started | - |
+| 2. Agent Orchestration | 0/3 | Not started | - |
+| 3. Knowledge Base | 0/3 | Not started | - |
+| 4. Sales Agent Core | 0/3 | Not started | - |
+| 5. Deal Management | 0/3 | Not started | - |
+| 6. Meeting Capabilities | 0/3 | Not started | - |
+| 7. Intelligence & Autonomy | 0/3 | Not started | - |
+
+---
+*Roadmap created: 2026-02-10*
+*Last updated: 2026-02-10*
