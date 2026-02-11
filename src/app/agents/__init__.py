@@ -1,0 +1,31 @@
+"""Agent orchestration package.
+
+Provides the base agent abstractions and registry for multi-agent
+coordination. Agents register with typed capabilities and can be
+discovered by capability name, tag, or agent ID. Backup agent routing
+enables failure handling without retrying the same agent.
+
+Exports:
+    BaseAgent: Abstract base class for all agent implementations.
+    AgentCapability: Typed capability declaration for an agent.
+    AgentRegistration: Metadata describing a registered agent.
+    AgentStatus: Runtime status enum (IDLE, BUSY, ERROR, OFFLINE).
+    AgentRegistry: Registry for agent discovery and routing.
+    get_agent_registry: Singleton accessor for the global registry.
+"""
+
+from __future__ import annotations
+
+from src.app.agents.base import (
+    AgentCapability,
+    AgentRegistration,
+    AgentStatus,
+    BaseAgent,
+)
+
+__all__ = [
+    "AgentCapability",
+    "AgentRegistration",
+    "AgentStatus",
+    "BaseAgent",
+]
