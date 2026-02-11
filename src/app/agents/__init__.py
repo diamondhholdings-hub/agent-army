@@ -22,10 +22,13 @@ from src.app.agents.base import (
     AgentStatus,
     BaseAgent,
 )
+from src.app.agents.registry import AgentRegistry, get_agent_registry
 
 __all__ = [
     "AgentCapability",
     "AgentRegistration",
+    "AgentRegistry",
     "AgentStatus",
     "BaseAgent",
+    "get_agent_registry",
 ]
