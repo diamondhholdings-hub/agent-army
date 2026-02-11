@@ -72,6 +72,7 @@ async def provision_tenant(slug: str, name: str) -> dict:
                 tenant_id UUID NOT NULL,
                 email VARCHAR(255) NOT NULL,
                 name VARCHAR(200),
+                hashed_password VARCHAR(255),
                 role VARCHAR(50) NOT NULL DEFAULT 'member',
                 is_active BOOLEAN NOT NULL DEFAULT true,
                 created_at TIMESTAMPTZ DEFAULT now(),
@@ -79,11 +80,11 @@ async def provision_tenant(slug: str, name: str) -> dict:
             )
         """))
 
-        # Enable and FORCE RLS
+        # Enable and FORCE RLS on users
         await conn.execute(text(f'ALTER TABLE "{schema_name}".users ENABLE ROW LEVEL SECURITY'))
         await conn.execute(text(f'ALTER TABLE "{schema_name}".users FORCE ROW LEVEL SECURITY'))
 
-        # Create RLS policy
+        # Create RLS policy on users
         await conn.execute(text(f"""
             CREATE POLICY tenant_isolation ON "{schema_name}".users
             FOR ALL
@@ -91,12 +92,46 @@ async def provision_tenant(slug: str, name: str) -> dict:
             WITH CHECK (tenant_id::text = current_setting('app.current_tenant_id', true))
         """))
 
-        # Create indexes
+        # Create indexes on users
         await conn.execute(text(
             f'CREATE INDEX IF NOT EXISTS idx_users_tenant ON "{schema_name}".users(tenant_id)'
         ))
         await conn.execute(text(
             f'CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_tenant ON "{schema_name}".users(tenant_id, lower(email))'
+        ))
+
+        # 5b. Create api_keys table with RLS
+        await conn.execute(text(f"""
+            CREATE TABLE IF NOT EXISTS "{schema_name}".api_keys (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                tenant_id UUID NOT NULL,
+                user_id UUID NOT NULL REFERENCES "{schema_name}".users(id) ON DELETE CASCADE,
+                key_hash VARCHAR(255) NOT NULL,
+                name VARCHAR(200) NOT NULL,
+                is_active BOOLEAN NOT NULL DEFAULT true,
+                last_used_at TIMESTAMPTZ,
+                created_at TIMESTAMPTZ DEFAULT now()
+            )
+        """))
+
+        # Enable and FORCE RLS on api_keys
+        await conn.execute(text(f'ALTER TABLE "{schema_name}".api_keys ENABLE ROW LEVEL SECURITY'))
+        await conn.execute(text(f'ALTER TABLE "{schema_name}".api_keys FORCE ROW LEVEL SECURITY'))
+
+        # Create RLS policy on api_keys
+        await conn.execute(text(f"""
+            CREATE POLICY tenant_isolation ON "{schema_name}".api_keys
+            FOR ALL
+            USING (tenant_id::text = current_setting('app.current_tenant_id', true))
+            WITH CHECK (tenant_id::text = current_setting('app.current_tenant_id', true))
+        """))
+
+        # Create indexes on api_keys
+        await conn.execute(text(
+            f'CREATE INDEX IF NOT EXISTS idx_api_keys_tenant ON "{schema_name}".api_keys(tenant_id)'
+        ))
+        await conn.execute(text(
+            f'CREATE UNIQUE INDEX IF NOT EXISTS idx_api_keys_tenant_hash ON "{schema_name}".api_keys(tenant_id, key_hash)'
         ))
 
         # 6. Insert tenant record

@@ -1,10 +1,11 @@
-"""Test fixtures for multi-tenant isolation tests.
+"""Test fixtures for multi-tenant isolation and authentication tests.
 
 Provides:
 - FastAPI test app with initialized database
 - Async HTTP client for API testing
 - Two test tenants (test-alpha, test-beta) with isolated schemas
 - Tenant-scoped database sessions
+- Test users with passwords for auth testing
 - Cleanup of test data after all tests
 """
 
@@ -17,8 +18,9 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.core.database import get_engine, init_db, close_db, close_db as _close_db
+from src.app.core.database import get_engine, init_db, close_db
 from src.app.core.redis import get_redis_pool, close_redis
+from src.app.core.security import hash_password, create_access_token
 from src.app.core.tenant import TenantContext, set_tenant_context, _tenant_context
 from src.app.main import create_app
 
@@ -72,6 +74,52 @@ async def tenant_beta(client, tenant_alpha) -> dict:
     )
     assert response.status_code == 201, f"Failed to create test-beta: {response.text}"
     return response.json()
+
+
+@pytest_asyncio.fixture(scope="session")
+async def alpha_user(tenant_alpha) -> dict:
+    """Create a test user in tenant alpha with a known password."""
+    engine = get_engine()
+    password = "test-password-alpha"
+    hashed = hash_password(password)
+    tenant_id = tenant_alpha["id"]
+    schema = tenant_alpha["schema_name"]
+
+    async with engine.begin() as conn:
+        # Set RLS context so INSERT passes the WITH CHECK
+        await conn.execute(text(f"SET app.current_tenant_id = '{tenant_id}'"))
+        result = await conn.execute(
+            text(f"""
+                INSERT INTO "{schema}".users (tenant_id, email, name, hashed_password, role)
+                VALUES (:tid, :email, :name, :hpw, 'admin')
+                RETURNING id::text
+            """),
+            {"tid": tenant_id, "email": "alice@alpha-corp.example.com", "name": "Alice", "hpw": hashed},
+        )
+        user_id = result.scalar_one()
+
+    return {
+        "id": user_id,
+        "email": "alice@alpha-corp.example.com",
+        "name": "Alice",
+        "password": password,
+        "tenant_id": tenant_id,
+        "tenant_slug": "test-alpha",
+        "schema_name": schema,
+    }
+
+
+@pytest_asyncio.fixture(scope="session")
+async def alpha_token(alpha_user, tenant_alpha) -> str:
+    """Create a valid JWT access token for the alpha user."""
+    token_data = {
+        "sub": alpha_user["id"],
+        "tenant_id": alpha_user["tenant_id"],
+        "tenant_slug": "test-alpha",
+        "email": alpha_user["email"],
+        "role": "admin",
+    }
+    return create_access_token(token_data)
 
 
 @pytest_asyncio.fixture

@@ -35,6 +35,10 @@ def get_engine() -> AsyncEngine:
             pool_size=20,
             max_overflow=10,
             echo=False,
+            # Disable asyncpg prepared statement caching -- required because
+            # RLS policies depend on session variables (app.current_tenant_id)
+            # and cached plans bake in the RLS filter from the first execution.
+            connect_args={"statement_cache_size": 0},
         )
 
         # Critical: Reset session variables on every connection checkout
@@ -87,7 +91,12 @@ async def get_tenant_session() -> AsyncGenerator[AsyncSession, None]:
     2. Creates a connection with schema_translate_map={"tenant": tenant.schema_name}
     3. Sets RLS context via SET app.current_tenant_id
     4. Yields the session
-    5. Closes connection in finally block
+    5. Commits the connection on clean exit, closes in finally block
+
+    NOTE: SET app.current_tenant_id is a session-level command, not a transaction
+    command. It persists for the connection lifetime regardless of COMMIT/ROLLBACK.
+    We commit after SET to ensure the implicit autobegin transaction is closed,
+    so subsequent session.commit() calls properly flush data to the database.
     """
     tenant = get_current_tenant()
     engine = get_engine()
@@ -99,6 +108,8 @@ async def get_tenant_session() -> AsyncGenerator[AsyncSession, None]:
         )
         # Set RLS session variable for defense-in-depth
         await conn.execute(text(f"SET app.current_tenant_id = '{tenant.tenant_id}'"))
+        # Commit the SET so the autobegin transaction is clean for the session
+        await conn.commit()
 
         async with AsyncSession(bind=conn, expire_on_commit=False) as session:
             yield session

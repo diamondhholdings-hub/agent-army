@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from src.app.api.v1 import health, tenants
+from src.app.api.v1 import auth, health, tenants
 
 router = APIRouter()
 
 router.include_router(health.router)
 router.include_router(tenants.router)
+router.include_router(auth.router)
