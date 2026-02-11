@@ -14,6 +14,8 @@ Exports:
     get_agent_registry: Singleton accessor for the global registry.
     HybridRouter: Two-phase router with rules and LLM fallback.
     RoutingDecision: Result model for routing decisions.
+    SupervisorOrchestrator: Coordinator for multi-agent task execution.
+    create_supervisor_graph: Factory for wiring supervisor dependencies.
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ from src.app.agents.base import (
 )
 from src.app.agents.registry import AgentRegistry, get_agent_registry
 from src.app.agents.router import HybridRouter, RoutingDecision
+from src.app.agents.supervisor import SupervisorOrchestrator, create_supervisor_graph
 
 __all__ = [
     "AgentCapability",
@@ -35,5 +38,7 @@ __all__ = [
     "BaseAgent",
     "HybridRouter",
     "RoutingDecision",
+    "SupervisorOrchestrator",
+    "create_supervisor_graph",
     "get_agent_registry",
 ]
