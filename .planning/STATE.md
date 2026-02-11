@@ -20,18 +20,18 @@ Progress: [####-----------------] 14%
 
 **Velocity:**
 - Total plans completed: 3
-- Average duration: 10 min
-- Total execution time: 0.5 hours
+- Average duration: 14 min
+- Total execution time: 0.7 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-infrastructure | 3/3 | 30 min | 10 min |
+| 01-infrastructure | 3/3 | 42 min | 14 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (11 min), 01-02 (10 min), 01-03 (9 min)
-- Trend: Consistent ~10 min per plan, slight improvement as infrastructure stabilized
+- Last 5 plans: 01-01 (11 min), 01-02 (22 min), 01-03 (9 min)
+- Trend: 01-02 took longer due to auth + LLM integration complexity and 4 auto-fixed deviations
 
 *Updated after each plan completion*
 
@@ -51,9 +51,11 @@ Recent decisions affecting current work:
 - [01-01]: Tenant provisioning uses inline DDL instead of Alembic programmatic calls
 - [01-01]: PostgreSQL/Redis via Homebrew locally (Docker not available); docker-compose.yml retained
 - [01-01]: asyncio_default_test_loop_scope=session for consistent event loop in async tests
-- [01-02]: JWT auth with python-jose, bcrypt password hashing via passlib
-- [01-02]: LiteLLM for provider abstraction (Claude for reasoning, OpenAI for voice)
-- [01-02]: Prompt injection detection via heuristic checks before LLM calls
+- [01-02]: JWT auth with python-jose, bcrypt directly (not passlib -- Python 3.13 compatibility)
+- [01-02]: LiteLLM Router for provider abstraction (Claude Sonnet 4 primary, GPT-4o fallback)
+- [01-02]: Prompt injection detection as heuristic layer (4 pattern categories); architectural defense is tenant isolation
+- [01-02]: statement_cache_size=0 for asyncpg to avoid RLS SET command conflicts
+- [01-02]: Explicit commit after SET app.current_tenant_id for session visibility
 - [01-03]: Prometheus metrics with tenant_id labels for multi-tenant observability
 - [01-03]: Workload Identity Federation for GitHub Actions to GCP (no long-lived keys)
 - [01-03]: Google Secret Manager with per-tenant naming convention {tenant-slug}-{secret-name}
