@@ -115,6 +115,24 @@ def mock_llm() -> MockLLM:
 
 
 @pytest.fixture
+def decomposer_llm() -> MockLLM:
+    """Create a dedicated LLM for the decomposer."""
+    return MockLLM(default_response='[{"query": "fallback query", "source_type": "product", "filters": {}}]')
+
+
+@pytest.fixture
+def synthesizer_llm() -> MockLLM:
+    """Create a dedicated LLM for the synthesizer."""
+    return MockLLM(default_response="Based on available information, here is the answer [1].")
+
+
+@pytest.fixture
+def grading_llm() -> MockLLM:
+    """Create a dedicated LLM for document grading (defaults to 'yes')."""
+    return MockLLM(default_response="yes")
+
+
+@pytest.fixture
 def mock_knowledge_store() -> MagicMock:
     """Create a mock QdrantKnowledgeStore."""
     store = MagicMock()
@@ -197,14 +215,13 @@ def mock_conversation_store() -> MagicMock:
 
 
 @pytest.fixture
-def decomposer(mock_llm: MockLLM) -> QueryDecomposer:
-    """Create a QueryDecomposer with mock LLM."""
-    # Configure mock LLM for decomposition responses
-    mock_llm.response_map = {
+def decomposer(decomposer_llm: MockLLM) -> QueryDecomposer:
+    """Create a QueryDecomposer with dedicated mock LLM."""
+    decomposer_llm.response_map = {
         "monetization platform pricing": '[{"query": "Monetization Platform pricing", "source_type": "product", "filters": {"content_type": "pricing"}}]',
         "position the monetization": '[{"query": "Monetization Platform key features and differentiators", "source_type": "product", "filters": {"content_type": "product"}}, {"query": "Competitive positioning", "source_type": "product", "filters": {"content_type": "positioning"}}, {"query": "APAC sales approach for technical buyers", "source_type": "regional", "filters": {"content_type": "regional"}}, {"query": "CTO engagement strategy", "source_type": "methodology", "filters": {"content_type": "methodology"}}]',
     }
-    return QueryDecomposer(llm=mock_llm)
+    return QueryDecomposer(llm=decomposer_llm)
 
 
 @pytest.fixture
@@ -221,12 +238,12 @@ def retriever(
 
 
 @pytest.fixture
-def synthesizer(mock_llm: MockLLM) -> ResponseSynthesizer:
-    """Create a ResponseSynthesizer with mock LLM."""
-    mock_llm.response_map = {
+def synthesizer(synthesizer_llm: MockLLM) -> ResponseSynthesizer:
+    """Create a ResponseSynthesizer with dedicated mock LLM."""
+    synthesizer_llm.response_map = {
         "monetization platform": "The Monetization Platform offers subscription management and usage-based pricing [1]. Pricing starts at $500/mo for Starter tier [2].",
     }
-    return ResponseSynthesizer(llm=mock_llm)
+    return ResponseSynthesizer(llm=synthesizer_llm)
 
 
 @pytest.fixture
@@ -234,14 +251,14 @@ def pipeline(
     decomposer: QueryDecomposer,
     retriever: MultiSourceRetriever,
     synthesizer: ResponseSynthesizer,
-    mock_llm: MockLLM,
+    grading_llm: MockLLM,
 ) -> AgenticRAGPipeline:
     """Create a full AgenticRAGPipeline with mock dependencies."""
     return AgenticRAGPipeline(
         decomposer=decomposer,
         retriever=retriever,
         synthesizer=synthesizer,
-        grading_llm=mock_llm,
+        grading_llm=grading_llm,
         max_iterations=2,
     )
 
