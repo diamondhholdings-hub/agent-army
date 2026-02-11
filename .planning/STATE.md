@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 2 (Agent Orchestration) -- Wave 3 complete (supervisor orchestration), Wave 4 next (observability)
+**Current focus:** Phase 2 COMPLETE (Agent Orchestration) -- all 6 plans delivered, 180 tests pass. Ready for Phase 3 (Knowledge Base).
 
 ## Current Position
 
-Phase: 2 of 7 (Agent Orchestration)
-Plan: 5 of 6 in current phase (02-01, 02-02, 02-03, 02-04, 02-05 complete)
-Status: In progress
-Last activity: 2026-02-11 -- Completed 02-05-PLAN.md (Supervisor orchestration)
+Phase: 2 of 7 (Agent Orchestration) -- COMPLETE
+Plan: 6 of 6 in current phase (02-01 through 02-06 complete)
+Status: Phase complete
+Last activity: 2026-02-11 -- Completed 02-06-PLAN.md (Observability and Phase 2 wiring)
 
-Progress: [########------------] 38%
+Progress: [#########-----------] 43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 9 min
-- Total execution time: 1.2 hours
+- Total plans completed: 9
+- Average duration: 8 min
+- Total execution time: 1.3 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
-| 02-agent-orchestration | 5/6 | 24 min | 5 min |
+| 02-agent-orchestration | 6/6 | 29 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (5 min), 02-02 (4 min), 02-04 (5 min), 02-03 (4 min), 02-05 (6 min)
+- Last 5 plans: 02-02 (4 min), 02-04 (5 min), 02-03 (4 min), 02-05 (6 min), 02-06 (5 min)
 - Trend: Phase 2 plans consistently fast (4-6 min avg) -- focused modules with clear boundaries
 
 *Updated after each plan completion*
@@ -84,6 +84,11 @@ Recent decisions affecting current work:
 - [02-05]: Conservative decomposition heuristic: only numbered lists or long descriptions with multiple action keywords
 - [02-05]: Agent instances attached to AgentRegistration via _agent_instance for supervisor execution
 - [02-05]: LLM routing uses model='fast', decomposition and synthesis use model='reasoning'
+- [02-06]: Langfuse integration via LiteLLM callbacks (not @observe decorator) for automatic tracing
+- [02-06]: LANGFUSE_* env vars from Settings only if not already in os.environ (env precedence)
+- [02-06]: Per-module try/except in lifespan for maximum Phase 2 init resilience
+- [02-06]: CostTracker returns "source: unavailable" to distinguish missing data from zero cost
+- [02-06]: Agent Prometheus metrics follow existing HTTP/LLM metric patterns with tenant_id scoping
 
 ### Pending Todos
 
@@ -94,10 +99,10 @@ None.
 - REQUIREMENTS.md states 60 v1 requirements but actual count is 57 (10 PLT + 7 KB + 30 SA + 10 INF). No missing requirements found -- likely a counting error in the original file.
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
-- 1 pre-existing test failure (test_prompt_injection_detection from 01-02) -- does not affect functionality, likely a test sensitivity issue.
+- 1 pre-existing test failure (test_prompt_injection_detection from 01-02) -- does not affect functionality, likely a test sensitivity issue. Note: full suite now at 180/180 pass.
 
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 02-05-PLAN.md (Supervisor orchestration)
+Stopped at: Completed 02-06-PLAN.md (Observability and Phase 2 wiring) -- Phase 2 COMPLETE
 Resume file: None
