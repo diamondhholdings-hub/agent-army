@@ -32,6 +32,21 @@ class Settings(BaseSettings):
     # Multi-tenant schema config
     SHARED_SCHEMA: str = "shared"
 
+    # JWT Authentication
+    JWT_SECRET_KEY: str = "CHANGE-ME-IN-PRODUCTION-use-openssl-rand-hex-32"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # CORS
+    CORS_ALLOWED_ORIGINS: str = "*"
+
+    # GCP (for Secret Manager and deployment)
+    GCP_PROJECT_ID: str = ""
+
+    # Monitoring
+    SENTRY_DSN: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:

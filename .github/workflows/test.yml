@@ -1,0 +1,58 @@
+name: Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: agent_army
+          POSTGRES_PASSWORD: agent_army_dev
+          POSTGRES_DB: agent_army
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - "6379:6379"
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Lint with ruff
+        run: uv run ruff check src/
+
+      - name: Check formatting
+        run: uv run ruff format --check src/
+
+      - name: Run tests
+        run: uv run pytest tests/ -v --tb=short
+        env:
+          DATABASE_URL: postgresql+asyncpg://agent_army:agent_army_dev@localhost:5432/agent_army
+          REDIS_URL: redis://localhost:6379/0
+          ENVIRONMENT: testing
+          JWT_SECRET_KEY: test-secret-key-for-ci

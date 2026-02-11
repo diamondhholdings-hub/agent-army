@@ -1,0 +1,53 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: ${{ secrets.GCP_REGION }}
+  SERVICE: agent-army-api
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity Federation
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github/providers/github
+          service_account: github-actions@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push Docker image
+        run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE --timeout=600
+
+      - name: Deploy to Cloud Run (staging)
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE }}-staging
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          env_vars: |
+            ENVIRONMENT=staging
+          secrets: |
+            DATABASE_URL=database-url-staging:latest
+            REDIS_URL=redis-url-staging:latest
+            ANTHROPIC_API_KEY=anthropic-api-key:latest
+            OPENAI_API_KEY=openai-api-key:latest
+            JWT_SECRET_KEY=jwt-secret-key:latest
+          flags: |
+            --min-instances=0
+            --max-instances=10
+            --memory=1Gi
+            --cpu=1
+            --timeout=300
+            --concurrency=80
