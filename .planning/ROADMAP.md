@@ -49,12 +49,15 @@ Plans:
   3. Agent handoffs include validation checkpoints that reject malformed or unattributed data (preventing cascading hallucination)
   4. Three-tier context management works: working context compiles correctly per invocation, session state persists across turns, and long-term memory is searchable
   5. Agent decisions are traceable through observability tooling (LangSmith or equivalent) with per-tenant per-agent cost tracking
-**Plans**: TBD
+**Plans**: 6 plans in 4 waves
 
 Plans:
-- [ ] 02-01: Event bus and supervisor orchestration topology
-- [ ] 02-02: Agent registry, handoff protocol, and validation checkpoints
-- [ ] 02-03: Context management and observability infrastructure
+- [ ] 02-01-PLAN.md -- Event bus infrastructure: Redis Streams event schemas, tenant-scoped bus, consumer with retry, DLQ (Wave 1)
+- [ ] 02-02-PLAN.md -- Agent registry and base agent: BaseAgent abstract class, AgentRegistry with capability discovery and backup routing (Wave 1)
+- [ ] 02-03-PLAN.md -- Handoff validation protocol: structural Pydantic validators, LLM semantic validation, configurable strictness (Wave 2, depends on 02-01, 02-02)
+- [ ] 02-04-PLAN.md -- Three-tier context management: session store (PostgreSQL checkpointer), long-term memory (pgvector), working context compiler (tiktoken budget) (Wave 1)
+- [ ] 02-05-PLAN.md -- Supervisor orchestration: hybrid router (rules + LLM), task decomposition, backup failure handling, LLM result synthesis (Wave 3, depends on 02-02, 02-03, 02-04)
+- [ ] 02-06-PLAN.md -- Observability, cost tracking, and integration wiring: Langfuse tracing, per-tenant per-agent costs, Prometheus metrics, main.py wiring, integration tests (Wave 4, depends on 02-01, 02-05)
 
 ### Phase 3: Knowledge Base
 **Goal**: The platform has a rich, tenant-scoped knowledge foundation that agents can query -- product data, sales methodologies, regional nuances, and conversation history are all retrievable with high relevance
@@ -149,8 +152,8 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Infrastructure Foundation | 0/3 | Planned (3 plans, 2 waves) | - |
-| 2. Agent Orchestration | 0/3 | Not started | - |
+| 1. Infrastructure Foundation | 3/3 | Complete | 2026-02-11 |
+| 2. Agent Orchestration | 0/6 | Planned (6 plans, 4 waves) | - |
 | 3. Knowledge Base | 0/3 | Not started | - |
 | 4. Sales Agent Core | 0/3 | Not started | - |
 | 5. Deal Management | 0/3 | Not started | - |
@@ -159,4 +162,4 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-10 after Phase 1 planning*
+*Last updated: 2026-02-11 after Phase 2 planning*
