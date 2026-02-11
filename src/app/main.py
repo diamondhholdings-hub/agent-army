@@ -26,6 +26,9 @@ from src.app.api.v1.router import router as v1_router
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan: init DB and Sentry on startup, close on shutdown."""
+    import structlog
+
+    log = structlog.get_logger(__name__)
     settings = get_settings()
     configure_structlog()
     await init_db()
@@ -34,7 +37,71 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     if settings.SENTRY_DSN:
         init_sentry(dsn=settings.SENTRY_DSN, environment=settings.ENVIRONMENT.value)
 
+    # ── Phase 2: Agent Orchestration Module Initialization ──────────────
+    # All Phase 2 init is additive and failure-tolerant. Each module is
+    # wrapped in its own try/except so a single failure (e.g., pgvector
+    # not installed) does not prevent the application from starting.
+
+    # Langfuse tracing (instruments LiteLLM callbacks)
+    try:
+        from src.app.observability.tracer import init_langfuse
+
+        init_langfuse(settings)
+    except Exception:
+        log.warning("phase2.langfuse_init_failed", exc_info=True)
+
+    # Session store (LangGraph checkpointer)
+    try:
+        from src.app.context.session import SessionStore
+
+        session_store = SessionStore(settings.DATABASE_URL)
+        await session_store.setup()
+        app.state.session_store = session_store
+        log.info("phase2.session_store_initialized")
+    except Exception:
+        log.warning("phase2.session_store_init_failed", exc_info=True)
+        app.state.session_store = None
+
+    # Long-term memory (pgvector)
+    try:
+        from src.app.context.memory import LongTermMemory
+
+        long_term_memory = LongTermMemory(settings.DATABASE_URL)
+        await long_term_memory.setup()
+        app.state.long_term_memory = long_term_memory
+        log.info("phase2.long_term_memory_initialized")
+    except Exception:
+        log.warning(
+            "phase2.long_term_memory_init_failed",
+            exc_info=True,
+            hint="pgvector extension may not be available",
+        )
+        app.state.long_term_memory = None
+
+    # Agent registry (in-memory singleton)
+    try:
+        from src.app.agents.registry import get_agent_registry
+
+        registry = get_agent_registry()
+        app.state.agent_registry = registry
+        log.info("phase2.agent_registry_initialized", agent_count=len(registry))
+    except Exception:
+        log.warning("phase2.agent_registry_init_failed", exc_info=True)
+        app.state.agent_registry = None
+
+    log.info("phase2.orchestration_modules_initialized")
+
     yield
+
+    # ── Shutdown ──────────────────────────────────────────────────────────
+    # Close long-term memory pool if it was initialized
+    ltm = getattr(app.state, "long_term_memory", None)
+    if ltm is not None:
+        try:
+            await ltm.close()
+        except Exception:
+            log.warning("phase2.long_term_memory_close_failed", exc_info=True)
+
     await close_db()
     await close_redis()
 
