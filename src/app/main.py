@@ -15,6 +15,7 @@ from src.app.config import get_settings
 from src.app.core.database import close_db, init_db
 from src.app.core.redis import close_redis, get_redis_pool
 from src.app.core.tenant import TenantMiddleware
+from src.app.api.v1.router import router as v1_router
 
 
 @asynccontextmanager
@@ -41,10 +42,8 @@ def create_app() -> FastAPI:
     redis_client = get_redis_pool()
     app.add_middleware(TenantMiddleware, redis_client=redis_client)
 
-    # Health endpoint (skips tenant middleware)
-    @app.get("/health")
-    async def health_check():
-        return {"status": "ok", "environment": settings.ENVIRONMENT.value}
+    # Include v1 API router (health, tenants, etc.)
+    app.include_router(v1_router)
 
     return app
 
