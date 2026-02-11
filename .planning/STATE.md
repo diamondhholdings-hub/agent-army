@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-02, 03-03, 03-04, 03-05, 03-06 complete. End-to-end ingestion pipeline, methodology frameworks, regional nuances, document ingestion, conversation storage, and ESW product knowledge operational.
+**Current focus:** Phase 3 COMPLETE (Knowledge Base) -- All 7 plans executed. Qdrant vector store, ingestion pipeline, ESW product knowledge, methodology frameworks, regional nuances, conversation storage, and agentic RAG pipeline all operational.
 
 ## Current Position
 
 Phase: 3 of 7 (Knowledge Base)
-Plan: 03-01, 03-02, 03-03, 03-04, 03-05, 03-06 complete; 7 total in phase
-Status: In progress
-Last activity: 2026-02-11 -- Completed 03-04-PLAN.md (ESW Product Knowledge Data)
+Plan: 7/7 complete
+Status: Phase complete
+Last activity: 2026-02-11 -- Completed 03-07-PLAN.md (Agentic RAG Pipeline)
 
-Progress: [##################--] 90%
+Progress: [####################] 100% (Phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 8 min
-- Total execution time: ~2 hours
+- Total execution time: ~2h 8min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [##################--] 90%
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
-| 03-knowledge-base | 6/7 | ~54 min | 9 min |
+| 03-knowledge-base | 7/7 | ~61 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-04 (7 min), 03-03 (4 min), 03-06 (6 min), 03-02 (9 min), 03-05 (13 min)
-- Trend: Consistent -- averaging 8 min per plan
+- Last 5 plans: 03-07 (7 min), 03-04 (7 min), 03-03 (4 min), 03-06 (6 min), 03-02 (9 min)
+- Trend: Consistent -- averaging 7 min per plan
 
 *Updated after each plan completion*
 
@@ -118,6 +118,11 @@ Recent decisions affecting current work:
 - [03-04]: Enterprise tier uses null pricing (contact sales model) for custom quotes
 - [03-04]: Regional pricing APAC=10% discount aligns with 03-05 regional modifiers
 - [03-04]: Battlecard uses generic competitor name 'Nextera BSS' for training data realism
+- [03-07]: State machine pattern for RAG pipeline (not LangGraph graph compilation) for testability
+- [03-07]: Separate LLM instances per component (decomposer, grading, synthesis) to prevent interference
+- [03-07]: Fail-open document grading (LLM errors assume relevant) consistent with 02-03 fail-open pattern
+- [03-07]: Position-based relevance scoring (decaying 0.1/rank) for deterministic ranking
+- [03-07]: 50% relevance threshold triggers query rewrite, max 2 iterations
 
 ### Pending Todos
 
@@ -132,6 +137,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-11T20:06:37Z
-Stopped at: Completed 03-04-PLAN.md (ESW Product Knowledge Data)
+Last session: 2026-02-11T20:16:18Z
+Stopped at: Completed 03-07-PLAN.md (Agentic RAG Pipeline) -- Phase 3 complete
 Resume file: None
