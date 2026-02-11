@@ -7,8 +7,11 @@ Provides persistent conversation memory for sales agents, enabling:
 - Session lifecycle management with metadata tracking
 """
 
+from src.knowledge.conversations.session import ConversationSession, SessionManager
 from src.knowledge.conversations.store import ConversationStore
 
 __all__ = [
+    "ConversationSession",
     "ConversationStore",
+    "SessionManager",
 ]
