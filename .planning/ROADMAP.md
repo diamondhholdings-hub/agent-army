@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The API gateway authenticates requests, resolves tenant context, and routes to backend services
   4. LLM calls can be made through the gateway with provider abstraction (Claude for reasoning, OpenAI for voice) and responses return correctly
   5. The platform deploys to a staging environment via automated pipeline with secrets managed per tenant
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 01-01: Multi-tenant database and tenant provisioning
-- [ ] 01-02: API gateway, authentication, and LLM integration
-- [ ] 01-03: Deployment pipeline, monitoring, and environment management
+- [ ] 01-01-PLAN.md -- Multi-tenant database and tenant provisioning (Wave 1)
+- [ ] 01-02-PLAN.md -- API gateway, authentication, and LLM integration (Wave 2, depends on 01-01)
+- [ ] 01-03-PLAN.md -- Deployment pipeline, monitoring, and environment management (Wave 2, depends on 01-01)
 
 ### Phase 2: Agent Orchestration
 **Goal**: Agents can be registered, coordinated through a supervisor topology, and communicate via events with validated handoffs -- preventing the "bag of agents" anti-pattern
@@ -149,7 +149,7 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Infrastructure Foundation | 0/3 | Not started | - |
+| 1. Infrastructure Foundation | 0/3 | Planned (3 plans, 2 waves) | - |
 | 2. Agent Orchestration | 0/3 | Not started | - |
 | 3. Knowledge Base | 0/3 | Not started | - |
 | 4. Sales Agent Core | 0/3 | Not started | - |
@@ -159,4 +159,4 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-10*
+*Last updated: 2026-02-10 after Phase 1 planning*
