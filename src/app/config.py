@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     # CORS
     CORS_ALLOWED_ORIGINS: str = "*"
 
+    # LLM Providers
+    ANTHROPIC_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
+    LLM_TIMEOUT: int = 30
+    LLM_MAX_RETRIES: int = 3
+
     # GCP (for Secret Manager and deployment)
     GCP_PROJECT_ID: str = ""
 
