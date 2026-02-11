@@ -281,5 +281,5 @@ async def test_health_ready_endpoint(client, tenant_alpha):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ready"
-    assert data["checks"]["database"] is True
-    assert data["checks"]["redis"] is True
+    assert data["checks"]["database"] == "ok"
+    assert data["checks"]["redis"] == "ok"

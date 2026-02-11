@@ -59,6 +59,7 @@ SKIP_TENANT_PATHS = (
     "/docs",
     "/openapi.json",
     "/redoc",
+    "/metrics",
     "/api/v1/tenants",
 )
 
