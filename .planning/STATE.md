@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 2 COMPLETE (Agent Orchestration) -- all 6 plans delivered, 180 tests pass. Ready for Phase 3 (Knowledge Base).
+**Current focus:** Phase 3 IN PROGRESS (Knowledge Base) -- 03-01, 03-06 complete. Conversation storage and session management operational.
 
 ## Current Position
 
-Phase: 2 of 7 (Agent Orchestration) -- COMPLETE
-Plan: 6 of 6 in current phase (02-01 through 02-06 complete)
-Status: Phase complete
-Last activity: 2026-02-11 -- Completed 02-06-PLAN.md (Observability and Phase 2 wiring)
+Phase: 3 of 7 (Knowledge Base)
+Plan: 06 complete, 7 total in phase
+Status: In progress
+Last activity: 2026-02-11 -- Completed 03-06-PLAN.md (Conversation History Storage)
 
-Progress: [#########-----------] 43%
+Progress: [#############-------] 69%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 11
 - Average duration: 8 min
-- Total execution time: 1.3 hours
+- Total execution time: ~1.6 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [#########-----------] 43%
 |-------|-------|-------|----------|
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
+| 03-knowledge-base | 2/7 | ~21 min | 10 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (4 min), 02-04 (5 min), 02-03 (4 min), 02-05 (6 min), 02-06 (5 min)
-- Trend: Phase 2 plans consistently fast (4-6 min avg) -- focused modules with clear boundaries
+- Last 5 plans: 02-05 (6 min), 02-06 (5 min), 03-01 (~15 min), 03-06 (6 min)
+- Trend: Back to fast execution with tools available
 
 *Updated after each plan completion*
 
@@ -89,10 +90,20 @@ Recent decisions affecting current work:
 - [02-06]: Per-module try/except in lifespan for maximum Phase 2 init resilience
 - [02-06]: CostTracker returns "source: unavailable" to distinguish missing data from zero cost
 - [02-06]: Agent Prometheus metrics follow existing HTTP/LLM metric patterns with tenant_id scoping
+- [03-01]: Qdrant local mode for dev (path=./qdrant_data), remote URL for production
+- [03-01]: Payload-based multitenancy with is_tenant=True on tenant_id for per-tenant HNSW indexes
+- [03-01]: Hybrid search: dense (OpenAI text-embedding-3-small 1536d) + sparse (fastembed BM25) with RRF fusion
+- [03-01]: Lazy BM25 model init to avoid heavy import on startup
+- [03-01]: src/knowledge/ as separate top-level module (not under src/app/)
+- [03-01]: UUID string IDs for Qdrant points matching KnowledgeChunk.id pattern
+- [03-06]: Dense-only embeddings for conversations (no BM25 sparse) -- short natural language, semantic similarity is primary
+- [03-06]: Timestamp stored as epoch float for Qdrant Range queries on integer-indexed field
+- [03-06]: Cross-session context limited to 5 messages from prior sessions to avoid context bloat
+- [03-06]: Non-LLM session summarization via keyword extraction (Counter) -- LLM summarization deferred to RAG layer
 
 ### Pending Todos
 
-None.
+- None (03-01 uncommitted files resolved during 03-06 execution)
 
 ### Blockers/Concerns
 
@@ -103,6 +114,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-11
-Stopped at: Completed 02-06-PLAN.md (Observability and Phase 2 wiring) -- Phase 2 COMPLETE
+Last session: 2026-02-11T19:43:01Z
+Stopped at: Completed 03-06-PLAN.md (Conversation History Storage)
 Resume file: None
