@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4.1 IN PROGRESS (Agent Learning & Performance Feedback) -- Plan 01 done. Outcome tracking data foundation established with 3 models, OutcomeTracker service, and 425 passing tests.
+**Current focus:** Phase 4.1 IN PROGRESS (Agent Learning & Performance Feedback) -- Plans 01-02 done. FeedbackCollector, CalibrationEngine, CoachingPatternExtractor services built with 449 passing tests.
 
 ## Current Position
 
 Phase: 4.1 of 7 (Agent Learning & Performance Feedback)
-Plan: 1 of ? in phase
+Plan: 2 of ? in phase
 Status: In progress
-Last activity: 2026-02-12 -- Completed 04.1-01-PLAN.md (Outcome Tracking Data Foundation)
+Last activity: 2026-02-12 -- Completed 04.1-02-PLAN.md (Feedback, Calibration & Coaching Services)
 
-Progress: [#####################] ~100% (22 plans completed through Phase 4.1-01)
+Progress: [######################] ~100% (23 plans completed through Phase 4.1-02)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
+- Total plans completed: 23
 - Average duration: 7 min
-- Total execution time: ~2h 38min
+- Total execution time: ~2h 45min
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [#####################] ~100% (22 plans completed through Phase 4.1-01
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
-| 04.1-agent-learning | 1/? | 5 min | 5 min |
+| 04.1-agent-learning | 2/? | 12 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.1-01 (5 min), 04-05 (5 min), 04-04 (6 min), 04-03 (5 min), 04-02 (5 min)
-- Trend: Consistent -- averaging 5 min per plan
+- Last 5 plans: 04.1-02 (7 min), 04.1-01 (5 min), 04-05 (5 min), 04-04 (6 min), 04-03 (5 min)
+- Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
 
@@ -159,6 +159,12 @@ Recent decisions affecting current work:
 - [04.1-01]: Bulk expire via single UPDATE statement for performance
 - [04.1-01]: CalibrationBin unique constraint on (tenant_id, action_type, bin_index) for 10 bins per action type
 - [04.1-01]: FeedbackEntry dual rating: -1/0/1 for inline, 1-5 for dashboard (single rating field)
+- [04.1-02]: In-memory test doubles mirror service interfaces for fast unit testing without database
+- [04.1-02]: Brier score uses weighted average of per-bin gaps squared, weighted by sample count
+- [04.1-02]: Cold start protection: bins with < 10 samples excluded from adjustment decisions
+- [04.1-02]: Adjustment damping: max 10% correction per cycle, clamped to [0.5, 1.5] scaling bounds
+- [04.1-02]: Coaching uses statistical correlations (not LLM) per RESEARCH.md recommendation
+- [04.1-02]: Improvement area threshold: < 40% success rate flags action type for attention
 
 ### Pending Todos
 
@@ -170,10 +176,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 425/425 passing as of 04.1-01 completion (29 new learning tests).
+- Full test suite: 449/449 passing as of 04.1-02 completion (24 new feedback/calibration/coaching tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T04:56:39Z
-Stopped at: Completed 04.1-01-PLAN.md (Outcome Tracking Data Foundation)
+Last session: 2026-02-12T05:05:53Z
+Stopped at: Completed 04.1-02-PLAN.md (Feedback, Calibration & Coaching Services)
 Resume file: None
