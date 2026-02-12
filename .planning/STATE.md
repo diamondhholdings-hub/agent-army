@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4.2 (QBS Methodology Integration) -- Plan 01 complete, Plans 02-03 remaining.
+**Current focus:** Phase 4.2 (QBS Methodology Integration) -- Plans 01-02 complete, Plan 03 remaining.
 
 ## Current Position
 
 Phase: 4.2 of 9 (QBS Methodology Integration) -- IN PROGRESS
-Plan: 1 of 3 in phase (04.2-01 complete)
-Status: In progress -- Plan 01 (schemas + prompts) done, Plan 02 (engine + tracker) next
-Last activity: 2026-02-12 -- Completed 04.2-01-PLAN.md (QBS Schemas & Prompts)
+Plan: 2 of 3 in phase (04.2-01, 04.2-02 complete)
+Status: In progress -- Plans 01-02 done, Plan 03 (agent integration) next
+Last activity: 2026-02-12 -- Completed 04.2-02-PLAN.md (QBS Engine, Pain Tracker & Expansion Detector)
 
-Progress: [##############################.---] ~78% (31 plans completed, 2 remaining in Phase 4.2, Phases 6-7 pending)
+Progress: [##############################..--] ~80% (32 plans completed, 1 remaining in Phase 4.2, Phases 6-7 pending)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 31
+- Total plans completed: 32
 - Average duration: 7 min
-- Total execution time: ~3h 26min
+- Total execution time: ~3h 32min
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [##############################.---] ~78% (31 plans completed, 2 remai
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
 | 05-deal-management | 6/6 | 29 min | 5 min |
-| 04.2-qbs-methodology | 1/3 | 5 min | 5 min |
+| 04.2-qbs-methodology | 2/3 | 11 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.2-01 (5 min), 05-06 (3 min), 05-05 (5 min), 05-03 (6 min), 05-02 (5 min)
+- Last 5 plans: 04.2-02 (6 min), 04.2-01 (5 min), 05-06 (3 min), 05-05 (5 min), 05-03 (6 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -204,6 +204,12 @@ Recent decisions affecting current work:
 - [04.2-01]: QBS prompt section is a string (not messages list) for system prompt injection; analysis/expansion builders return messages lists for instructor
 - [04.2-01]: build_qbs_prompt_section shows at most 3 pain topics and 3 revisit-later items to prevent prompt bloat
 - [04.2-01]: Expansion detection appends known contacts to system message content (not structured parameter)
+- [04.2-02]: QBS engine uses 'fast' model (not 'reasoning') for low-latency signal analysis per RESEARCH.md Pitfall 5
+- [04.2-02]: Pain depth only advances forward (NOT_EXPLORED -> SURFACE -> BUSINESS_IMPACT -> EMOTIONAL), never regresses
+- [04.2-02]: Back-off threshold: 3+ probes on same topic without self-elaboration or emotional recognition
+- [04.2-02]: Expansion urgency override: interaction_count < 3 prevents premature 'immediate' expansion
+- [04.2-02]: Max 10 pain topics with oldest-by-last_probed_at eviction; expansion state capped at 20 entries
+- [04.2-02]: All three QBS components fail-open on LLM errors (engine -> rule fallback, expansion -> empty list)
 
 ### Roadmap Evolution
 
@@ -222,10 +228,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 662/662 passing as of 04.2-01 completion (611 existing + 51 new QBS schema/prompt tests).
+- Full test suite: 705/705 passing as of 04.2-02 completion (662 existing + 43 new QBS engine/tracker/expansion tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T18:20:19Z
-Stopped at: Completed 04.2-01-PLAN.md (QBS Schemas & Prompts)
+Last session: 2026-02-12T18:29:15Z
+Stopped at: Completed 04.2-02-PLAN.md (QBS Engine, Pain Tracker & Expansion Detector)
 Resume file: None
