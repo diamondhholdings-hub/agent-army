@@ -91,6 +91,78 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     log.info("phase2.orchestration_modules_initialized")
 
+    # ── Phase 4: Sales Agent Initialization ──────────────────────────────
+    # Follows the per-module try/except pattern from Phase 2. If GSuite
+    # credentials are not configured, the agent initializes but email/chat
+    # services will be None -- handler methods return errors for send tasks.
+
+    try:
+        from src.app.agents.sales import SalesAgent, create_sales_registration
+        from src.app.agents.sales.qualification import QualificationExtractor
+        from src.app.agents.sales.actions import NextActionEngine
+        from src.app.agents.sales.escalation import EscalationManager
+        from src.app.agents.sales.state_repository import ConversationStateRepository
+        from src.app.services.gsuite import GSuiteAuthManager, GmailService, ChatService
+        from src.app.core.database import get_tenant_session
+
+        sales_registration = create_sales_registration()
+
+        # GSuite services (may not be configured in dev -- graceful handling)
+        gsuite_auth = None
+        gmail_service = None
+        chat_service = None
+        if settings.GOOGLE_SERVICE_ACCOUNT_FILE:
+            gsuite_auth = GSuiteAuthManager(
+                service_account_file=settings.GOOGLE_SERVICE_ACCOUNT_FILE,
+                delegated_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+            )
+            gmail_service = GmailService(
+                auth_manager=gsuite_auth,
+                default_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+            )
+            chat_service = ChatService(auth_manager=gsuite_auth)
+
+        # State repository, qualification, actions, escalation
+        state_repo = ConversationStateRepository(session_factory=get_tenant_session)
+
+        # Use a lightweight mock-compatible LLM reference if available
+        # In production these come from prior init; in dev they may be None
+        llm_service = getattr(app.state, "llm_service", None)
+        event_bus = getattr(app.state, "event_bus", None)
+        rag_pipeline = getattr(app.state, "rag_pipeline", None)
+        conversation_store = getattr(app.state, "conversation_store", None)
+        session_manager = getattr(app.state, "session_manager", None)
+
+        qual_extractor = QualificationExtractor(llm_service=llm_service)
+        action_engine = NextActionEngine(llm_service=llm_service)
+        escalation_mgr = EscalationManager(
+            event_bus=event_bus, llm_service=llm_service
+        )
+
+        sales_agent = SalesAgent(
+            registration=sales_registration,
+            llm_service=llm_service,
+            gmail_service=gmail_service,
+            chat_service=chat_service,
+            rag_pipeline=rag_pipeline,
+            conversation_store=conversation_store,
+            session_manager=session_manager,
+            state_repository=state_repo,
+            qualification_extractor=qual_extractor,
+            action_engine=action_engine,
+            escalation_manager=escalation_mgr,
+        )
+
+        # Register in agent registry (per 02-05 pattern)
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(sales_registration)
+            sales_registration._agent_instance = sales_agent
+        app.state.sales_agent = sales_agent
+        log.info("phase4.sales_agent_initialized")
+    except Exception as exc:
+        log.warning("phase4.sales_agent_init_failed", error=str(exc))
+
     yield
 
     # ── Shutdown ──────────────────────────────────────────────────────────
