@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plans 01, 02, 04 complete. Data models, detection/political/plan intelligence, stage progression. Plans 03, 05 remaining.
+**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plans 01, 02, 03, 04 complete. Data models, detection/political/plan intelligence, CRM integration, stage progression. Plan 05 remaining.
 
 ## Current Position
 
 Phase: 5 of 7 (Deal Management)
-Plan: 3 of 5 in phase (plans 03, 05 remaining)
+Plan: 4 of 5 in phase (plan 05 remaining)
 Status: In progress
-Last activity: 2026-02-12 -- Completed 05-02-PLAN.md (Opportunity Detection & Political Mapping)
+Last activity: 2026-02-12 -- Completed 05-03-PLAN.md (CRM Integration)
 
-Progress: [##########################--------] ~77% (27 plans completed through Phase 5-02)
+Progress: [###########################-------] ~80% (28 plans completed through Phase 5-03)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
+- Total plans completed: 28
 - Average duration: 7 min
-- Total execution time: ~3h 7min
+- Total execution time: ~3h 13min
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [##########################--------] ~77% (27 plans completed through 
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
-| 05-deal-management | 3/5 | 15 min | 5 min |
+| 05-deal-management | 4/5 | 21 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (5 min), 05-04 (4 min), 05-01 (6 min), 04.1-03 (7 min), 04.1-02 (7 min)
+- Last 5 plans: 05-03 (6 min), 05-02 (5 min), 05-04 (4 min), 05-01 (6 min), 04.1-03 (7 min)
 - Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
@@ -186,6 +186,12 @@ Recent decisions affecting current work:
 - [05-04]: MEDDIC threshold for QUALIFICATION adjusted from 0.17 to 0.16 to align with 1/6 score increment (0.1667)
 - [05-04]: Signal map covers all 10 BANT+MEDDIC dimensions for future extensibility
 - [05-04]: No auto-progression past NEGOTIATION -- close decisions are human-only
+- [05-03]: notion-client>=2.7.0 added as dependency for Notion API 2025-09-03 support
+- [05-03]: PostgresAdapter delegates all operations to DealRepository -- no additional database logic
+- [05-03]: NotionAdapter gracefully handles missing notion-client with helpful ImportError
+- [05-03]: SyncEngine defaults to 60-second sync interval per RESEARCH.md Pitfall 1 (Notion 3 req/sec)
+- [05-03]: Field-level conflict resolution: agent-owned (agent wins), human-owned (CRM wins), shared (last-write-wins)
+- [05-03]: NotionAdapter uses tenacity retry with exponential backoff (3 attempts, 1-10s wait)
 
 ### Pending Todos
 
@@ -197,10 +203,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 547/547 passing as of 05-02 completion (504 existing + 43 new detection/political/plan tests).
+- Full test suite: 586/586 passing as of 05-03 completion (547 existing + 39 new CRM adapter/sync/mapping tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T13:01:19Z
-Stopped at: Completed 05-02-PLAN.md (Opportunity Detection & Political Mapping) -- Phase 5 in progress
+Last session: 2026-02-12T13:02:18Z
+Stopped at: Completed 05-03-PLAN.md (CRM Integration) -- Phase 5 in progress
 Resume file: None
