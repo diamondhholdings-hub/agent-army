@@ -56,12 +56,12 @@ Requirements for initial release. Sales Agent + Platform Foundation to 80%+ prod
 
 ### Sales Agent - Deal Management
 
-- [ ] **SA-19**: Opportunity identification from conversations (budget signals, pain points, timeline)
-- [ ] **SA-20**: Account plan creation and maintenance (strategic view of customer relationship)
-- [ ] **SA-21**: Opportunity plan creation and maintenance (tactical view of specific deal)
-- [ ] **SA-22**: Political mapping (decision makers, influencers, champions, blockers with power dynamics)
-- [ ] **SA-23**: CRM integration (Salesforce or HubSpot - create/update opportunities, contacts, activities)
-- [ ] **SA-24**: Deal stage progression (move opportunities through pipeline based on signals)
+- [x] **SA-19**: Opportunity identification from conversations (budget signals, pain points, timeline)
+- [x] **SA-20**: Account plan creation and maintenance (strategic view of customer relationship)
+- [x] **SA-21**: Opportunity plan creation and maintenance (tactical view of specific deal)
+- [x] **SA-22**: Political mapping (decision makers, influencers, champions, blockers with power dynamics)
+- [x] **SA-23**: CRM integration (Salesforce or HubSpot - create/update opportunities, contacts, activities)
+- [x] **SA-24**: Deal stage progression (move opportunities through pipeline based on signals)
 
 ### Sales Agent - Intelligence & Autonomy
 
@@ -239,12 +239,12 @@ Requirement-to-phase mapping populated during roadmap creation.
 | SA-16 | Phase 6: Meeting Capabilities | Pending |
 | SA-17 | Phase 6: Meeting Capabilities | Pending |
 | SA-18 | Phase 6: Meeting Capabilities | Pending |
-| SA-19 | Phase 5: Deal Management | Pending |
-| SA-20 | Phase 5: Deal Management | Pending |
-| SA-21 | Phase 5: Deal Management | Pending |
-| SA-22 | Phase 5: Deal Management | Pending |
-| SA-23 | Phase 5: Deal Management | Pending |
-| SA-24 | Phase 5: Deal Management | Pending |
+| SA-19 | Phase 5: Deal Management | Complete |
+| SA-20 | Phase 5: Deal Management | Complete |
+| SA-21 | Phase 5: Deal Management | Complete |
+| SA-22 | Phase 5: Deal Management | Complete |
+| SA-23 | Phase 5: Deal Management | Complete |
+| SA-24 | Phase 5: Deal Management | Complete |
 | SA-25 | Phase 7: Intelligence & Autonomy | Pending |
 | SA-26 | Phase 7: Intelligence & Autonomy | Pending |
 | SA-27 | Phase 7: Intelligence & Autonomy | Pending |
