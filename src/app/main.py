@@ -163,9 +163,69 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         log.warning("phase4.sales_agent_init_failed", error=str(exc))
 
+    # ── Phase 4.1: Agent Learning & Performance Feedback ─────────────
+    # All Phase 4.1 init is additive and failure-tolerant. Each component
+    # is wrapped in its own try/except so a single failure (e.g., numpy
+    # not installed, APScheduler missing) does not prevent startup.
+
+    try:
+        from src.app.learning.outcomes import OutcomeTracker
+        from src.app.learning.feedback import FeedbackCollector
+        from src.app.learning.calibration import CalibrationEngine
+        from src.app.learning.coaching import CoachingPatternExtractor
+        from src.app.learning.analytics import AnalyticsService
+        from src.app.learning.scheduler import setup_learning_scheduler, start_scheduler_background
+        from src.app.core.database import get_tenant_session as _get_tenant_session
+
+        outcome_tracker = OutcomeTracker(session_factory=_get_tenant_session)
+        feedback_collector = FeedbackCollector(session_factory=_get_tenant_session)
+        calibration_engine = CalibrationEngine(session_factory=_get_tenant_session)
+        coaching_extractor = CoachingPatternExtractor(session_factory=_get_tenant_session)
+
+        redis_client = getattr(app.state, "redis_client", None) or get_redis_pool()
+        analytics_service = AnalyticsService(
+            session_factory=_get_tenant_session,
+            outcome_tracker=outcome_tracker,
+            feedback_collector=feedback_collector,
+            calibration_engine=calibration_engine,
+            coaching_extractor=coaching_extractor,
+            redis_client=redis_client,
+        )
+
+        # Store on app.state for API endpoint dependency injection
+        app.state.outcome_tracker = outcome_tracker
+        app.state.feedback_collector = feedback_collector
+        app.state.calibration_engine = calibration_engine
+        app.state.coaching_extractor = coaching_extractor
+        app.state.analytics_service = analytics_service
+
+        # Start background scheduler tasks
+        scheduler_tasks = await setup_learning_scheduler(
+            outcome_tracker=outcome_tracker,
+            calibration_engine=calibration_engine,
+            analytics_service=analytics_service,
+        )
+        await start_scheduler_background(scheduler_tasks, app.state)
+
+        log.info("phase4_1.learning_system_initialized")
+    except Exception as exc:
+        log.warning("phase4_1.learning_system_init_failed", error=str(exc))
+        # Set all to None for graceful 503 responses from API
+        app.state.outcome_tracker = None
+        app.state.feedback_collector = None
+        app.state.calibration_engine = None
+        app.state.coaching_extractor = None
+        app.state.analytics_service = None
+
     yield
 
     # ── Shutdown ──────────────────────────────────────────────────────────
+    # Clean up Phase 4.1 scheduler tasks
+    scheduler_tasks_refs = getattr(app.state, "learning_scheduler_tasks", None)
+    if scheduler_tasks_refs:
+        for task_ref in scheduler_tasks_refs:
+            task_ref.cancel()
+
     # Close long-term memory pool if it was initialized
     ltm = getattr(app.state, "long_term_memory", None)
     if ltm is not None:
