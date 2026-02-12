@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4.2 (QBS Methodology Integration) -- Plans 01-02 complete, Plan 03 remaining.
+**Current focus:** Phase 4.2 (QBS Methodology Integration) -- COMPLETE. Ready for Phase 6 or 7.
 
 ## Current Position
 
-Phase: 4.2 of 9 (QBS Methodology Integration) -- IN PROGRESS
-Plan: 2 of 3 in phase (04.2-01, 04.2-02 complete)
-Status: In progress -- Plans 01-02 done, Plan 03 (agent integration) next
-Last activity: 2026-02-12 -- Completed 04.2-02-PLAN.md (QBS Engine, Pain Tracker & Expansion Detector)
+Phase: 4.2 of 9 (QBS Methodology Integration) -- COMPLETE
+Plan: 3 of 3 in phase (04.2-01, 04.2-02, 04.2-03 complete)
+Status: Phase complete -- all 3 plans delivered
+Last activity: 2026-02-12 -- Completed 04.2-03-PLAN.md (Sales Agent QBS Integration)
 
-Progress: [##############################..--] ~80% (32 plans completed, 1 remaining in Phase 4.2, Phases 6-7 pending)
+Progress: [###############################.--] ~82% (33 plans completed, Phases 6-7 pending)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 32
+- Total plans completed: 33
 - Average duration: 7 min
-- Total execution time: ~3h 32min
+- Total execution time: ~3h 38min
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [##############################..--] ~80% (32 plans completed, 1 remai
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
 | 05-deal-management | 6/6 | 29 min | 5 min |
-| 04.2-qbs-methodology | 2/3 | 11 min | 6 min |
+| 04.2-qbs-methodology | 3/3 | 17 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.2-02 (6 min), 04.2-01 (5 min), 05-06 (3 min), 05-05 (5 min), 05-03 (6 min)
+- Last 5 plans: 04.2-03 (6 min), 04.2-02 (6 min), 04.2-01 (5 min), 05-06 (3 min), 05-05 (5 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -210,6 +210,10 @@ Recent decisions affecting current work:
 - [04.2-02]: Expansion urgency override: interaction_count < 3 prevents premature 'immediate' expansion
 - [04.2-02]: Max 10 pain topics with oldest-by-last_probed_at eviction; expansion state capped at 20 entries
 - [04.2-02]: All three QBS components fail-open on LLM errors (engine -> rule fallback, expansion -> empty list)
+- [04.2-03]: QBS methodology prompt always included in system prompt (not gated on engine presence) for base QBS awareness
+- [04.2-03]: Dynamic QBS guidance is optional additive layer on top of base methodology prompt
+- [04.2-03]: Pain state READ-ONLY in _get_qbs_guidance, WRITE-ONLY in _handle_process_reply -- single mutation point
+- [04.2-03]: QBS processing placed BEFORE state_repository.save_state for single DB persistence call
 
 ### Roadmap Evolution
 
@@ -228,10 +232,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 705/705 passing as of 04.2-02 completion (662 existing + 43 new QBS engine/tracker/expansion tests).
+- Full test suite: 714/714 passing as of 04.2-03 completion (705 existing + 9 new QBS integration tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T18:29:15Z
-Stopped at: Completed 04.2-02-PLAN.md (QBS Engine, Pain Tracker & Expansion Detector)
+Last session: 2026-02-12T18:39:08Z
+Stopped at: Completed 04.2-03-PLAN.md (Sales Agent QBS Integration) -- Phase 4.2 COMPLETE
 Resume file: None
