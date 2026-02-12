@@ -217,6 +217,49 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.coaching_extractor = None
         app.state.analytics_service = None
 
+    # ── Phase 5: Deal Management Module Initialization ──────────────
+    try:
+        from src.app.deals.repository import DealRepository
+        from src.app.deals.detection import OpportunityDetector
+        from src.app.deals.political import PoliticalMapper
+        from src.app.deals.plans import PlanManager
+        from src.app.deals.progression import StageProgressionEngine
+        from src.app.deals.hooks import PostConversationHook
+        from src.app.deals.crm.postgres import PostgresAdapter
+        from src.app.deals.crm.sync import SyncEngine
+        from src.app.deals.crm.field_mapping import DEFAULT_FIELD_OWNERSHIP
+        from src.app.core.database import get_tenant_session as _get_deal_session
+
+        deal_repository = DealRepository(session_factory=_get_deal_session)
+        app.state.deal_repository = deal_repository
+
+        detector = OpportunityDetector()
+        political_mapper = PoliticalMapper()
+        plan_manager = PlanManager(repository=deal_repository)
+        progression_engine = StageProgressionEngine()
+
+        app.state.deal_hook = PostConversationHook(
+            detector=detector,
+            political_mapper=political_mapper,
+            plan_manager=plan_manager,
+            progression_engine=progression_engine,
+            repository=deal_repository,
+        )
+
+        # CRM sync engine (external adapter configured per tenant later)
+        app.state.sync_engine = SyncEngine(
+            primary=PostgresAdapter(repository=deal_repository, tenant_id=""),
+            external=None,  # Configured per-tenant when Notion token is set
+            field_ownership=DEFAULT_FIELD_OWNERSHIP,
+        )
+
+        log.info("phase5.deal_management_initialized")
+    except Exception:
+        log.warning("phase5.deal_management_init_failed", exc_info=True)
+        app.state.deal_repository = None
+        app.state.deal_hook = None
+        app.state.sync_engine = None
+
     yield
 
     # ── Shutdown ──────────────────────────────────────────────────────────
