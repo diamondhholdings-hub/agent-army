@@ -128,12 +128,13 @@ Plans:
   3. Sales Agent guides customers through solution questions that connect their needs to product capabilities
   4. Sales Agent uses confirmation questions to validate understanding and build commitment at each stage
   5. Sales Agent employs QBS techniques to identify and expand contacts within accounts, building multi-threaded relationships
-**Plans**: 3 plans in 3 waves
+**Plans**: 4 plans in 4 waves
 
 Plans:
-- [ ] 04.2-01-PLAN.md -- QBS Pydantic schemas, prompt templates, and unit tests (Wave 1)
-- [ ] 04.2-02-PLAN.md -- QBS Question Engine, Pain Depth Tracker, Account Expansion Detector (Wave 2, depends on 04.2-01)
-- [ ] 04.2-03-PLAN.md -- Agent integration, prompt wiring, learning integration, and integration tests (Wave 3, depends on 04.2-01, 04.2-02)
+- [x] 04.2-01-PLAN.md -- QBS Pydantic schemas, prompt templates, and unit tests (Wave 1)
+- [x] 04.2-02-PLAN.md -- QBS Question Engine, Pain Depth Tracker, Account Expansion Detector (Wave 2, depends on 04.2-01)
+- [x] 04.2-03-PLAN.md -- Agent integration, prompt wiring, learning integration, and integration tests (Wave 3, depends on 04.2-01, 04.2-02)
+- [ ] 04.2-04-PLAN.md -- Gap closure: wire QBS components into SalesAgent in main.py (Wave 4, gap closure)
 
 ### Phase 5: Deal Management
 **Goal**: The Sales Agent manages the full deal lifecycle -- identifying opportunities from conversations, maintaining strategic account plans and tactical opportunity plans, mapping political structures, and keeping CRM in sync
