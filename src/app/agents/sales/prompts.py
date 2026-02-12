@@ -1,10 +1,10 @@
-"""Persona-adapted prompt system with Chris Voss methodology.
+"""Persona-adapted prompt system with Chris Voss and QBS methodology.
 
 Provides prompt builders that compose system prompts from persona configs,
-channel configs, deal stage context, and Chris Voss tactical empathy methodology.
-Every prompt produced adapts tone, formality, question style, and Voss emphasis
-to the target persona -- affecting the entire message generation, not just
-greetings.
+channel configs, deal stage context, Chris Voss tactical empathy methodology,
+and QBS (Question Based Selling) methodology. Every prompt produced adapts
+tone, formality, question style, and methodology emphasis to the target persona
+-- affecting the entire message generation, not just greetings.
 
 Exports:
     PERSONA_CONFIGS: Per-persona communication style configuration.
@@ -19,6 +19,7 @@ Exports:
 
 from __future__ import annotations
 
+from src.app.agents.sales.qbs.prompts import QBS_METHODOLOGY_PROMPT
 from src.app.agents.sales.schemas import Channel, DealStage, PersonaType
 
 
@@ -230,12 +231,15 @@ def build_system_prompt(
     persona: PersonaType,
     channel: Channel,
     deal_stage: DealStage,
+    qbs_guidance: str | None = None,
 ) -> str:
     """Compose a full system prompt from persona, channel, and deal stage.
 
     The resulting prompt combines:
     - Role definition (top 1% enterprise sales professional)
     - Chris Voss tactical empathy methodology
+    - QBS (Question Based Selling) methodology
+    - Optional dynamic QBS guidance (conversation-specific)
     - Persona-specific communication guidance
     - Channel-specific formatting guidance
     - Deal stage context and focus areas
@@ -245,6 +249,9 @@ def build_system_prompt(
         persona: Customer persona seniority level.
         channel: Communication channel (email or chat).
         deal_stage: Current stage in the sales pipeline.
+        qbs_guidance: Optional dynamic QBS guidance section produced by
+            the QBS engine for the current conversation context. When
+            provided, appended after the base QBS methodology prompt.
 
     Returns:
         Complete system prompt string ready for LLM consumption.
@@ -291,18 +298,28 @@ def build_system_prompt(
         "and build on established rapport."
     )
 
-    return (
+    # Assemble prompt parts -- methodologies first, then context
+    parts = [
         "You are a top 1% enterprise sales professional. You combine deep "
         "product expertise with masterful relationship-building skills. You "
         "are executing the ESW (Enterprise Sales Workflow) methodology, which "
         "integrates BANT and MEDDIC qualification frameworks with Chris Voss's "
-        "tactical empathy approach from 'Never Split the Difference.'\n\n"
-        f"{VOSS_METHODOLOGY_PROMPT}\n\n"
-        f"{persona_section}\n\n"
-        f"{channel_section}\n\n"
-        f"**Current Deal Stage:**\n{stage_guidance}\n\n"
-        f"{rules_section}"
-    )
+        "tactical empathy approach from 'Never Split the Difference.'",
+        VOSS_METHODOLOGY_PROMPT,
+        QBS_METHODOLOGY_PROMPT,
+    ]
+
+    if qbs_guidance:
+        parts.append(qbs_guidance)
+
+    parts.extend([
+        persona_section,
+        channel_section,
+        f"**Current Deal Stage:**\n{stage_guidance}",
+        rules_section,
+    ])
+
+    return "\n\n".join(parts)
 
 
 def build_email_prompt(
@@ -310,6 +327,7 @@ def build_email_prompt(
     deal_stage: DealStage,
     context_summary: str,
     task_description: str,
+    qbs_guidance: str | None = None,
 ) -> list[dict[str, str]]:
     """Build a messages list for an email LLM call.
 
@@ -320,19 +338,22 @@ def build_email_prompt(
             and relevant knowledge base content.
         task_description: What the agent should do (e.g., "Draft a follow-up
             email addressing their pricing concerns").
+        qbs_guidance: Optional dynamic QBS guidance for this conversation.
 
     Returns:
         List of message dicts with 'role' and 'content' keys, ready for
         LLM chat completion API.
     """
-    system_prompt = build_system_prompt(persona, Channel.EMAIL, deal_stage)
+    system_prompt = build_system_prompt(
+        persona, Channel.EMAIL, deal_stage, qbs_guidance=qbs_guidance
+    )
 
     user_message = (
         f"**Context:**\n{context_summary}\n\n"
         f"**Task:**\n{task_description}\n\n"
         "Compose the email following the system prompt guidelines. "
         "Ensure the tone, formality, and style match the persona and "
-        "deal stage. Apply Chris Voss methodology throughout."
+        "deal stage. Apply Chris Voss methodology and QBS questioning throughout."
     )
 
     return [
@@ -346,6 +367,7 @@ def build_chat_prompt(
     deal_stage: DealStage,
     context_summary: str,
     task_description: str,
+    qbs_guidance: str | None = None,
 ) -> list[dict[str, str]]:
     """Build a messages list for a chat LLM call.
 
@@ -356,19 +378,22 @@ def build_chat_prompt(
             and relevant knowledge base content.
         task_description: What the agent should do (e.g., "Respond to their
             question about integration capabilities").
+        qbs_guidance: Optional dynamic QBS guidance for this conversation.
 
     Returns:
         List of message dicts with 'role' and 'content' keys, ready for
         LLM chat completion API.
     """
-    system_prompt = build_system_prompt(persona, Channel.CHAT, deal_stage)
+    system_prompt = build_system_prompt(
+        persona, Channel.CHAT, deal_stage, qbs_guidance=qbs_guidance
+    )
 
     user_message = (
         f"**Context:**\n{context_summary}\n\n"
         f"**Task:**\n{task_description}\n\n"
         "Compose the chat message following the system prompt guidelines. "
         "Keep it conversational and appropriately concise for chat. "
-        "Apply Chris Voss methodology throughout."
+        "Apply Chris Voss methodology and QBS questioning throughout."
     )
 
     return [
