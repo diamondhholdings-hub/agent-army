@@ -70,7 +70,7 @@ Plans:
   3. Sales methodology frameworks (MEDDIC, BANT) are structured and queryable -- an agent can retrieve the right framework guidance for a given deal situation
   4. Conversation history persists across sessions and channels -- an agent can recall what was discussed in a previous email when preparing for a meeting
   5. New product documents can be ingested through the pipeline (supporting future ESW acquisitions)
-**Plans**: TBD
+**Plans**: 7 plans in 5 waves
 
 Plans:
 - [x] 03-01: Qdrant vector DB and embedding foundation (Wave 1)
@@ -91,12 +91,14 @@ Plans:
   3. Sales Agent executes BANT qualification naturally within conversations -- extracting budget, authority, need, and timeline signals without robotic interrogation
   4. Sales Agent executes MEDDIC qualification -- identifying metrics, economic buyer, decision criteria, decision process, pain, and champion through conversational discovery
   5. Sales Agent tracks conversation state across interactions and recommends next actions, escalating to human when confidence drops below threshold
-**Plans**: TBD
+**Plans**: 5 plans in 4 waves
 
 Plans:
-- [ ] 04-01: Text conversation engine and GSuite integration (Gmail, Chat)
-- [ ] 04-02: Persona adaptation and sales methodology execution
-- [ ] 04-03: Conversation state tracking, next-action engine, and human escalation
+- [ ] 04-01-PLAN.md -- GSuite integration services: Gmail and Google Chat async wrappers with auth caching (Wave 1)
+- [ ] 04-02-PLAN.md -- Sales schemas and persona-adapted prompt system with Chris Voss methodology (Wave 1)
+- [ ] 04-03-PLAN.md -- Conversation state persistence and qualification signal extraction with instructor (Wave 2, depends on 04-02)
+- [ ] 04-04-PLAN.md -- SalesAgent class, next-action engine, and escalation manager (Wave 3, depends on 04-01, 04-02, 04-03)
+- [ ] 04-05-PLAN.md -- API endpoints, agent registration, and integration tests (Wave 4, depends on 04-04)
 
 ### Phase 4.1: Agent Learning & Performance Feedback (INSERTED)
 **Goal**: The Sales Agent learns from its interactions and improves over time through outcome tracking, confidence calibration, human feedback loops, and performance analytics -- enabling continuous improvement and sales team insights
@@ -178,7 +180,7 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 1. Infrastructure Foundation | 3/3 | Complete | 2026-02-11 |
 | 2. Agent Orchestration | 6/6 | Complete | 2026-02-11 |
 | 3. Knowledge Base | 7/7 | Complete | 2026-02-11 |
-| 4. Sales Agent Core | 0/3 | Not started | - |
+| 4. Sales Agent Core | 0/5 | Not started | - |
 | 4.1. Agent Learning & Performance Feedback | 0/3 | Not started | - |
 | 5. Deal Management | 0/3 | Not started | - |
 | 6. Meeting Capabilities | 0/3 | Not started | - |
@@ -186,4 +188,4 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-11 after Phase 3 completion*
+*Last updated: 2026-02-11 after Phase 4 planning*
