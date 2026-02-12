@@ -51,6 +51,8 @@ dependencies = [
     "google-auth-oauthlib>=1.2.0",
     "instructor>=1.7.0",
     "jinja2>=3.1.0",
+    # Deal Management CRM Integration (Phase 5)
+    "notion-client>=2.7.0",
 ]
 
 [project.optional-dependencies]
