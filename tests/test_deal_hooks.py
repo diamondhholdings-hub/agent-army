@@ -335,3 +335,112 @@ class TestHookStageProgression:
 
         assert len(result.stage_progressions) == 1
         assert "qualification" in result.stage_progressions[0].lower()
+
+
+# ── Sales Endpoint Hook Wiring Tests ────────────────────────────────────────
+
+
+class TestSendEmailFiresHook:
+    """Verify POST /sales/send-email calls PostConversationHook."""
+
+    @pytest.mark.asyncio
+    async def test_send_email_fires_deal_hook(self) -> None:
+        """send_email endpoint source contains _fire_deal_hook call."""
+        import inspect
+        from src.app.api.v1 import sales as sales_module
+
+        src_code = inspect.getsource(sales_module.send_email)
+        assert "_fire_deal_hook" in src_code, (
+            "send_email endpoint must call _fire_deal_hook"
+        )
+
+
+class TestSendChatFiresHook:
+    """Verify POST /sales/send-chat calls PostConversationHook."""
+
+    @pytest.mark.asyncio
+    async def test_send_chat_fires_deal_hook(self) -> None:
+        """send_chat endpoint source contains _fire_deal_hook call."""
+        import inspect
+        from src.app.api.v1 import sales as sales_module
+
+        src_code = inspect.getsource(sales_module.send_chat)
+        assert "_fire_deal_hook" in src_code, (
+            "send_chat endpoint must call _fire_deal_hook"
+        )
+
+
+class TestProcessReplyFiresHook:
+    """Verify POST /sales/process-reply calls PostConversationHook."""
+
+    @pytest.mark.asyncio
+    async def test_process_reply_fires_deal_hook(self) -> None:
+        """process_reply endpoint source contains _fire_deal_hook call."""
+        import inspect
+        from src.app.api.v1 import sales as sales_module
+
+        src_code = inspect.getsource(sales_module.process_reply)
+        assert "_fire_deal_hook" in src_code, (
+            "process_reply endpoint must call _fire_deal_hook"
+        )
+
+
+class TestFireDealHookHelper:
+    """Tests for the _fire_deal_hook helper function itself."""
+
+    @pytest.mark.asyncio
+    async def test_fire_deal_hook_calls_hook_run(self) -> None:
+        """_fire_deal_hook invokes deal_hook.run() with correct args."""
+        from src.app.api.v1.sales import _fire_deal_hook
+
+        mock_request = MagicMock()
+        mock_hook = MagicMock()
+        mock_hook.run = AsyncMock(return_value=HookResult())
+        mock_request.app.state.deal_hook = mock_hook
+
+        state = _make_conversation_state()
+        await _fire_deal_hook(mock_request, TENANT_ID, "test conversation", state)
+
+        mock_hook.run.assert_called_once_with(
+            tenant_id=TENANT_ID,
+            conversation_text="test conversation",
+            conversation_state=state,
+        )
+
+    @pytest.mark.asyncio
+    async def test_fire_deal_hook_skips_when_no_hook(self) -> None:
+        """_fire_deal_hook returns silently when deal_hook is None."""
+        from src.app.api.v1.sales import _fire_deal_hook
+
+        mock_request = MagicMock()
+        mock_request.app.state.deal_hook = None
+
+        state = _make_conversation_state()
+        # Should NOT raise
+        await _fire_deal_hook(mock_request, TENANT_ID, "test", state)
+
+    @pytest.mark.asyncio
+    async def test_fire_deal_hook_swallows_errors(self) -> None:
+        """_fire_deal_hook catches exceptions from hook.run() and does not raise."""
+        from src.app.api.v1.sales import _fire_deal_hook
+
+        mock_request = MagicMock()
+        mock_hook = MagicMock()
+        mock_hook.run = AsyncMock(side_effect=RuntimeError("Database exploded"))
+        mock_request.app.state.deal_hook = mock_hook
+
+        state = _make_conversation_state()
+        # Should NOT raise despite hook failure
+        await _fire_deal_hook(mock_request, TENANT_ID, "test", state)
+
+    @pytest.mark.asyncio
+    async def test_fire_deal_hook_no_attr(self) -> None:
+        """_fire_deal_hook handles missing deal_hook attribute gracefully."""
+        from src.app.api.v1.sales import _fire_deal_hook
+
+        mock_request = MagicMock()
+        del mock_request.app.state.deal_hook  # Remove the attr
+
+        state = _make_conversation_state()
+        # getattr returns None -> should skip
+        await _fire_deal_hook(mock_request, TENANT_ID, "test", state)
