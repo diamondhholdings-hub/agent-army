@@ -58,6 +58,11 @@ class Settings(BaseSettings):
     LANGFUSE_SECRET_KEY: str = ""
     LANGFUSE_HOST: str = "https://cloud.langfuse.com"
 
+    # Google Workspace (GSuite) Integration
+    GOOGLE_SERVICE_ACCOUNT_FILE: str = ""  # Path to service account JSON key file
+    GOOGLE_DELEGATED_USER_EMAIL: str = ""  # Admin email for domain-wide delegation
+    GOOGLE_CHAT_SPACE_ID: str = ""  # Default Google Chat space for internal team notifications
+
 
 @lru_cache
 def get_settings() -> Settings:
