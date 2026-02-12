@@ -94,10 +94,10 @@ Plans:
 **Plans**: 5 plans in 4 waves
 
 Plans:
-- [ ] 04-01-PLAN.md -- GSuite integration services: Gmail and Google Chat async wrappers with auth caching (Wave 1)
-- [ ] 04-02-PLAN.md -- Sales schemas and persona-adapted prompt system with Chris Voss methodology (Wave 1)
-- [ ] 04-03-PLAN.md -- Conversation state persistence and qualification signal extraction with instructor (Wave 2, depends on 04-02)
-- [ ] 04-04-PLAN.md -- SalesAgent class, next-action engine, and escalation manager (Wave 3, depends on 04-01, 04-02, 04-03)
+- [x] 04-01-PLAN.md -- GSuite integration services: Gmail and Google Chat async wrappers with auth caching (Wave 1)
+- [x] 04-02-PLAN.md -- Sales schemas and persona-adapted prompt system with Chris Voss methodology (Wave 1)
+- [x] 04-03-PLAN.md -- Conversation state persistence and qualification signal extraction with instructor (Wave 2, depends on 04-02)
+- [x] 04-04-PLAN.md -- SalesAgent class, next-action engine, and escalation manager (Wave 3, depends on 04-01, 04-02, 04-03)
 - [ ] 04-05-PLAN.md -- API endpoints, agent registration, and integration tests (Wave 4, depends on 04-04)
 
 ### Phase 4.1: Agent Learning & Performance Feedback (INSERTED)

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 3/5 complete. GSuite integration, schemas, prompts, conversation state persistence, and qualification extraction operational.
+**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 4/5 complete. SalesAgent composing GSuite, RAG, qualification, next-action, and escalation into supervisor-invocable agent.
 
 ## Current Position
 
 Phase: 4 of 7 (Sales Agent Core)
-Plan: 3/5 complete
+Plan: 4/5 complete
 Status: In progress
-Last activity: 2026-02-12 -- Completed 04-03-PLAN.md (State Persistence and Qualification Extraction)
+Last activity: 2026-02-12 -- Completed 04-04-PLAN.md (Sales Agent Core Composition)
 
-Progress: [#################---] 86% (19/22 plans)
+Progress: [##################--] 91% (20/22 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 7 min
-- Total execution time: ~2h 22min
+- Total execution time: ~2h 28min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [#################---] 86% (19/22 plans)
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
-| 04-sales-agent-core | 3/5 | 14 min | 5 min |
+| 04-sales-agent-core | 4/5 | 20 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (5 min), 04-02 (5 min), 04-01 (4 min), 03-07 (7 min), 03-04 (7 min)
+- Last 5 plans: 04-04 (6 min), 04-03 (5 min), 04-02 (5 min), 04-01 (4 min), 03-07 (7 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -140,6 +140,12 @@ Recent decisions affecting current work:
 - [04-03]: qualification_data stored as JSON column for schema evolution flexibility
 - [04-03]: Repository uses session_factory callable pattern for testable async CRUD
 - [04-03]: _pick_by_confidence: new identified signal overrides unidentified; ties go to existing
+- [04-04]: Hybrid rule-based + LLM for next-action: rules for obvious situations, LLM for nuanced
+- [04-04]: Escalation trigger priority: customer_request > high_stakes > confidence_low > complexity
+- [04-04]: High-stakes only triggers in NEGOTIATION and EVALUATION stages
+- [04-04]: Complexity threshold: 3+ decision criteria AND 2+ identified stakeholders
+- [04-04]: EventType.AGENT_HEALTH for escalation events (closest existing event type)
+- [04-04]: Both NextActionEngine and EscalationManager fail-graceful with rule-based fallbacks
 
 ### Pending Todos
 
@@ -155,6 +161,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-12T03:44:31Z
-Stopped at: Completed 04-03-PLAN.md (State Persistence and Qualification Extraction) -- Phase 4 plan 3/5
+Last session: 2026-02-12T03:52:46Z
+Stopped at: Completed 04-04-PLAN.md (Sales Agent Core Composition) -- Phase 4 plan 4/5
 Resume file: None
