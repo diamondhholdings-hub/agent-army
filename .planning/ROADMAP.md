@@ -17,6 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Knowledge Base** - Product knowledge, vector search, agentic RAG, methodology library, and conversation memory
 - [x] **Phase 4: Sales Agent Core** - Text-based sales conversations with email, chat, persona adaptation, and methodology execution
 - [x] **Phase 4.1: Agent Learning & Performance Feedback (INSERTED)** - Outcome tracking, confidence calibration, human feedback loops, and performance analytics
+- [ ] **Phase 4.2: QBS Methodology Integration (INSERTED)** - Question Based Selling methodology integrated throughout all sales stages from outreach to closing
 - [x] **Phase 5: Deal Management** - CRM integration, opportunity tracking, account/opportunity plans, and political mapping
 - [ ] **Phase 6: Meeting Capabilities** - Google Meet attendance with avatar, real-time response, recording, minutes, and distribution
 - [ ] **Phase 7: Intelligence & Autonomy** - Data consolidation, pattern recognition, self-directed goals, proactive outreach, and agent cloning
@@ -117,6 +118,23 @@ Plans:
 - [x] 04.1-02-PLAN.md -- FeedbackCollector, CalibrationEngine, CoachingPatternExtractor services (Wave 2, depends on 04.1-01)
 - [x] 04.1-03-PLAN.md -- AnalyticsService, scheduler, API endpoints, SSE streaming, main.py wiring, and integration tests (Wave 3, depends on 04.1-01, 04.1-02)
 
+### Phase 4.2: QBS Methodology Integration (INSERTED)
+**Goal**: The Sales Agent leverages Question Based Selling (QBS) methodology throughout all sales stages -- using pain funnel questions, impact questions, solution questions, and confirmation questions to guide conversations from outreach to closing and expand contacts within accounts
+**Depends on**: Phase 4.1
+**Requirements**: Extension of SA requirements (QBS framework integration)
+**Success Criteria** (what must be TRUE):
+  1. Sales Agent uses pain funnel questions to uncover customer pain depth and urgency naturally within conversations
+  2. Sales Agent asks impact questions that help customers understand the business consequences of their pain points
+  3. Sales Agent guides customers through solution questions that connect their needs to product capabilities
+  4. Sales Agent uses confirmation questions to validate understanding and build commitment at each stage
+  5. Sales Agent employs QBS techniques to identify and expand contacts within accounts, building multi-threaded relationships
+**Plans**: 3 plans in 3 waves
+
+Plans:
+- [ ] 04.2-01-PLAN.md -- QBS Pydantic schemas, prompt templates, and unit tests (Wave 1)
+- [ ] 04.2-02-PLAN.md -- QBS Question Engine, Pain Depth Tracker, Account Expansion Detector (Wave 2, depends on 04.2-01)
+- [ ] 04.2-03-PLAN.md -- Agent integration, prompt wiring, learning integration, and integration tests (Wave 3, depends on 04.2-01, 04.2-02)
+
 ### Phase 5: Deal Management
 **Goal**: The Sales Agent manages the full deal lifecycle -- identifying opportunities from conversations, maintaining strategic account plans and tactical opportunity plans, mapping political structures, and keeping CRM in sync
 **Depends on**: Phase 4
@@ -174,9 +192,10 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 4.1 -> 5 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 4.1 -> 4.2 -> 5 -> 6 -> 7
 Note: Phase 4.1 was inserted to add learning capabilities before deal management complexity.
-Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after Phase 4.1.
+Note: Phase 4.2 was inserted to add QBS methodology throughout all sales stages.
+Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after Phase 4.2.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -185,10 +204,11 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 3. Knowledge Base | 7/7 | Complete | 2026-02-11 |
 | 4. Sales Agent Core | 5/5 | Complete | 2026-02-12 |
 | 4.1. Agent Learning & Performance Feedback | 3/3 | Complete | 2026-02-12 |
+| 4.2. QBS Methodology Integration | 0/3 | Planned | - |
 | 5. Deal Management | 6/6 | Complete | 2026-02-12 |
 | 6. Meeting Capabilities | 0/3 | Not started | - |
 | 7. Intelligence & Autonomy | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-12 after Phase 5 completion*
+*Last updated: 2026-02-12 after Phase 4.2 insertion*

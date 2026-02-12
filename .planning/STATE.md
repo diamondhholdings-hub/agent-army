@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 5 COMPLETE (Deal Management) -- All 6 plans done (5 core + 1 gap closure). Data models, detection/political/plan intelligence, CRM integration, stage progression, API endpoints & hooks, hook integration into sales endpoints. Ready for Phase 6.
+**Current focus:** Phase 4.2 (QBS Methodology Integration) -- Planning complete. 3 plans in 3 waves ready for execution.
 
 ## Current Position
 
-Phase: 5 of 7 (Deal Management) -- COMPLETE
-Plan: 6 of 6 in phase (all complete, including gap closure)
-Status: Phase complete, verified (5/5 must-haves passed)
-Last activity: 2026-02-12 -- Completed 05-06-PLAN.md (Gap Closure: Hook Integration), re-verified
+Phase: 4.2 of 9 (QBS Methodology Integration) -- PLANNED, READY FOR EXECUTION
+Plan: 0 of 3 in phase (execution not yet started)
+Status: Phase planned -- 3 plans in 3 sequential waves
+Last activity: 2026-02-12 -- Planned Phase 4.2 (QBS Methodology Integration)
 
-Progress: [##############################----] ~88% (30 plans completed through Phase 5)
+Progress: [##############################----] ~77% (30 plans completed through Phase 5, Phase 4.2 planned with 3 plans, Phases 6-7 pending)
 
 ## Performance Metrics
 
@@ -199,6 +199,13 @@ Recent decisions affecting current work:
 - [05-06]: conversation_text is body.description for send_email/send_chat, body.reply_text for process_reply
 - [05-06]: Hook fires synchronously after agent.invoke() but swallows all errors (fire-and-forget with warning logging)
 - [05-06]: ConversationState loaded AFTER agent.invoke() so hook sees post-qualification-extraction state
+
+### Roadmap Evolution
+
+Timeline of urgent insertions and roadmap adjustments:
+
+- Phase 4.1 inserted after Phase 4: Agent Learning & Performance Feedback (2026-02-10, captured in original roadmap creation)
+- Phase 4.2 inserted after Phase 4.1: QBS Methodology Integration (2026-02-12, URGENT) -- Add Question Based Selling methodology throughout all sales stages (outreach, discovery, qualification, proposal, closing) with pain funnel questions, impact questions, solution questions, confirmation questions, and expanding contacts within accounts
 
 ### Pending Todos
 
