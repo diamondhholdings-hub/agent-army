@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 3 COMPLETE (Knowledge Base) -- All 7 plans executed. Qdrant vector store, ingestion pipeline, ESW product knowledge, methodology frameworks, regional nuances, conversation storage, and agentic RAG pipeline all operational.
+**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 1/5 complete. GSuite integration services (Gmail, Google Chat) operational with async wrappers and service caching.
 
 ## Current Position
 
-Phase: 3 of 7 (Knowledge Base)
-Plan: 7/7 complete
-Status: Phase complete
-Last activity: 2026-02-11 -- Completed 03-07-PLAN.md (Agentic RAG Pipeline)
+Phase: 4 of 7 (Sales Agent Core)
+Plan: 1/5 complete
+Status: In progress
+Last activity: 2026-02-12 -- Completed 04-01-PLAN.md (GSuite Integration)
 
-Progress: [####################] 100% (Phase 3)
+Progress: [###############-----] 77% (17/22 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 8 min
-- Total execution time: ~2h 8min
+- Total execution time: ~2h 12min
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [####################] 100% (Phase 3)
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
+| 04-sales-agent-core | 1/5 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-07 (7 min), 03-04 (7 min), 03-03 (4 min), 03-06 (6 min), 03-02 (9 min)
-- Trend: Consistent -- averaging 7 min per plan
+- Last 5 plans: 04-01 (4 min), 03-07 (7 min), 03-04 (7 min), 03-03 (4 min), 03-06 (6 min)
+- Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
 
@@ -123,6 +124,10 @@ Recent decisions affecting current work:
 - [03-07]: Fail-open document grading (LLM errors assume relevant) consistent with 02-03 fail-open pattern
 - [03-07]: Position-based relevance scoring (decaying 0.1/rank) for deterministic ranking
 - [03-07]: 50% relevance threshold triggers query rewrite, max 2 iterations
+- [04-01]: Service instance caching keyed by f"gmail:{user_email}" and "chat" singleton
+- [04-01]: Chat service uses service account directly (no user delegation) for bot auth
+- [04-01]: Email MIME built with stdlib email.message.EmailMessage for RFC 2822 compliance
+- [04-01]: HTML body with optional text fallback via set_content/add_alternative pattern
 
 ### Pending Todos
 
@@ -133,10 +138,11 @@ Recent decisions affecting current work:
 - REQUIREMENTS.md states 60 v1 requirements but actual count is 57 (10 PLT + 7 KB + 30 SA + 10 INF). No missing requirements found -- likely a counting error in the original file.
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
+- Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
 - 1 pre-existing test failure (test_prompt_injection_detection from 01-02) -- does not affect functionality, likely a test sensitivity issue. Note: full suite now at 180/180 pass.
 
 ## Session Continuity
 
-Last session: 2026-02-11T20:16:18Z
-Stopped at: Completed 03-07-PLAN.md (Agentic RAG Pipeline) -- Phase 3 complete
+Last session: 2026-02-12T03:36:06Z
+Stopped at: Completed 04-01-PLAN.md (GSuite Integration) -- Phase 4 plan 1/5
 Resume file: None
