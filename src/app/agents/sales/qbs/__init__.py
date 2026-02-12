@@ -1,9 +1,8 @@
 """QBS (Question Based Selling) methodology subpackage.
 
-Provides QBS-specific data models, prompt templates, and builder functions
-for integrating Thomas Freese's QBS framework with the existing Sales Agent.
-The QBS Question Engine, Pain Tracker, and Expansion Detector (Plans 02/03)
-build on the schemas and prompts defined here.
+Provides QBS-specific data models, prompt templates, builder functions,
+and service classes for integrating Thomas Freese's QBS framework with the
+existing Sales Agent.
 
 Exports:
     QBSQuestionType: Question category enum (pain_funnel, impact, solution, confirmation).
@@ -14,8 +13,14 @@ Exports:
     PainFunnelState: Pain funnel progression state across conversation turns.
     ExpansionTrigger: Detected mention of another person in conversation.
     ExpansionRecommendation: Aggregated expansion recommendation with triggers.
+    QBSQuestionEngine: Adaptive QBS question selection based on conversation signals.
+    PainDepthTracker: Pain funnel state management for QBS methodology.
+    AccountExpansionDetector: Detects expansion triggers from conversation text.
 """
 
+from src.app.agents.sales.qbs.engine import QBSQuestionEngine
+from src.app.agents.sales.qbs.expansion import AccountExpansionDetector
+from src.app.agents.sales.qbs.pain_tracker import PainDepthTracker
 from src.app.agents.sales.qbs.schemas import (
     EngagementSignal,
     ExpansionRecommendation,
@@ -28,12 +33,15 @@ from src.app.agents.sales.qbs.schemas import (
 )
 
 __all__ = [
+    "AccountExpansionDetector",
     "EngagementSignal",
     "ExpansionRecommendation",
     "ExpansionTrigger",
     "PainDepthLevel",
+    "PainDepthTracker",
     "PainFunnelState",
     "PainTopic",
+    "QBSQuestionEngine",
     "QBSQuestionRecommendation",
     "QBSQuestionType",
 ]
