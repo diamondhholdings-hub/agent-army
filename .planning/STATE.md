@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plans 01, 02, 03, 04 complete. Data models, detection/political/plan intelligence, CRM integration, stage progression. Plan 05 remaining.
+**Current focus:** Phase 5 COMPLETE (Deal Management) -- All 5 plans done. Data models, detection/political/plan intelligence, CRM integration, stage progression, API endpoints & hooks. Ready for Phase 6.
 
 ## Current Position
 
-Phase: 5 of 7 (Deal Management)
-Plan: 4 of 5 in phase (plan 05 remaining)
-Status: In progress
-Last activity: 2026-02-12 -- Completed 05-03-PLAN.md (CRM Integration)
+Phase: 5 of 7 (Deal Management) -- COMPLETE
+Plan: 5 of 5 in phase (all complete)
+Status: Phase complete
+Last activity: 2026-02-12 -- Completed 05-05-PLAN.md (API Endpoints & Post-Conversation Hooks)
 
-Progress: [###########################-------] ~80% (28 plans completed through Phase 5-03)
+Progress: [##############################----] ~86% (29 plans completed through Phase 5)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
+- Total plans completed: 29
 - Average duration: 7 min
-- Total execution time: ~3h 13min
+- Total execution time: ~3h 18min
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [###########################-------] ~80% (28 plans completed through 
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
-| 05-deal-management | 4/5 | 21 min | 5 min |
+| 05-deal-management | 5/5 | 26 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-03 (6 min), 05-02 (5 min), 05-04 (4 min), 05-01 (6 min), 04.1-03 (7 min)
-- Trend: Consistent -- averaging 6 min per plan
+- Last 5 plans: 05-05 (5 min), 05-03 (6 min), 05-02 (5 min), 05-04 (4 min), 05-01 (6 min)
+- Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
 
@@ -192,6 +192,9 @@ Recent decisions affecting current work:
 - [05-03]: SyncEngine defaults to 60-second sync interval per RESEARCH.md Pitfall 1 (Notion 3 req/sec)
 - [05-03]: Field-level conflict resolution: agent-owned (agent wins), human-owned (CRM wins), shared (last-write-wins)
 - [05-03]: NotionAdapter uses tenacity retry with exponential backoff (3 attempts, 1-10s wait)
+- [05-05]: HookResult includes errors list for observability without breaking fire-and-forget pattern
+- [05-05]: InMemoryDealRepository as test double mirrors DealRepository interface for fast unit testing
+- [05-05]: All 13 API endpoints follow sales.py auth+tenant dependency pattern
 
 ### Pending Todos
 
@@ -203,10 +206,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 586/586 passing as of 05-03 completion (547 existing + 39 new CRM adapter/sync/mapping tests).
+- Full test suite: 604/604 passing as of 05-05 completion (586 existing + 18 new deal API/hooks tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T13:02:18Z
-Stopped at: Completed 05-03-PLAN.md (CRM Integration) -- Phase 5 in progress
+Last session: 2026-02-12T13:10:53Z
+Stopped at: Completed 05-05-PLAN.md (API Endpoints & Post-Conversation Hooks) -- Phase 5 COMPLETE
 Resume file: None
