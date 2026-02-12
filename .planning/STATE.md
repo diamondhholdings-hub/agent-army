@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plan 01 complete. Data models, schemas, repository, and migration for deal lifecycle.
+**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plans 01 and 04 complete. Data models + stage progression engine. Plans 02, 03, 05 remaining.
 
 ## Current Position
 
 Phase: 5 of 7 (Deal Management)
-Plan: 1 of 5 in phase
+Plan: 4 of 5 in phase (plans 02, 03, 05 remaining)
 Status: In progress
-Last activity: 2026-02-12 -- Completed 05-01-PLAN.md (Deal Management Data Models)
+Last activity: 2026-02-12 -- Completed 05-04-PLAN.md (Stage Progression Engine)
 
-Progress: [#########################---------] ~71% (25 plans completed through Phase 5-01)
+Progress: [##########################--------] ~74% (26 plans completed through Phase 5-04)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
+- Total plans completed: 26
 - Average duration: 7 min
-- Total execution time: ~2h 58min
+- Total execution time: ~3h 2min
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [#########################---------] ~71% (25 plans completed through 
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
-| 05-deal-management | 1/5 | 6 min | 6 min |
+| 05-deal-management | 2/5 | 10 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (6 min), 04.1-03 (7 min), 04.1-02 (7 min), 04.1-01 (5 min), 04-05 (5 min)
+- Last 5 plans: 05-04 (4 min), 05-01 (6 min), 04.1-03 (7 min), 04.1-02 (7 min), 04.1-01 (5 min)
 - Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
@@ -177,6 +177,9 @@ Recent decisions affecting current work:
 - [05-01]: DealStage imported from agents.sales.schemas (not duplicated) -- single source of truth
 - [05-01]: StakeholderModel allows nullable contact_email in unique constraint for stakeholders without email
 - [05-01]: find_matching_opportunity uses product_line + open status for dedup simplicity
+- [05-04]: MEDDIC threshold for QUALIFICATION adjusted from 0.17 to 0.16 to align with 1/6 score increment (0.1667)
+- [05-04]: Signal map covers all 10 BANT+MEDDIC dimensions for future extensibility
+- [05-04]: No auto-progression past NEGOTIATION -- close decisions are human-only
 
 ### Pending Todos
 
@@ -188,10 +191,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 465/465 passing as of 05-01 completion (no new tests -- data models only).
+- Full test suite: 504/504 passing as of 05-04 completion (465 existing + 39 new progression tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T12:53:38Z
-Stopped at: Completed 05-01-PLAN.md (Deal Management Data Models) -- Phase 5 in progress
+Last session: 2026-02-12T12:59:44Z
+Stopped at: Completed 05-04-PLAN.md (Stage Progression Engine) -- Phase 5 in progress
 Resume file: None
