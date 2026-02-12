@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 2/5 complete. GSuite integration, schemas (BANT/MEDDIC/ConversationState), and persona-adapted Chris Voss prompt system operational.
+**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 3/5 complete. GSuite integration, schemas, prompts, conversation state persistence, and qualification extraction operational.
 
 ## Current Position
 
 Phase: 4 of 7 (Sales Agent Core)
-Plan: 2/5 complete
+Plan: 3/5 complete
 Status: In progress
-Last activity: 2026-02-12 -- Completed 04-02-PLAN.md (Schemas and Prompts)
+Last activity: 2026-02-12 -- Completed 04-03-PLAN.md (State Persistence and Qualification Extraction)
 
-Progress: [################----] 82% (18/22 plans)
+Progress: [#################---] 86% (19/22 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 7 min
-- Total execution time: ~2h 17min
+- Total execution time: ~2h 22min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [################----] 82% (18/22 plans)
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
-| 04-sales-agent-core | 2/5 | 9 min | 5 min |
+| 04-sales-agent-core | 3/5 | 14 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (5 min), 04-01 (4 min), 03-07 (7 min), 03-04 (7 min), 03-03 (4 min)
+- Last 5 plans: 04-03 (5 min), 04-02 (5 min), 04-01 (4 min), 03-07 (7 min), 03-04 (7 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -133,6 +133,13 @@ Recent decisions affecting current work:
 - [04-02]: Qualification extraction preserves existing state -- only updates fields with new evidence (anti-overwrite)
 - [04-02]: Deal stage guidance for all 8 stages embedded directly in system prompts
 - [04-02]: Channel configs keyed by string value (not enum) for simpler dict access in prompt builder
+- [04-03]: instructor.from_litellm(litellm.acompletion) for async structured BANT+MEDDIC extraction
+- [04-03]: Single LLM call for all qualification signals (anti-pattern: no per-field calls)
+- [04-03]: Evidence always appended with ' | ' separator, never replaced
+- [04-03]: STALLED can transition to any active stage; terminal stages (CLOSED_WON, CLOSED_LOST) have no outbound transitions
+- [04-03]: qualification_data stored as JSON column for schema evolution flexibility
+- [04-03]: Repository uses session_factory callable pattern for testable async CRUD
+- [04-03]: _pick_by_confidence: new identified signal overrides unidentified; ties go to existing
 
 ### Pending Todos
 
@@ -148,6 +155,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-12T03:37:12Z
-Stopped at: Completed 04-02-PLAN.md (Schemas and Prompts) -- Phase 4 plan 2/5
+Last session: 2026-02-12T03:44:31Z
+Stopped at: Completed 04-03-PLAN.md (State Persistence and Qualification Extraction) -- Phase 4 plan 3/5
 Resume file: None
