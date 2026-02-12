@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4.1 IN PROGRESS (Agent Learning & Performance Feedback) -- Plans 01-02 done. FeedbackCollector, CalibrationEngine, CoachingPatternExtractor services built with 449 passing tests.
+**Current focus:** Phase 4.1 COMPLETE (Agent Learning & Performance Feedback) -- All 3 plans done. Full learning system wired: analytics, scheduler, 9 API endpoints, 465 passing tests.
 
 ## Current Position
 
 Phase: 4.1 of 7 (Agent Learning & Performance Feedback)
-Plan: 2 of ? in phase
-Status: In progress
-Last activity: 2026-02-12 -- Completed 04.1-02-PLAN.md (Feedback, Calibration & Coaching Services)
+Plan: 3 of 3 in phase
+Status: Phase complete
+Last activity: 2026-02-12 -- Completed 04.1-03-PLAN.md (Analytics, Scheduler & API Wiring)
 
-Progress: [######################] ~100% (23 plans completed through Phase 4.1-02)
+Progress: [########################] ~100% (24 plans completed through Phase 4.1-03)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: 7 min
-- Total execution time: ~2h 45min
+- Total execution time: ~2h 52min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [######################] ~100% (23 plans completed through Phase 4.1-0
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
-| 04.1-agent-learning | 2/? | 12 min | 6 min |
+| 04.1-agent-learning | 3/3 | 19 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.1-02 (7 min), 04.1-01 (5 min), 04-05 (5 min), 04-04 (6 min), 04-03 (5 min)
+- Last 5 plans: 04.1-03 (7 min), 04.1-02 (7 min), 04.1-01 (5 min), 04-05 (5 min), 04-04 (6 min)
 - Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
@@ -165,6 +165,12 @@ Recent decisions affecting current work:
 - [04.1-02]: Adjustment damping: max 10% correction per cycle, clamped to [0.5, 1.5] scaling bounds
 - [04.1-02]: Coaching uses statistical correlations (not LLM) per RESEARCH.md recommendation
 - [04.1-02]: Improvement area threshold: < 40% success rate flags action type for attention
+- [04.1-03]: Scheduler uses asyncio background loops (APScheduler optional upgrade path)
+- [04.1-03]: CalibrationEngine.get_all_action_types requires tenant_id; scheduler calibration task is tenant-scoped placeholder
+- [04.1-03]: SSE endpoint falls back to 30s polling if Redis pub/sub unavailable
+- [04.1-03]: Analytics cache uses Redis with 5-min TTL per RESEARCH.md Pitfall 4
+- [04.1-03]: sse-starlette added as dependency; SSE endpoint returns 501 if not installed
+- [04.1-03]: Learning API dependency injection reads from app.state with 503 fallback (matches _get_sales_agent pattern)
 
 ### Pending Todos
 
@@ -176,10 +182,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 449/449 passing as of 04.1-02 completion (24 new feedback/calibration/coaching tests).
+- Full test suite: 465/465 passing as of 04.1-03 completion (16 new integration tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T05:05:53Z
-Stopped at: Completed 04.1-02-PLAN.md (Feedback, Calibration & Coaching Services)
+Last session: 2026-02-12T05:15:43Z
+Stopped at: Completed 04.1-03-PLAN.md (Analytics, Scheduler & API Wiring) -- Phase 4.1 complete
 Resume file: None
