@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 4/5 complete. SalesAgent composing GSuite, RAG, qualification, next-action, and escalation into supervisor-invocable agent.
+**Current focus:** Phase 4 COMPLETE (Sales Agent Core) -- All 5 plans done. Sales Agent fully wired with API endpoints, registry registration, and 396 passing tests. Ready for Phase 4.1 (Agent Learning).
 
 ## Current Position
 
 Phase: 4 of 7 (Sales Agent Core)
-Plan: 4/5 complete
-Status: In progress
-Last activity: 2026-02-12 -- Completed 04-04-PLAN.md (Sales Agent Core Composition)
+Plan: 5/5 complete
+Status: Phase complete
+Last activity: 2026-02-12 -- Completed 04-05-PLAN.md (API Endpoints and Integration Tests)
 
-Progress: [##################--] 91% (20/22 plans)
+Progress: [####################] 100% (21/21 plans through Phase 4)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 7 min
-- Total execution time: ~2h 28min
+- Total execution time: ~2h 33min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [##################--] 91% (20/22 plans)
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
-| 04-sales-agent-core | 4/5 | 20 min | 5 min |
+| 04-sales-agent-core | 5/5 | 25 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-04 (6 min), 04-03 (5 min), 04-02 (5 min), 04-01 (4 min), 03-07 (7 min)
+- Last 5 plans: 04-05 (5 min), 04-04 (6 min), 04-03 (5 min), 04-02 (5 min), 04-01 (4 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -146,6 +146,11 @@ Recent decisions affecting current work:
 - [04-04]: Complexity threshold: 3+ decision criteria AND 2+ identified stakeholders
 - [04-04]: EventType.AGENT_HEALTH for escalation events (closest existing event type)
 - [04-04]: Both NextActionEngine and EscalationManager fail-graceful with rule-based fallbacks
+- [04-05]: Agent instance obtained via _get_sales_agent() reading _agent_instance from AgentRegistration (02-05 pattern)
+- [04-05]: ConversationStateResponse serializes datetimes to ISO strings and enums to values for clean JSON
+- [04-05]: GSuite services gracefully None when credentials missing -- agent initializes but send endpoints return 503
+- [04-05]: State repository uses get_tenant_session as session_factory for tenant-scoped DB access
+- [04-05]: InMemoryStateRepository in integration tests avoids database dependency
 
 ### Pending Todos
 
@@ -157,10 +162,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- 1 pre-existing test failure (test_prompt_injection_detection from 01-02) -- does not affect functionality, likely a test sensitivity issue. Note: full suite now at 180/180 pass.
+- Full test suite: 396/396 passing as of 04-05 completion.
 
 ## Session Continuity
 
-Last session: 2026-02-12T03:52:46Z
-Stopped at: Completed 04-04-PLAN.md (Sales Agent Core Composition) -- Phase 4 plan 4/5
+Last session: 2026-02-12T03:59:33Z
+Stopped at: Completed 04-05-PLAN.md (API Endpoints and Integration Tests) -- Phase 4 complete (5/5)
 Resume file: None
