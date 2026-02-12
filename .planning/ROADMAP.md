@@ -110,12 +110,12 @@ Plans:
   3. Confidence calibration tracks agent confidence scores vs actual success rates and identifies calibration gaps (overconfident or underconfident predictions)
   4. Performance analytics dashboard shows agent effectiveness metrics -- response quality trends, escalation rate patterns, customer engagement scores, qualification completion rates
   5. Sales training module identifies patterns from escalations and successful interactions to train human reps on what works (turning AI insights into human coaching)
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves
 
 Plans:
-- [ ] 04.1-01: Outcome tracking system and success/failure signal detection
-- [ ] 04.1-02: Human feedback interface and learning loop integration
-- [ ] 04.1-03: Confidence calibration engine and performance analytics dashboard
+- [ ] 04.1-01-PLAN.md -- Outcome tracking data models, Pydantic schemas, OutcomeTracker service, and migration (Wave 1)
+- [ ] 04.1-02-PLAN.md -- FeedbackCollector, CalibrationEngine, CoachingPatternExtractor services (Wave 2, depends on 04.1-01)
+- [ ] 04.1-03-PLAN.md -- AnalyticsService, scheduler, API endpoints, SSE streaming, main.py wiring, and integration tests (Wave 3, depends on 04.1-01, 04.1-02)
 
 ### Phase 5: Deal Management
 **Goal**: The Sales Agent manages the full deal lifecycle -- identifying opportunities from conversations, maintaining strategic account plans and tactical opportunity plans, mapping political structures, and keeping CRM in sync
