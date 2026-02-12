@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 1/5 complete. GSuite integration services (Gmail, Google Chat) operational with async wrappers and service caching.
+**Current focus:** Phase 4 IN PROGRESS (Sales Agent Core) -- Plan 2/5 complete. GSuite integration, schemas (BANT/MEDDIC/ConversationState), and persona-adapted Chris Voss prompt system operational.
 
 ## Current Position
 
 Phase: 4 of 7 (Sales Agent Core)
-Plan: 1/5 complete
+Plan: 2/5 complete
 Status: In progress
-Last activity: 2026-02-12 -- Completed 04-01-PLAN.md (GSuite Integration)
+Last activity: 2026-02-12 -- Completed 04-02-PLAN.md (Schemas and Prompts)
 
-Progress: [###############-----] 77% (17/22 plans)
+Progress: [################----] 82% (18/22 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 8 min
-- Total execution time: ~2h 12min
+- Total plans completed: 18
+- Average duration: 7 min
+- Total execution time: ~2h 17min
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [###############-----] 77% (17/22 plans)
 | 01-infrastructure | 3/3 | 42 min | 14 min |
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
-| 04-sales-agent-core | 1/5 | 4 min | 4 min |
+| 04-sales-agent-core | 2/5 | 9 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (4 min), 03-07 (7 min), 03-04 (7 min), 03-03 (4 min), 03-06 (6 min)
-- Trend: Consistent -- averaging 6 min per plan
+- Last 5 plans: 04-02 (5 min), 04-01 (4 min), 03-07 (7 min), 03-04 (7 min), 03-03 (4 min)
+- Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
 
@@ -128,6 +128,11 @@ Recent decisions affecting current work:
 - [04-01]: Chat service uses service account directly (no user delegation) for bot auth
 - [04-01]: Email MIME built with stdlib email.message.EmailMessage for RFC 2822 compliance
 - [04-01]: HTML body with optional text fallback via set_content/add_alternative pattern
+- [04-02]: Completion score as computed property (not stored) on BANTSignals (4 dims) and MEDDICSignals (6 dims)
+- [04-02]: QualificationState.combined_completion averages BANT + MEDDIC scores
+- [04-02]: Qualification extraction preserves existing state -- only updates fields with new evidence (anti-overwrite)
+- [04-02]: Deal stage guidance for all 8 stages embedded directly in system prompts
+- [04-02]: Channel configs keyed by string value (not enum) for simpler dict access in prompt builder
 
 ### Pending Todos
 
@@ -143,6 +148,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-12T03:36:06Z
-Stopped at: Completed 04-01-PLAN.md (GSuite Integration) -- Phase 4 plan 1/5
+Last session: 2026-02-12T03:37:12Z
+Stopped at: Completed 04-02-PLAN.md (Schemas and Prompts) -- Phase 4 plan 2/5
 Resume file: None
