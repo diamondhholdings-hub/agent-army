@@ -80,7 +80,7 @@ STAGE_EVIDENCE_REQUIREMENTS: dict[DealStage, StageRequirements] = {
     ),
     DealStage.QUALIFICATION: StageRequirements(
         min_bant_completion=0.25,
-        min_meddic_completion=0.17,
+        min_meddic_completion=0.16,  # 1/6 MEDDIC = 0.1667; threshold just below
         min_interactions=2,
         required_signals=["need_identified", "pain_identified"],
     ),
