@@ -104,6 +104,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         from src.app.agents.sales.state_repository import ConversationStateRepository
         from src.app.services.gsuite import GSuiteAuthManager, GmailService, ChatService
         from src.app.core.database import get_tenant_session
+        from src.app.agents.sales.qbs import QBSQuestionEngine, AccountExpansionDetector
 
         sales_registration = create_sales_registration()
 
@@ -139,6 +140,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             event_bus=event_bus, llm_service=llm_service
         )
 
+        # Phase 4.2: QBS methodology components
+        qbs_engine = QBSQuestionEngine(llm_service=llm_service)
+        expansion_detector = AccountExpansionDetector(llm_service=llm_service)
+
         sales_agent = SalesAgent(
             registration=sales_registration,
             llm_service=llm_service,
@@ -151,6 +156,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             qualification_extractor=qual_extractor,
             action_engine=action_engine,
             escalation_manager=escalation_mgr,
+            qbs_engine=qbs_engine,
+            expansion_detector=expansion_detector,
         )
 
         # Register in agent registry (per 02-05 pattern)
@@ -159,7 +166,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             agent_registry.register(sales_registration)
             sales_registration._agent_instance = sales_agent
         app.state.sales_agent = sales_agent
-        log.info("phase4.sales_agent_initialized")
+        app.state.qbs_engine = qbs_engine
+        app.state.expansion_detector = expansion_detector
+        log.info("phase4.sales_agent_initialized", qbs_enabled=True)
     except Exception as exc:
         log.warning("phase4.sales_agent_init_failed", error=str(exc))
 
