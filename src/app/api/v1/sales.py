@@ -10,12 +10,16 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, Field
+
+import structlog
 
 from src.app.api.deps import get_current_user, get_tenant
 from src.app.core.tenant import TenantContext
 from src.app.models.tenant import User
+
+logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/sales", tags=["sales"])
 
@@ -176,6 +180,37 @@ def _get_state_repository() -> Any:
     return repo
 
 
+async def _fire_deal_hook(
+    request: Request,
+    tenant_id: str,
+    conversation_text: str,
+    conversation_state: Any,
+) -> None:
+    """Fire post-conversation deal management hook (fire-and-forget).
+
+    Retrieves PostConversationHook from app.state and runs it.
+    Errors are logged but never raised -- the sales endpoint response
+    must not be blocked by deal management failures.
+
+    Args:
+        request: FastAPI request for app.state access.
+        tenant_id: Tenant UUID string.
+        conversation_text: The conversation text to analyze.
+        conversation_state: Current ConversationState for the contact.
+    """
+    deal_hook = getattr(request.app.state, "deal_hook", None)
+    if deal_hook is None:
+        return
+    try:
+        await deal_hook.run(
+            tenant_id=tenant_id,
+            conversation_text=conversation_text,
+            conversation_state=conversation_state,
+        )
+    except Exception as exc:
+        logger.warning("deal_hook.fire_failed", error=str(exc))
+
+
 # ── Helper: Convert ConversationState to Response ────────────────────────────
 
 
@@ -218,6 +253,7 @@ def _state_to_response(state: Any) -> ConversationStateResponse:
 
 @router.post("/send-email", response_model=SendEmailResponse)
 async def send_email(
+    request: Request,
     body: SendEmailRequest,
     user: User = Depends(get_current_user),
     tenant: TenantContext = Depends(get_tenant),
@@ -245,11 +281,20 @@ async def send_email(
     context = {"tenant_id": tenant.tenant_id}
 
     result = await agent.invoke(task, context)
+
+    # Fire deal management hook (fire-and-forget)
+    state_repo = getattr(agent, "_state_repository", None)
+    if state_repo:
+        conv_state = await state_repo.get_state(tenant.tenant_id, body.account_id, body.contact_id)
+        if conv_state:
+            await _fire_deal_hook(request, tenant.tenant_id, body.description, conv_state)
+
     return SendEmailResponse(**result)
 
 
 @router.post("/send-chat", response_model=SendChatResponse)
 async def send_chat(
+    request: Request,
     body: SendChatRequest,
     user: User = Depends(get_current_user),
     tenant: TenantContext = Depends(get_tenant),
@@ -276,11 +321,20 @@ async def send_chat(
     context = {"tenant_id": tenant.tenant_id}
 
     result = await agent.invoke(task, context)
+
+    # Fire deal management hook (fire-and-forget)
+    state_repo = getattr(agent, "_state_repository", None)
+    if state_repo:
+        conv_state = await state_repo.get_state(tenant.tenant_id, body.account_id, body.contact_id)
+        if conv_state:
+            await _fire_deal_hook(request, tenant.tenant_id, body.description, conv_state)
+
     return SendChatResponse(**result)
 
 
 @router.post("/process-reply", response_model=ProcessReplyResponse)
 async def process_reply(
+    request: Request,
     body: ProcessReplyRequest,
     user: User = Depends(get_current_user),
     tenant: TenantContext = Depends(get_tenant),
@@ -304,6 +358,14 @@ async def process_reply(
     context = {"tenant_id": tenant.tenant_id}
 
     result = await agent.invoke(task, context)
+
+    # Fire deal management hook (fire-and-forget)
+    state_repo = getattr(agent, "_state_repository", None)
+    if state_repo:
+        conv_state = await state_repo.get_state(tenant.tenant_id, body.account_id, body.contact_id)
+        if conv_state:
+            await _fire_deal_hook(request, tenant.tenant_id, body.reply_text, conv_state)
+
     return ProcessReplyResponse(**result)
 
 
