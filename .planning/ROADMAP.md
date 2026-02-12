@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Knowledge Base** - Product knowledge, vector search, agentic RAG, methodology library, and conversation memory
 - [x] **Phase 4: Sales Agent Core** - Text-based sales conversations with email, chat, persona adaptation, and methodology execution
 - [x] **Phase 4.1: Agent Learning & Performance Feedback (INSERTED)** - Outcome tracking, confidence calibration, human feedback loops, and performance analytics
-- [ ] **Phase 4.2: QBS Methodology Integration (INSERTED)** - Question Based Selling methodology integrated throughout all sales stages from outreach to closing
+- [x] **Phase 4.2: QBS Methodology Integration (INSERTED)** - Question Based Selling methodology integrated throughout all sales stages from outreach to closing
 - [x] **Phase 5: Deal Management** - CRM integration, opportunity tracking, account/opportunity plans, and political mapping
 - [ ] **Phase 6: Meeting Capabilities** - Google Meet attendance with avatar, real-time response, recording, minutes, and distribution
 - [ ] **Phase 7: Intelligence & Autonomy** - Data consolidation, pattern recognition, self-directed goals, proactive outreach, and agent cloning
@@ -134,7 +134,7 @@ Plans:
 - [x] 04.2-01-PLAN.md -- QBS Pydantic schemas, prompt templates, and unit tests (Wave 1)
 - [x] 04.2-02-PLAN.md -- QBS Question Engine, Pain Depth Tracker, Account Expansion Detector (Wave 2, depends on 04.2-01)
 - [x] 04.2-03-PLAN.md -- Agent integration, prompt wiring, learning integration, and integration tests (Wave 3, depends on 04.2-01, 04.2-02)
-- [ ] 04.2-04-PLAN.md -- Gap closure: wire QBS components into SalesAgent in main.py (Wave 4, gap closure)
+- [x] 04.2-04-PLAN.md -- Gap closure: wire QBS components into SalesAgent in main.py (Wave 4, gap closure)
 
 ### Phase 5: Deal Management
 **Goal**: The Sales Agent manages the full deal lifecycle -- identifying opportunities from conversations, maintaining strategic account plans and tactical opportunity plans, mapping political structures, and keeping CRM in sync
@@ -205,7 +205,7 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 3. Knowledge Base | 7/7 | Complete | 2026-02-11 |
 | 4. Sales Agent Core | 5/5 | Complete | 2026-02-12 |
 | 4.1. Agent Learning & Performance Feedback | 3/3 | Complete | 2026-02-12 |
-| 4.2. QBS Methodology Integration | 0/3 | Planned | - |
+| 4.2. QBS Methodology Integration | 4/4 | Complete | 2026-02-12 |
 | 5. Deal Management | 6/6 | Complete | 2026-02-12 |
 | 6. Meeting Capabilities | 0/3 | Not started | - |
 | 7. Intelligence & Autonomy | 0/3 | Not started | - |
