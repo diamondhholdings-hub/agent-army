@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4 COMPLETE (Sales Agent Core) -- All 5 plans done. Sales Agent fully wired with API endpoints, registry registration, and 396 passing tests. Ready for Phase 4.1 (Agent Learning).
+**Current focus:** Phase 4.1 IN PROGRESS (Agent Learning & Performance Feedback) -- Plan 01 done. Outcome tracking data foundation established with 3 models, OutcomeTracker service, and 425 passing tests.
 
 ## Current Position
 
-Phase: 4 of 7 (Sales Agent Core)
-Plan: 5/5 complete
-Status: Phase complete
-Last activity: 2026-02-12 -- Completed 04-05-PLAN.md (API Endpoints and Integration Tests)
+Phase: 4.1 of 7 (Agent Learning & Performance Feedback)
+Plan: 1 of ? in phase
+Status: In progress
+Last activity: 2026-02-12 -- Completed 04.1-01-PLAN.md (Outcome Tracking Data Foundation)
 
-Progress: [####################] 100% (21/21 plans through Phase 4)
+Progress: [#####################] ~100% (22 plans completed through Phase 4.1-01)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 22
 - Average duration: 7 min
-- Total execution time: ~2h 33min
+- Total execution time: ~2h 38min
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [####################] 100% (21/21 plans through Phase 4)
 | 02-agent-orchestration | 6/6 | 29 min | 5 min |
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
+| 04.1-agent-learning | 1/? | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-05 (5 min), 04-04 (6 min), 04-03 (5 min), 04-02 (5 min), 04-01 (4 min)
+- Last 5 plans: 04.1-01 (5 min), 04-05 (5 min), 04-04 (6 min), 04-03 (5 min), 04-02 (5 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -151,6 +152,13 @@ Recent decisions affecting current work:
 - [04-05]: GSuite services gracefully None when credentials missing -- agent initializes but send endpoints return 503
 - [04-05]: State repository uses get_tenant_session as session_factory for tenant-scoped DB access
 - [04-05]: InMemoryStateRepository in integration tests avoids database dependency
+- [04.1-01]: OutcomeTracker uses session_factory callable pattern matching ConversationStateRepository
+- [04.1-01]: Time windows: 24h email engagement, 168h meeting/escalation, 720h deal progression
+- [04.1-01]: Deal progression scoring: 0.2 per stage advanced, capped at 1.0
+- [04.1-01]: Immediate signal detection via interaction_count comparison (reply = positive)
+- [04.1-01]: Bulk expire via single UPDATE statement for performance
+- [04.1-01]: CalibrationBin unique constraint on (tenant_id, action_type, bin_index) for 10 bins per action type
+- [04.1-01]: FeedbackEntry dual rating: -1/0/1 for inline, 1-5 for dashboard (single rating field)
 
 ### Pending Todos
 
@@ -162,10 +170,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 396/396 passing as of 04-05 completion.
+- Full test suite: 425/425 passing as of 04.1-01 completion (29 new learning tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T03:59:33Z
-Stopped at: Completed 04-05-PLAN.md (API Endpoints and Integration Tests) -- Phase 4 complete (5/5)
+Last session: 2026-02-12T04:56:39Z
+Stopped at: Completed 04.1-01-PLAN.md (Outcome Tracking Data Foundation)
 Resume file: None
