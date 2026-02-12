@@ -204,6 +204,28 @@ class CalibrationAdjustment(BaseModel):
     reason: str
 
 
+# -- Coaching Schemas ---------------------------------------------------------
+
+
+class CoachingPattern(BaseModel):
+    """A coaching insight extracted from outcome/feedback data.
+
+    Represents a statistical correlation between agent action attributes
+    and outcomes, formatted as actionable sales training insights.
+    """
+
+    pattern_id: str = Field(default_factory=lambda: str(uuid4()))
+    pattern_type: str  # "time_correlation", "persona_effectiveness", "escalation_pattern", "channel_preference", "stage_insight"
+    description: str  # Human-readable insight
+    confidence: float  # Statistical confidence 0.0-1.0
+    sample_size: int
+    supporting_data: dict = Field(default_factory=dict)  # Raw data backing the pattern
+    recommendation: str  # Actionable advice for sales reps
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
+
+
 # -- API Request/Response Schemas ---------------------------------------------
 
 
