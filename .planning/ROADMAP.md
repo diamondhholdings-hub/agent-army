@@ -16,6 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Agent Orchestration** - Supervisor topology, event-driven coordination, context management, and observability
 - [x] **Phase 3: Knowledge Base** - Product knowledge, vector search, agentic RAG, methodology library, and conversation memory
 - [ ] **Phase 4: Sales Agent Core** - Text-based sales conversations with email, chat, persona adaptation, and methodology execution
+- [ ] **Phase 4.1: Agent Learning & Performance Feedback (INSERTED)** - Outcome tracking, confidence calibration, human feedback loops, and performance analytics
 - [ ] **Phase 5: Deal Management** - CRM integration, opportunity tracking, account/opportunity plans, and political mapping
 - [ ] **Phase 6: Meeting Capabilities** - Google Meet attendance with avatar, real-time response, recording, minutes, and distribution
 - [ ] **Phase 7: Intelligence & Autonomy** - Data consolidation, pattern recognition, self-directed goals, proactive outreach, and agent cloning
@@ -97,6 +98,23 @@ Plans:
 - [ ] 04-02: Persona adaptation and sales methodology execution
 - [ ] 04-03: Conversation state tracking, next-action engine, and human escalation
 
+### Phase 4.1: Agent Learning & Performance Feedback (INSERTED)
+**Goal**: The Sales Agent learns from its interactions and improves over time through outcome tracking, confidence calibration, human feedback loops, and performance analytics -- enabling continuous improvement and sales team insights
+**Depends on**: Phase 4
+**Requirements**: Extension of SA requirements (outcome tracking, feedback systems, analytics)
+**Success Criteria** (what must be TRUE):
+  1. Outcome tracking captures whether agent actions led to positive or negative results -- customer engaged vs ghosted, deal progressed vs stalled, response quality indicators
+  2. Human feedback mechanism allows sales reps and managers to mark agent responses as good/bad/needs-improvement, feeding into the learning system
+  3. Confidence calibration tracks agent confidence scores vs actual success rates and identifies calibration gaps (overconfident or underconfident predictions)
+  4. Performance analytics dashboard shows agent effectiveness metrics -- response quality trends, escalation rate patterns, customer engagement scores, qualification completion rates
+  5. Sales training module identifies patterns from escalations and successful interactions to train human reps on what works (turning AI insights into human coaching)
+**Plans**: TBD
+
+Plans:
+- [ ] 04.1-01: Outcome tracking system and success/failure signal detection
+- [ ] 04.1-02: Human feedback interface and learning loop integration
+- [ ] 04.1-03: Confidence calibration engine and performance analytics dashboard
+
 ### Phase 5: Deal Management
 **Goal**: The Sales Agent manages the full deal lifecycle -- identifying opportunities from conversations, maintaining strategic account plans and tactical opportunity plans, mapping political structures, and keeping CRM in sync
 **Depends on**: Phase 4
@@ -151,8 +169,9 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
-Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 4.1 -> 5 -> 6 -> 7
+Note: Phase 4.1 was inserted to add learning capabilities before deal management complexity.
+Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after Phase 4.1.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -160,6 +179,7 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel.
 | 2. Agent Orchestration | 6/6 | Complete | 2026-02-11 |
 | 3. Knowledge Base | 7/7 | Complete | 2026-02-11 |
 | 4. Sales Agent Core | 0/3 | Not started | - |
+| 4.1. Agent Learning & Performance Feedback | 0/3 | Not started | - |
 | 5. Deal Management | 0/3 | Not started | - |
 | 6. Meeting Capabilities | 0/3 | Not started | - |
 | 7. Intelligence & Autonomy | 0/3 | Not started | - |
