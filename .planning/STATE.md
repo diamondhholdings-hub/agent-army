@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plans 01 and 04 complete. Data models + stage progression engine. Plans 02, 03, 05 remaining.
+**Current focus:** Phase 5 IN PROGRESS (Deal Management) -- Plans 01, 02, 04 complete. Data models, detection/political/plan intelligence, stage progression. Plans 03, 05 remaining.
 
 ## Current Position
 
 Phase: 5 of 7 (Deal Management)
-Plan: 4 of 5 in phase (plans 02, 03, 05 remaining)
+Plan: 3 of 5 in phase (plans 03, 05 remaining)
 Status: In progress
-Last activity: 2026-02-12 -- Completed 05-04-PLAN.md (Stage Progression Engine)
+Last activity: 2026-02-12 -- Completed 05-02-PLAN.md (Opportunity Detection & Political Mapping)
 
-Progress: [##########################--------] ~74% (26 plans completed through Phase 5-04)
+Progress: [##########################--------] ~77% (27 plans completed through Phase 5-02)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
+- Total plans completed: 27
 - Average duration: 7 min
-- Total execution time: ~3h 2min
+- Total execution time: ~3h 7min
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [##########################--------] ~74% (26 plans completed through 
 | 03-knowledge-base | 7/7 | ~61 min | 9 min |
 | 04-sales-agent-core | 5/5 | 25 min | 5 min |
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
-| 05-deal-management | 2/5 | 10 min | 5 min |
+| 05-deal-management | 3/5 | 15 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-04 (4 min), 05-01 (6 min), 04.1-03 (7 min), 04.1-02 (7 min), 04.1-01 (5 min)
+- Last 5 plans: 05-02 (5 min), 05-04 (4 min), 05-01 (6 min), 04.1-03 (7 min), 04.1-02 (7 min)
 - Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
@@ -177,6 +177,12 @@ Recent decisions affecting current work:
 - [05-01]: DealStage imported from agents.sales.schemas (not duplicated) -- single source of truth
 - [05-01]: StakeholderModel allows nullable contact_email in unique constraint for stakeholders without email
 - [05-01]: find_matching_opportunity uses product_line + open status for dedup simplicity
+- [05-02]: instructor.from_litellm pattern for opportunity detection matching Phase 4 QualificationExtractor
+- [05-02]: Title heuristic tiers: c-suite(9/8/3), vp(8/7/3), director(6/6/3), manager(4/5/3), ic(2/3/3)
+- [05-02]: Conversation signals can ONLY increase scores via max() (Pitfall 5)
+- [05-02]: Human overrides always win with 0-10 clamping (Pitfall 5)
+- [05-02]: Company profile updates use structured data assembly, not LLM (RESEARCH.md Open Question 4)
+- [05-02]: ConversationScoreRefinement and RoleDetection as dedicated Pydantic models for LLM responses
 - [05-04]: MEDDIC threshold for QUALIFICATION adjusted from 0.17 to 0.16 to align with 1/6 score increment (0.1667)
 - [05-04]: Signal map covers all 10 BANT+MEDDIC dimensions for future extensibility
 - [05-04]: No auto-progression past NEGOTIATION -- close decisions are human-only
@@ -191,10 +197,10 @@ Recent decisions affecting current work:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 504/504 passing as of 05-04 completion (465 existing + 39 new progression tests).
+- Full test suite: 547/547 passing as of 05-02 completion (504 existing + 43 new detection/political/plan tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T12:59:44Z
-Stopped at: Completed 05-04-PLAN.md (Stage Progression Engine) -- Phase 5 in progress
+Last session: 2026-02-12T13:01:19Z
+Stopped at: Completed 05-02-PLAN.md (Opportunity Detection & Political Mapping) -- Phase 5 in progress
 Resume file: None
