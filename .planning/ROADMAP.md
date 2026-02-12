@@ -127,14 +127,15 @@ Plans:
   3. Sales Agent maps political structures within accounts -- identifying decision makers, influencers, champions, and blockers with power dynamics
   4. CRM integration (Salesforce or HubSpot) works bidirectionally -- agent creates/updates opportunities, contacts, and activities; CRM changes flow back to agent context
   5. Deal stages progress automatically based on qualification signals -- agent moves opportunities through the pipeline when evidence supports advancement
-**Plans**: 5 plans in 3 waves
+**Plans**: 6 plans in 4 waves
 
 Plans:
-- [ ] 05-01-PLAN.md -- Deal management data models, schemas, repository, and migration (Wave 1)
-- [ ] 05-02-PLAN.md -- Opportunity detection, political mapping, and plan manager (Wave 2, depends on 05-01)
-- [ ] 05-03-PLAN.md -- CRM adapter, Notion connector, and sync engine (Wave 2, depends on 05-01)
-- [ ] 05-04-PLAN.md -- Evidence-based stage progression engine (Wave 2, depends on 05-01)
-- [ ] 05-05-PLAN.md -- API endpoints, post-conversation hooks, main.py wiring, and integration tests (Wave 3, depends on 05-01, 05-02, 05-03, 05-04)
+- [x] 05-01-PLAN.md -- Deal management data models, schemas, repository, and migration (Wave 1)
+- [x] 05-02-PLAN.md -- Opportunity detection, political mapping, and plan manager (Wave 2, depends on 05-01)
+- [x] 05-03-PLAN.md -- CRM adapter, Notion connector, and sync engine (Wave 2, depends on 05-01)
+- [x] 05-04-PLAN.md -- Evidence-based stage progression engine (Wave 2, depends on 05-01)
+- [x] 05-05-PLAN.md -- API endpoints, post-conversation hooks, main.py wiring, and integration tests (Wave 3, depends on 05-01, 05-02, 05-03, 05-04)
+- [ ] 05-06-PLAN.md -- Gap closure: wire PostConversationHook into sales conversation endpoints (Wave 4, depends on 05-05)
 
 ### Phase 6: Meeting Capabilities
 **Goal**: The Sales Agent attends Google Meet meetings with an avatar representation, participates in real-time conversation, and produces meeting minutes distributed to stakeholders -- the "wow" differentiator
@@ -184,10 +185,10 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 3. Knowledge Base | 7/7 | Complete | 2026-02-11 |
 | 4. Sales Agent Core | 5/5 | Complete | 2026-02-12 |
 | 4.1. Agent Learning & Performance Feedback | 3/3 | Complete | 2026-02-12 |
-| 5. Deal Management | 0/5 | Not started | - |
+| 5. Deal Management | 5/6 | Gap closure | - |
 | 6. Meeting Capabilities | 0/3 | Not started | - |
 | 7. Intelligence & Autonomy | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-12 after Phase 4.1 completion*
+*Last updated: 2026-02-12 after Phase 5 gap closure plan*
