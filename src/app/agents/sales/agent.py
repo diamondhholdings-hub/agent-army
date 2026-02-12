@@ -2,23 +2,25 @@
 
 Composes all prior Sales Agent components (GSuite services, RAG pipeline,
 conversation store, state repository, qualification extractor, next-action
-engine, escalation manager) into a working agent that can be invoked via
-the supervisor topology.
+engine, escalation manager, QBS engine, pain tracker, expansion detector)
+into a working agent that can be invoked via the supervisor topology.
 
 The execute() method routes tasks by type to specialized handlers:
 - send_email: Generate and send persona-adapted email via Gmail
 - send_chat: Generate and send persona-adapted chat message via Google Chat
-- process_reply: Process incoming customer reply with qualification + escalation
+- process_reply: Process incoming customer reply with qualification + escalation + QBS
 - qualify: Force qualification extraction on conversation text
 - recommend_action: Get next-action recommendations
 
 Each handler follows the pattern:
 1. Compile context (RAG + conversation history + state)
-2. Generate content via LLM
-3. Send via GSuite
-4. Update state (qualification, interaction count, channel)
-5. Check escalation triggers
-6. Return structured result
+2. Run QBS engine analysis for dynamic guidance (email/chat handlers)
+3. Generate content via LLM with QBS-enriched prompts
+4. Send via GSuite
+5. Update state (qualification, QBS pain state, interaction count, channel)
+6. Detect expansion triggers (reply handler)
+7. Check escalation triggers
+8. Return structured result
 
 Exports:
     SalesAgent: The core sales agent class.
@@ -35,6 +37,12 @@ import structlog
 from src.app.agents.base import AgentRegistration, BaseAgent
 from src.app.agents.sales.actions import NextActionEngine
 from src.app.agents.sales.escalation import EscalationManager
+from src.app.agents.sales.qbs import (
+    AccountExpansionDetector,
+    PainDepthTracker,
+    QBSQuestionEngine,
+)
+from src.app.agents.sales.qbs.prompts import build_qbs_prompt_section
 from src.app.agents.sales.qualification import QualificationExtractor
 from src.app.agents.sales.schemas import (
     Channel,
@@ -53,8 +61,9 @@ class SalesAgent(BaseAgent):
 
     Extends BaseAgent with specialized handlers for email outreach,
     chat messaging, reply processing, qualification, and action
-    recommendation. Composes all Phase 4 plan outputs into a single
-    agent invocable by the supervisor.
+    recommendation. Composes all Phase 4 plan outputs plus QBS
+    methodology components into a single agent invocable by the
+    supervisor.
 
     Args:
         registration: Agent registration metadata for the registry.
@@ -68,6 +77,10 @@ class SalesAgent(BaseAgent):
         qualification_extractor: QualificationExtractor for signal extraction.
         action_engine: NextActionEngine for next-action recommendations.
         escalation_manager: EscalationManager for escalation evaluation.
+        qbs_engine: Optional QBSQuestionEngine for adaptive question selection.
+            When None, QBS guidance is not injected (backward compatible).
+        expansion_detector: Optional AccountExpansionDetector for multi-threading
+            opportunity detection. When None, expansion detection is skipped.
     """
 
     def __init__(
@@ -83,6 +96,8 @@ class SalesAgent(BaseAgent):
         qualification_extractor: QualificationExtractor,
         action_engine: NextActionEngine,
         escalation_manager: EscalationManager,
+        qbs_engine: QBSQuestionEngine | None = None,
+        expansion_detector: AccountExpansionDetector | None = None,
     ) -> None:
         super().__init__(registration)
         self._llm_service = llm_service
@@ -95,6 +110,8 @@ class SalesAgent(BaseAgent):
         self._qualification_extractor = qualification_extractor
         self._action_engine = action_engine
         self._escalation_manager = escalation_manager
+        self._qbs_engine = qbs_engine
+        self._expansion_detector = expansion_detector
 
     async def execute(
         self, task: dict[str, Any], context: dict[str, Any]
@@ -205,6 +222,57 @@ class SalesAgent(BaseAgent):
             "channel": task.get("channel", "email"),
         }
 
+    # ── QBS Integration ──────────────────────────────────────────────────────
+
+    async def _get_qbs_guidance(
+        self, sales_ctx: dict[str, Any]
+    ) -> str | None:
+        """Run QBS engine analysis and return dynamic prompt guidance.
+
+        Returns None if QBS engine is not configured or analysis fails.
+        """
+        if self._qbs_engine is None:
+            return None
+
+        state: ConversationState = sales_ctx["conversation_state"]
+        history = sales_ctx.get("conversation_history", [])
+
+        try:
+            # Get latest message context
+            latest_msg = ""
+            if history:
+                latest_msg = str(history[0]) if history else ""
+
+            recommendation = await self._qbs_engine.analyze_and_recommend(
+                conversation_state=state,
+                latest_message=latest_msg,
+                conversation_history=(
+                    [str(h) for h in history[:5]] if history else None
+                ),
+            )
+
+            # Load pain state (READ-ONLY here; updates happen in _handle_process_reply)
+            pain_state = PainDepthTracker.load(state)
+
+            # Load expansion triggers from prior interactions
+            expansion_triggers = []
+            expansion_data = state.metadata.get("qbs", {}).get("expansion", {})
+            if expansion_data.get("detected_contacts"):
+                from src.app.agents.sales.qbs.schemas import ExpansionTrigger
+
+                expansion_triggers = [
+                    ExpansionTrigger(**t)
+                    for t in expansion_data["detected_contacts"][:3]
+                ]
+
+            # Build the dynamic QBS guidance section (no state mutation)
+            return build_qbs_prompt_section(
+                recommendation, pain_state, expansion_triggers
+            )
+        except Exception as exc:
+            logger.warning("qbs_guidance_failed", error=str(exc))
+            return None
+
     # ── Task Handlers ───────────────────────────────────────────────────────
 
     async def _handle_send_email(
@@ -230,12 +298,16 @@ class SalesAgent(BaseAgent):
         # Build context summary for prompt
         context_summary = self._format_context_summary(sales_ctx)
 
+        # Get QBS guidance for prompt injection
+        qbs_guidance = await self._get_qbs_guidance(sales_ctx)
+
         # Generate email via LLM
         messages = build_email_prompt(
             persona=state.persona_type,
             deal_stage=state.deal_stage,
             context_summary=context_summary,
             task_description=task.get("description", "Send an outreach email"),
+            qbs_guidance=qbs_guidance,
         )
 
         response = await self._llm_service.completion(
@@ -302,12 +374,16 @@ class SalesAgent(BaseAgent):
 
         context_summary = self._format_context_summary(sales_ctx)
 
+        # Get QBS guidance for prompt injection
+        qbs_guidance = await self._get_qbs_guidance(sales_ctx)
+
         # Generate chat message via LLM
         messages = build_chat_prompt(
             persona=state.persona_type,
             deal_stage=state.deal_stage,
             context_summary=context_summary,
             task_description=task.get("description", "Send a chat message"),
+            qbs_guidance=qbs_guidance,
         )
 
         response = await self._llm_service.completion(
@@ -391,12 +467,47 @@ class SalesAgent(BaseAgent):
             state.escalation_reason = escalation_report.escalation_trigger
             await self._escalation_manager.publish_escalation(escalation_report)
 
+        # Update QBS pain state from reply content
+        if self._qbs_engine is not None:
+            try:
+                qbs_recommendation = await self._qbs_engine.analyze_and_recommend(
+                    conversation_state=state,
+                    latest_message=reply_text,
+                )
+                pain_state = PainDepthTracker.load(state)
+                updated_pain = PainDepthTracker.update_from_recommendation(
+                    pain_state, qbs_recommendation, state.interaction_count
+                )
+                PainDepthTracker.save(state, updated_pain)
+            except Exception as exc:
+                logger.warning("qbs_reply_analysis_failed", error=str(exc))
+
+        # Detect expansion triggers from reply
+        if self._expansion_detector is not None:
+            try:
+                existing_contacts = [state.contact_name, state.contact_email]
+                expansion_triggers = (
+                    await self._expansion_detector.detect_expansion_triggers(
+                        conversation_text=reply_text,
+                        existing_contacts=[c for c in existing_contacts if c],
+                        interaction_count=state.interaction_count,
+                    )
+                )
+                if expansion_triggers:
+                    AccountExpansionDetector.save_expansion_state(
+                        state, expansion_triggers
+                    )
+            except Exception as exc:
+                logger.warning(
+                    "qbs_expansion_detection_failed", error=str(exc)
+                )
+
         # Get recommended next actions
         actions = await self._action_engine.recommend_actions(
             state, recent_interactions=[reply_text]
         )
 
-        # Save updated state
+        # Save updated state (includes QBS metadata)
         await self._state_repository.save_state(state)
 
         return {
@@ -506,6 +617,35 @@ class SalesAgent(BaseAgent):
         # Add recent conversation history
         if history:
             parts.append(f"\nConversation History: {len(history)} prior messages")
+
+        # Add QBS pain state if present
+        qbs_data = state.metadata.get("qbs", {})
+        pain_data = qbs_data.get("pain_state", {})
+        if pain_data:
+            pain_topics = pain_data.get("pain_topics", [])
+            if pain_topics:
+                topic_summaries = []
+                for topic in pain_topics[:3]:  # Top 3 most recent
+                    summary = (
+                        f"- {topic.get('topic', 'Unknown')} "
+                        f"(depth: {topic.get('depth', 'unknown')})"
+                    )
+                    if topic.get("business_impact"):
+                        summary += f" -- impact: {topic['business_impact']}"
+                    topic_summaries.append(summary)
+                parts.append(
+                    "\nIdentified Pain Points:\n"
+                    + "\n".join(topic_summaries)
+                )
+
+        # Add expansion opportunities if present
+        expansion_data = qbs_data.get("expansion", {})
+        detected = expansion_data.get("detected_contacts", [])
+        if detected:
+            parts.append(
+                f"\nExpansion Opportunities: {len(detected)} contact(s) "
+                f"detected for multi-threading"
+            )
 
         return "\n".join(parts)
 
