@@ -63,6 +63,16 @@ class Settings(BaseSettings):
     GOOGLE_DELEGATED_USER_EMAIL: str = ""  # Admin email for domain-wide delegation
     GOOGLE_CHAT_SPACE_ID: str = ""  # Default Google Chat space for internal team notifications
 
+    # Meeting Capabilities -- External Service API Keys (Phase 6)
+    RECALL_AI_API_KEY: str = ""
+    RECALL_AI_REGION: str = "us-west-2"
+    DEEPGRAM_API_KEY: str = ""
+    ELEVENLABS_API_KEY: str = ""
+    ELEVENLABS_VOICE_ID: str = ""
+    HEYGEN_API_KEY: str = ""
+    HEYGEN_AVATAR_ID: str = ""  # Default avatar; tenant-specific overrides later
+    MEETING_BOT_WEBAPP_URL: str = ""  # URL where the Output Media webapp is hosted
+
 
 @lru_cache
 def get_settings() -> Settings:
