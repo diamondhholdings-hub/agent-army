@@ -166,12 +166,15 @@ Plans:
   3. Real-time speech-to-text captures the meeting conversation and the agent generates responses within the latency budget (target under 1 second end-to-end)
   4. Meeting recordings are captured, stored, and searchable -- feeding back into the agent's knowledge of the account
   5. Structured meeting minutes (summary, action items, decisions) are generated and automatically distributed to stakeholders within minutes of meeting end
-**Plans**: TBD
+**Plans**: 6 plans in 4 waves
 
 Plans:
-- [ ] 06-01: Meeting briefing generation and Google Meet bot integration
-- [ ] 06-02: Avatar representation and real-time response pipeline
-- [ ] 06-03: Recording capture, minutes generation, and stakeholder distribution
+- [ ] 06-01-PLAN.md -- Meeting data foundation: schemas, models, migration, repository, Calendar service (Wave 1)
+- [ ] 06-02-PLAN.md -- Pre-meeting pipeline: CalendarMonitor and BriefingGenerator (Wave 2, depends on 06-01)
+- [ ] 06-03-PLAN.md -- Recall.ai bot management and real-time service wrappers: STT, TTS, Avatar (Wave 2, depends on 06-01)
+- [ ] 06-04-PLAN.md -- Real-time pipeline: TurnDetector, SilenceChecker, RealtimePipeline, Output Media webapp (Wave 3, depends on 06-01, 06-03)
+- [ ] 06-05-PLAN.md -- Post-meeting pipeline: MinutesGenerator with map-reduce, MinutesDistributor (Wave 2, depends on 06-01)
+- [ ] 06-06-PLAN.md -- API endpoints, WebSocket, main.py wiring, and integration tests (Wave 4, depends on all)
 
 ### Phase 7: Intelligence & Autonomy
 **Goal**: The Sales Agent operates with autonomous intelligence -- consolidating data across all channels, recognizing patterns, pursuing revenue goals self-directedly, adapting to geographic norms, and being clonable per sales rep
@@ -207,7 +210,7 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 4.1. Agent Learning & Performance Feedback | 3/3 | Complete | 2026-02-12 |
 | 4.2. QBS Methodology Integration | 4/4 | Complete | 2026-02-12 |
 | 5. Deal Management | 6/6 | Complete | 2026-02-12 |
-| 6. Meeting Capabilities | 0/3 | Not started | - |
+| 6. Meeting Capabilities | 0/6 | Planned | - |
 | 7. Intelligence & Autonomy | 0/3 | Not started | - |
 
 ---
