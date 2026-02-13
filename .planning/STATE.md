@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 4.2 (QBS Methodology Integration) -- COMPLETE (including gap closure). Ready for Phase 6 or 7.
+**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plan 01 complete.
 
 ## Current Position
 
-Phase: 4.2 of 9 (QBS Methodology Integration) -- COMPLETE
-Plan: 4 of 4 in phase (04.2-01, 04.2-02, 04.2-03, 04.2-04 complete)
-Status: Phase complete -- all 4 plans delivered (including gap closure)
-Last activity: 2026-02-12 -- Completed 04.2-04-PLAN.md (QBS Main.py Wiring Gap Closure)
+Phase: 6 of 9 (Meeting Capabilities)
+Plan: 1 of ? in phase (06-01 complete)
+Status: In progress
+Last activity: 2026-02-13 -- Completed 06-01-PLAN.md (Meeting Data Foundation)
 
-Progress: [################################--] ~84% (34 plans completed, Phases 6-7 pending)
+Progress: [#################################-] ~86% (35 plans completed, Phase 6 remaining plans + Phase 7 pending)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 34
+- Total plans completed: 35
 - Average duration: 6 min
-- Total execution time: ~3h 39min
+- Total execution time: ~3h 44min
 
 **By Phase:**
 
@@ -34,10 +34,11 @@ Progress: [################################--] ~84% (34 plans completed, Phases 
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
 | 05-deal-management | 6/6 | 29 min | 5 min |
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
+| 06-meeting-capabilities | 1/? | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 04.2-04 (1 min), 04.2-03 (6 min), 04.2-02 (6 min), 04.2-01 (5 min), 05-06 (3 min)
-- Trend: Consistent -- averaging 4 min per plan
+- Last 5 plans: 06-01 (5 min), 04.2-04 (1 min), 04.2-03 (6 min), 04.2-02 (6 min), 04.2-01 (5 min)
+- Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
 
@@ -215,6 +216,12 @@ Recent decisions affecting current work:
 - [04.2-03]: Pain state READ-ONLY in _get_qbs_guidance, WRITE-ONLY in _handle_process_reply -- single mutation point
 - [04.2-03]: QBS processing placed BEFORE state_repository.save_state for single DB persistence call
 - [04.2-04]: QBS initialization inside Phase 4 try/except (not separate block) -- failure scope matches SalesAgent lifecycle
+- [06-01]: No FK constraints in meeting tables (application-level referential integrity, consistent with Phase 5 pattern)
+- [06-01]: JSON columns for meeting structured data with Pydantic model_dump(mode="json")/model_validate() round-tripping
+- [06-01]: TranscriptModel dual storage: entries_data JSON for real-time append + full_text Text for search
+- [06-01]: Calendar service static methods for event parsing (no API call needed for invite/meet/attendee checks)
+- [06-01]: CALENDAR_SCOPES as module-level constant for reuse across calendar services
+- [06-01]: MeetingModel unique constraint on (tenant_id, google_event_id) for calendar event dedup
 
 ### Roadmap Evolution
 
@@ -233,10 +240,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 714/714 passing as of 04.2-04 completion (all QBS functionality wired and active).
+- Full test suite: 749/749 passing as of 06-01 completion (714 prior + 35 meeting foundation tests).
 
 ## Session Continuity
 
-Last session: 2026-02-12T19:22:13Z
-Stopped at: Completed 04.2-04-PLAN.md (QBS Main.py Wiring Gap Closure) -- Phase 4.2 fully COMPLETE
+Last session: 2026-02-13T14:29:53Z
+Stopped at: Completed 06-01-PLAN.md (Meeting Data Foundation) -- Phase 6 plan 01 complete
 Resume file: None
