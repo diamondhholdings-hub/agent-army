@@ -319,14 +319,16 @@ async def generate_briefing(
     Otherwise generates via BriefingGenerator.
     """
     repo = _get_meeting_repository(request)
-    briefing_gen = _get_briefing_generator(request)
 
-    # Check for cached briefing
+    # Check for cached briefing first (no generator needed)
     existing = await repo.get_briefing(
         tenant.tenant_id, meeting_id, body.format
     )
     if existing is not None:
         return _briefing_to_response(existing)
+
+    # Need to generate -- now require briefing generator
+    briefing_gen = _get_briefing_generator(request)
 
     # Get the meeting for context
     meeting = await repo.get_meeting(tenant.tenant_id, meeting_id)

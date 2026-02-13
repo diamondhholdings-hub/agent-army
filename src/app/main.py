@@ -269,6 +269,117 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.deal_hook = None
         app.state.sync_engine = None
 
+    # ── Phase 6: Meeting Capabilities ──────────────────────────────
+    try:
+        from src.app.meetings.repository import MeetingRepository
+        from src.app.meetings.calendar.monitor import CalendarMonitor
+        from src.app.meetings.calendar.briefing import BriefingGenerator
+        from src.app.meetings.bot.recall_client import RecallClient
+        from src.app.meetings.bot.manager import BotManager
+        from src.app.meetings.minutes.generator import MinutesGenerator
+        from src.app.meetings.minutes.distributor import MinutesDistributor
+        from src.app.core.database import get_tenant_session as _get_meeting_session
+
+        meeting_repo = MeetingRepository(session_factory=_get_meeting_session)
+        app.state.meeting_repository = meeting_repo
+
+        # Calendar service (reconstruct GSuite auth if credentials configured)
+        calendar_service = None
+        try:
+            if settings.GOOGLE_SERVICE_ACCOUNT_FILE:
+                from src.app.services.gsuite import GSuiteAuthManager as _GSuiteAuth
+                from src.app.services.gsuite.calendar import GoogleCalendarService
+
+                _gsuite_auth = _GSuiteAuth(
+                    service_account_file=settings.GOOGLE_SERVICE_ACCOUNT_FILE,
+                    delegated_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+                )
+                calendar_service = GoogleCalendarService(auth_manager=_gsuite_auth)
+        except Exception:
+            log.warning("phase6.calendar_service_init_failed", exc_info=True)
+
+        # Briefing generator
+        llm_service = getattr(app.state, "llm_service", None)
+        deal_repo = getattr(app.state, "deal_repository", None)
+        briefing_gen = BriefingGenerator(
+            repository=meeting_repo,
+            llm_service=llm_service,
+            deal_repository=deal_repo,
+        )
+        app.state.briefing_generator = briefing_gen
+
+        # Recall.ai bot management
+        recall_client = None
+        bot_manager = None
+        if settings.RECALL_AI_API_KEY:
+            recall_client = RecallClient(
+                api_key=settings.RECALL_AI_API_KEY,
+                region=settings.RECALL_AI_REGION,
+            )
+            bot_manager = BotManager(
+                recall_client=recall_client,
+                repository=meeting_repo,
+                settings=settings,
+            )
+        app.state.bot_manager = bot_manager
+
+        # Real-time pipeline API keys (stored for per-meeting pipeline creation)
+        app.state.deepgram_api_key = settings.DEEPGRAM_API_KEY
+        app.state.elevenlabs_api_key = settings.ELEVENLABS_API_KEY
+        app.state.elevenlabs_voice_id = settings.ELEVENLABS_VOICE_ID
+        app.state.heygen_api_key = settings.HEYGEN_API_KEY
+        app.state.heygen_avatar_id = settings.HEYGEN_AVATAR_ID
+
+        # Minutes pipeline
+        minutes_gen = MinutesGenerator(repository=meeting_repo, llm_service=llm_service)
+        # Gmail service: reconstruct or get from app.state
+        _gmail_svc = None
+        try:
+            if settings.GOOGLE_SERVICE_ACCOUNT_FILE:
+                from src.app.services.gsuite import GmailService as _GmailSvc
+                from src.app.services.gsuite import GSuiteAuthManager as _GSuiteAuth2
+
+                _gsuite_auth2 = _GSuiteAuth2(
+                    service_account_file=settings.GOOGLE_SERVICE_ACCOUNT_FILE,
+                    delegated_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+                )
+                _gmail_svc = _GmailSvc(
+                    auth_manager=_gsuite_auth2,
+                    default_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+                )
+        except Exception:
+            log.warning("phase6.gmail_service_init_failed", exc_info=True)
+
+        minutes_dist = MinutesDistributor(
+            repository=meeting_repo,
+            gmail_service=_gmail_svc,
+        )
+        app.state.minutes_generator = minutes_gen
+        app.state.minutes_distributor = minutes_dist
+
+        # Calendar monitor with poll loop
+        if calendar_service:
+            calendar_monitor = CalendarMonitor(
+                calendar_service=calendar_service,
+                repository=meeting_repo,
+                briefing_generator=briefing_gen,
+                bot_manager=bot_manager,
+            )
+            app.state.calendar_monitor = calendar_monitor
+            log.info("phase6.calendar_monitor_ready")
+        else:
+            app.state.calendar_monitor = None
+
+        log.info("phase6.meeting_capabilities_initialized")
+    except Exception as exc:
+        log.warning("phase6.meeting_capabilities_init_failed", error=str(exc))
+        app.state.meeting_repository = None
+        app.state.briefing_generator = None
+        app.state.bot_manager = None
+        app.state.minutes_generator = None
+        app.state.minutes_distributor = None
+        app.state.calendar_monitor = None
+
     yield
 
     # ── Shutdown ──────────────────────────────────────────────────────────
