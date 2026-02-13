@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plan 01 complete.
+**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plans 01-02 complete.
 
 ## Current Position
 
 Phase: 6 of 9 (Meeting Capabilities)
-Plan: 1 of ? in phase (06-01 complete)
+Plan: 2 of ? in phase (06-01, 06-02 complete)
 Status: In progress
-Last activity: 2026-02-13 -- Completed 06-01-PLAN.md (Meeting Data Foundation)
+Last activity: 2026-02-13 -- Completed 06-02-PLAN.md (Pre-Meeting Pipeline)
 
-Progress: [#################################-] ~86% (35 plans completed, Phase 6 remaining plans + Phase 7 pending)
+Progress: [####################################] ~90% (36 plans completed, Phase 6 remaining plans + Phase 7 pending)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 35
+- Total plans completed: 36
 - Average duration: 6 min
-- Total execution time: ~3h 44min
+- Total execution time: ~3h 50min
 
 **By Phase:**
 
@@ -34,10 +34,10 @@ Progress: [#################################-] ~86% (35 plans completed, Phase 6
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
 | 05-deal-management | 6/6 | 29 min | 5 min |
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
-| 06-meeting-capabilities | 1/? | 5 min | 5 min |
+| 06-meeting-capabilities | 2/? | 11 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-01 (5 min), 04.2-04 (1 min), 04.2-03 (6 min), 04.2-02 (6 min), 04.2-01 (5 min)
+- Last 5 plans: 06-02 (6 min), 06-01 (5 min), 04.2-04 (1 min), 04.2-03 (6 min), 04.2-02 (6 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -222,6 +222,12 @@ Recent decisions affecting current work:
 - [06-01]: Calendar service static methods for event parsing (no API call needed for invite/meet/attendee checks)
 - [06-01]: CALENDAR_SCOPES as module-level constant for reuse across calendar services
 - [06-01]: MeetingModel unique constraint on (tenant_id, google_event_id) for calendar event dedup
+- [06-02]: CalendarMonitor classifies attendees by exact email match (AGENT), domain suffix (INTERNAL), fallback (EXTERNAL)
+- [06-02]: BriefingGenerator uses model='reasoning' for LLM content (quality over latency -- briefings not time-critical)
+- [06-02]: Rule-based fallback provides deal-stage-specific objectives and talk tracks for all 8 stages
+- [06-02]: Adaptive briefing format uses repository history lookup for overlapping external attendees to determine detail level
+- [06-02]: Last-minute meetings get immediate briefing (degraded lead time > no briefing per CONTEXT.md)
+- [06-02]: Idempotent briefing keyed by meeting_id; rescheduled meetings (status reset to SCHEDULED) get new briefings
 
 ### Roadmap Evolution
 
@@ -240,10 +246,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 749/749 passing as of 06-01 completion (714 prior + 35 meeting foundation tests).
+- Full test suite: 780/780 passing as of 06-02 completion (749 prior + 31 pre-meeting pipeline tests).
 
 ## Session Continuity
 
-Last session: 2026-02-13T14:29:53Z
-Stopped at: Completed 06-01-PLAN.md (Meeting Data Foundation) -- Phase 6 plan 01 complete
+Last session: 2026-02-13T14:38:21Z
+Stopped at: Completed 06-02-PLAN.md (Pre-Meeting Pipeline) -- Phase 6 plan 02 complete
 Resume file: None
