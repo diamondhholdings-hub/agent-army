@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plans 01, 02, 03, 05 complete.
+**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plans 01, 02, 03, 04, 05 complete.
 
 ## Current Position
 
 Phase: 6 of 9 (Meeting Capabilities)
-Plan: 4 of 6 in phase (06-01, 06-02, 06-03, 06-05 complete)
+Plan: 5 of 6 in phase (06-01, 06-02, 06-03, 06-04, 06-05 complete)
 Status: In progress
-Last activity: 2026-02-13 -- Completed 06-03-PLAN.md (Bot Services & Real-Time Wrappers)
+Last activity: 2026-02-13 -- Completed 06-04-PLAN.md (Real-Time Pipeline & Output Media Webapp)
 
-Progress: [######################################] ~95% (38 plans completed, 06-04 + 06-06 remaining)
+Progress: [#######################################] ~97.5% (39 plans completed, 06-06 remaining)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 38
+- Total plans completed: 39
 - Average duration: 6 min
-- Total execution time: ~4h 2min
+- Total execution time: ~4h 13min
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: [######################################] ~95% (38 plans completed, 06-
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
 | 05-deal-management | 6/6 | 29 min | 5 min |
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
-| 06-meeting-capabilities | 4/6 | 23 min | 6 min |
+| 06-meeting-capabilities | 5/6 | 34 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-03 (6 min), 06-05 (6 min), 06-02 (6 min), 06-01 (5 min), 04.2-04 (1 min)
-- Trend: Consistent -- averaging 5 min per plan
+- Last 5 plans: 06-04 (11 min), 06-03 (6 min), 06-05 (6 min), 06-02 (6 min), 06-01 (5 min)
+- Trend: Consistent -- averaging 7 min per plan
 
 *Updated after each plan completion*
 
@@ -234,6 +234,12 @@ Recent decisions affecting current work:
 - [06-03]: HeyGenAvatar 'repeat' task_type for speak (exact text reproduction; LLM reasoning handled externally)
 - [06-03]: Idle reactions mapped to text cues for avatar behavior (nod/interested/thinking)
 - [06-03]: Silent MP3 placeholder in automatic_audio_output config enables output_audio REST endpoint
+- [06-04]: Pipeline uses model='fast' (Haiku-class) for real-time responses (not reasoning model) per RESEARCH.md
+- [06-04]: [CONF:X.XX] prefix pattern for LLM confidence signaling; SILENCE_TOKEN ("[SILENCE]") for explicit no-speak
+- [06-04]: Three-gate silence check: turn-taking -> internal rep -> confidence, ALL must pass before speaking
+- [06-04]: Latency degradation: 3+ consecutive budget overruns (>1000ms) triggers switch to shorter prompts
+- [06-04]: Webapp uses esbuild (not webpack/vite) for lightweight bundling; only dependency: livekit-client
+- [06-04]: MockLLM class (not AsyncMock) for pipeline testing to avoid hasattr attribute leak issues
 - [06-05]: Minutes use model='reasoning' (Claude Sonnet) since generation is not latency-sensitive (RESEARCH.md)
 - [06-05]: Map-reduce threshold MAX_TOKENS_PER_CHUNK=12000 (~15 min) using CHARS_PER_TOKEN=4.0 (matching 03-02)
 - [06-05]: Chunk overlap: last 2 speaker turns from previous chunk for context continuity
@@ -257,10 +263,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 833/833 passing as of 06-03 completion (809 prior + 24 bot services tests).
+- Full test suite: 866/866 passing as of 06-04 completion (833 prior + 33 realtime pipeline tests).
 
 ## Session Continuity
 
-Last session: 2026-02-13T14:38:57Z
-Stopped at: Completed 06-03-PLAN.md (Bot Services & Real-Time Wrappers) -- Phase 6 plan 03 complete
+Last session: 2026-02-13T14:53:26Z
+Stopped at: Completed 06-04-PLAN.md (Real-Time Pipeline & Output Media Webapp) -- Phase 6 plan 04 complete
 Resume file: None
