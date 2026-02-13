@@ -1,0 +1,17 @@
+{
+  "name": "meeting-bot-webapp",
+  "version": "1.0.0",
+  "description": "Output Media webapp for Recall.ai bot camera -- captures meeting audio, routes through STT, receives LLM responses, renders HeyGen avatar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/app.js --bundle --outfile=dist/app.js --format=esm --platform=browser --target=es2020",
+    "dev": "esbuild src/app.js --bundle --outfile=dist/app.js --format=esm --platform=browser --target=es2020 --watch --servedir=src"
+  },
+  "dependencies": {
+    "livekit-client": "^2.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  }
+}

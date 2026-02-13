@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Bot - Output Media</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    #avatar-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #status {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      color: #aaa;
+      font: 10px/1.4 monospace;
+      background: rgba(0,0,0,0.5);
+      padding: 4px 8px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #status .ok { color: #4ade80; }
+    #status .err { color: #f87171; }
+    #status .pending { color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <video id="avatar-video" autoplay playsinline></video>
+  <div id="status">Initializing...</div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
