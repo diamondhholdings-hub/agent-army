@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plans 01, 02, 05 complete.
+**Current focus:** Phase 6 (Meeting Capabilities) -- In progress. Plans 01, 02, 03, 05 complete.
 
 ## Current Position
 
 Phase: 6 of 9 (Meeting Capabilities)
-Plan: 3 of ? in phase (06-01, 06-02, 06-05 complete)
+Plan: 4 of 6 in phase (06-01, 06-02, 06-03, 06-05 complete)
 Status: In progress
-Last activity: 2026-02-13 -- Completed 06-05-PLAN.md (Minutes Pipeline)
+Last activity: 2026-02-13 -- Completed 06-03-PLAN.md (Bot Services & Real-Time Wrappers)
 
-Progress: [####################################] ~91% (37 plans completed, Phase 6 remaining plans + Phase 7 pending)
+Progress: [######################################] ~95% (38 plans completed, 06-04 + 06-06 remaining)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 37
+- Total plans completed: 38
 - Average duration: 6 min
-- Total execution time: ~3h 56min
+- Total execution time: ~4h 2min
 
 **By Phase:**
 
@@ -34,10 +34,10 @@ Progress: [####################################] ~91% (37 plans completed, Phase
 | 04.1-agent-learning | 3/3 | 19 min | 6 min |
 | 05-deal-management | 6/6 | 29 min | 5 min |
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
-| 06-meeting-capabilities | 3/? | 17 min | 6 min |
+| 06-meeting-capabilities | 4/6 | 23 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 06-05 (6 min), 06-02 (6 min), 06-01 (5 min), 04.2-04 (1 min), 04.2-03 (6 min)
+- Last 5 plans: 06-03 (6 min), 06-05 (6 min), 06-02 (6 min), 06-01 (5 min), 04.2-04 (1 min)
 - Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
@@ -228,6 +228,12 @@ Recent decisions affecting current work:
 - [06-02]: Adaptive briefing format uses repository history lookup for overlapping external attendees to determine detail level
 - [06-02]: Last-minute meetings get immediate briefing (degraded lead time > no briefing per CONTEXT.md)
 - [06-02]: Idempotent briefing keyed by meeting_id; rescheduled meetings (status reset to SCHEDULED) get new briefings
+- [06-03]: RecallClient uses httpx.AsyncClient per-request (not shared) for clean lifecycle with tenacity retry
+- [06-03]: BotManager entrance greeting is best-effort: TTS failure logs warning, does NOT block meeting participation
+- [06-03]: DeepgramSTT and ElevenLabsTTS use lazy imports (_ensure_X pattern) to avoid hard SDK dependency at module level
+- [06-03]: HeyGenAvatar 'repeat' task_type for speak (exact text reproduction; LLM reasoning handled externally)
+- [06-03]: Idle reactions mapped to text cues for avatar behavior (nod/interested/thinking)
+- [06-03]: Silent MP3 placeholder in automatic_audio_output config enables output_audio REST endpoint
 - [06-05]: Minutes use model='reasoning' (Claude Sonnet) since generation is not latency-sensitive (RESEARCH.md)
 - [06-05]: Map-reduce threshold MAX_TOKENS_PER_CHUNK=12000 (~15 min) using CHARS_PER_TOKEN=4.0 (matching 03-02)
 - [06-05]: Chunk overlap: last 2 speaker turns from previous chunk for context continuity
@@ -251,10 +257,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 809/809 passing as of 06-05 completion (780 prior + 29 minutes pipeline tests).
+- Full test suite: 833/833 passing as of 06-03 completion (809 prior + 24 bot services tests).
 
 ## Session Continuity
 
-Last session: 2026-02-13T14:38:34Z
-Stopped at: Completed 06-05-PLAN.md (Minutes Pipeline) -- Phase 6 plan 05 complete
+Last session: 2026-02-13T14:38:57Z
+Stopped at: Completed 06-03-PLAN.md (Bot Services & Real-Time Wrappers) -- Phase 6 plan 03 complete
 Resume file: None
