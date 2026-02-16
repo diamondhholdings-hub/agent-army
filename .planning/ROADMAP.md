@@ -186,12 +186,15 @@ Plans:
   3. Sales Agent tracks its own performance metrics (dollars identified, dollars sold, average deal time, closing rate) and self-directs toward revenue targets without human prompting
   4. Sales Agent adapts behavior for geographic context -- different communication styles, relationship expectations, and decision-making norms for APAC, EMEA, and Americas
   5. Agent cloning system allows replication with different persona per sales rep -- each regional director gets their own Sales Agent tuned to their style
-**Plans**: TBD
+**Plans**: 6 plans in 4 waves
 
 Plans:
-- [ ] 07-01: Cross-channel data consolidation and pattern recognition
-- [ ] 07-02: Self-directed goal tracking and proactive outreach
-- [ ] 07-03: Geographic customization and agent cloning system
+- [ ] 07-01-PLAN.md -- Intelligence data foundation: schemas, models, repository, and migration (Wave 1)
+- [ ] 07-02-PLAN.md -- Geographic adapter and agent cloning/persona system (Wave 1)
+- [ ] 07-03-PLAN.md -- Cross-channel data consolidation: EntityLinker, ContextSummarizer, CustomerViewService (Wave 2, depends on 07-01)
+- [ ] 07-04-PLAN.md -- Pattern recognition: detectors, PatternRecognitionEngine, InsightGenerator (Wave 2, depends on 07-01)
+- [ ] 07-05-PLAN.md -- Autonomy engine: GuardrailChecker, GoalTracker, AutonomyEngine, ProactiveScheduler (Wave 3, depends on 07-01, 07-03, 07-04)
+- [ ] 07-06-PLAN.md -- API endpoints, main.py wiring, prompt integration, and integration tests (Wave 4, depends on all)
 
 ## Progress
 
@@ -210,9 +213,9 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 4.1. Agent Learning & Performance Feedback | 3/3 | Complete | 2026-02-12 |
 | 4.2. QBS Methodology Integration | 4/4 | Complete | 2026-02-12 |
 | 5. Deal Management | 6/6 | Complete | 2026-02-12 |
-| 6. Meeting Capabilities | 0/6 | Planned | - |
-| 7. Intelligence & Autonomy | 0/3 | Not started | - |
+| 6. Meeting Capabilities | 6/6 | Complete | 2026-02-13 |
+| 7. Intelligence & Autonomy | 0/6 | Planned | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-12 after Phase 4.2 insertion*
+*Last updated: 2026-02-16 after Phase 7 planning*
