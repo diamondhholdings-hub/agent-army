@@ -250,6 +250,11 @@ Recent decisions affecting current work:
 - [06-06]: Webhook endpoint has no tenant auth; optional X-Recall-Token validation
 - [06-06]: Phase 6 init reconstructs GSuiteAuthManager/GmailService from settings (not Phase 4 local variables)
 - [06-06]: WebSocket sends silence response when no pipeline attached (graceful no-op for dev/testing)
+- [07-01]: No FK constraints in intelligence tables (application-level referential integrity, consistent with Phase 5/6 pattern)
+- [07-01]: GIN indexes on pattern_data and action_data JSONB columns for efficient pattern/action queries
+- [07-01]: IntelligenceRepository returns Dict[str, Any] (not Pydantic schemas) -- lightweight; downstream composes as needed
+- [07-01]: Goal auto-complete: update_goal_progress auto-sets status to "completed" when current_value >= target_value
+- [07-01]: InMemoryIntelligenceRepository test double mirrors full interface for fast unit testing without DB
 - [07-02]: GeographicAdapter composes RegionalNuances (not inherits) -- clean separation between knowledge and prompt generation
 - [07-02]: CloneRepository as Protocol interface enables in-memory test doubles without mock libraries
 - [07-02]: Dimension interpolation uses 3 bands: <0.3 low, 0.3-0.7 mid, >0.7 high for clear prompt guidance
@@ -274,10 +279,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 939/939 passing as of 07-02 completion (893 prior + 46 persona tests).
+- Full test suite: 1001/1001 passing as of 07-01 completion (939 prior + 62 intelligence data tests).
 
 ## Session Continuity
 
-Last session: 2026-02-16T19:02:49Z
-Stopped at: Completed 07-02-PLAN.md (Geographic Adaptation & Agent Cloning)
+Last session: 2026-02-16T19:05:29Z
+Stopped at: Completed 07-01-PLAN.md (Intelligence Data Layer)
 Resume file: None
