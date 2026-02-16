@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 7 (Intelligence & Autonomy) -- In progress. 5/6 plans complete.
+**Current focus:** Phase 7 (Intelligence & Autonomy) -- COMPLETE. All 6/6 plans done. Phase 8 ready.
 
 ## Current Position
 
 Phase: 7 of 9 (Intelligence & Autonomy)
-Plan: 5 of 6 in phase (07-01, 07-02, 07-03, 07-04, 07-05 complete)
-Status: In progress
-Last activity: 2026-02-16 -- Completed 07-05-PLAN.md (Autonomy System)
+Plan: 6 of 6 in phase (07-01, 07-02, 07-03, 07-04, 07-05, 07-06 complete)
+Status: Phase 7 COMPLETE
+Last activity: 2026-02-16 -- Completed 07-06-PLAN.md (API Wiring & Integration)
 
-Progress: [#######################################.] 98% (45/46 plans completed across all phases)
+Progress: [########################################] 100% (46/46 plans completed across all phases)
 
 ## Performance Metrics
 
@@ -35,10 +35,10 @@ Progress: [#######################################.] 98% (45/46 plans completed 
 | 05-deal-management | 6/6 | 29 min | 5 min |
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
 | 06-meeting-capabilities | 6/6 | 41 min | 7 min |
-| 07-intelligence-autonomy | 5/6 | ~30 min | 6 min |
+| 07-intelligence-autonomy | 6/6 | ~37 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-05 (6 min), 07-04 (6 min), 07-03 (8 min), 07-02 (5 min), 07-01 (5 min)
+- Last 5 plans: 07-06 (7 min), 07-05 (6 min), 07-04 (6 min), 07-03 (8 min), 07-02 (5 min)
 - Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
@@ -278,6 +278,11 @@ Recent decisions affecting current work:
 - [07-05]: Rule-based pattern-to-action mapping; LLM refinement is optional placeholder
 - [07-05]: Critical risk -> escalation (approval required); medium risk -> follow-up (autonomous)
 - [07-05]: Intelligence scheduler tasks return int count for monitoring effectiveness
+- [07-06]: Persona prompt section injected AFTER methodology (Voss/QBS/BANT/MEDDIC), BEFORE Critical Rules, preventing methodology override
+- [07-06]: build_system_prompt accepts optional persona_section="" for full backward compatibility with existing callers
+- [07-06]: All 10 Phase 7 app.state attributes set to None in except block for graceful 503 fallback
+- [07-06]: Intelligence scheduler tasks cancel during shutdown alongside Phase 4.1 learning tasks
+- [07-06]: _get_intelligence_service(request, service_name) pattern for 503 fallback (matching learning.py pattern)
 
 ### Roadmap Evolution
 
@@ -296,10 +301,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 1092/1092 passing as of 07-05 completion (1055 prior + 37 autonomy tests).
+- Full test suite: 1116/1116 passing as of 07-06 completion (1092 prior + 24 intelligence API/wiring tests).
 
 ## Session Continuity
 
-Last session: 2026-02-16T19:27:00Z
-Stopped at: Completed 07-05-PLAN.md (Autonomy System)
+Last session: 2026-02-16T19:37:00Z
+Stopped at: Completed 07-06-PLAN.md (API Wiring & Integration) -- Phase 7 COMPLETE
 Resume file: None
