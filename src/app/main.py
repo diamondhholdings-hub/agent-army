@@ -380,6 +380,101 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.minutes_distributor = None
         app.state.calendar_monitor = None
 
+    # ── Phase 7: Intelligence & Autonomy ──────────────────────────────
+    try:
+        from src.app.intelligence.repository import IntelligenceRepository
+        from src.app.intelligence.consolidation.entity_linker import EntityLinker
+        from src.app.intelligence.consolidation.summarizer import ContextSummarizer
+        from src.app.intelligence.consolidation.customer_view import CustomerViewService
+        from src.app.intelligence.patterns.engine import create_default_engine
+        from src.app.intelligence.patterns.insights import InsightGenerator
+        from src.app.intelligence.autonomy.guardrails import GuardrailChecker
+        from src.app.intelligence.autonomy.goals import GoalTracker
+        from src.app.intelligence.autonomy.engine import AutonomyEngine
+        from src.app.intelligence.autonomy.scheduler import (
+            setup_intelligence_scheduler,
+            start_intelligence_scheduler_background,
+        )
+        from src.app.intelligence.persona.geographic import GeographicAdapter
+        from src.app.intelligence.persona.cloning import AgentCloneManager
+        from src.app.intelligence.persona.persona_builder import PersonaBuilder
+        from src.app.core.database import get_tenant_session as _get_intel_session
+
+        intel_repo = IntelligenceRepository(session_factory=_get_intel_session)
+        app.state.intelligence_repository = intel_repo
+
+        # Consolidation
+        entity_linker = EntityLinker()
+        summarizer = ContextSummarizer(llm_service=llm_service)
+        customer_view_service = CustomerViewService(
+            conversation_store=getattr(app.state, "conversation_store", None),
+            state_repository=(
+                getattr(app.state, "sales_agent", None)
+                and getattr(app.state.sales_agent, "_state_repository", None)
+            ),
+            deal_repository=getattr(app.state, "deal_repository", None),
+            meeting_repository=getattr(app.state, "meeting_repository", None),
+            summarizer=summarizer,
+            entity_linker=entity_linker,
+        )
+        app.state.customer_view_service = customer_view_service
+
+        # Patterns
+        pattern_engine = create_default_engine(llm_service=llm_service)
+        insight_generator = InsightGenerator(
+            repository=intel_repo,
+            event_bus=getattr(app.state, "event_bus", None),
+        )
+        app.state.pattern_engine = pattern_engine
+        app.state.insight_generator = insight_generator
+
+        # Autonomy
+        guardrail_checker = GuardrailChecker()
+        goal_tracker = GoalTracker(repository=intel_repo)
+        autonomy_engine = AutonomyEngine(
+            guardrail_checker=guardrail_checker,
+            goal_tracker=goal_tracker,
+            pattern_engine=pattern_engine,
+            repository=intel_repo,
+            llm_service=llm_service,
+        )
+        app.state.autonomy_engine = autonomy_engine
+        app.state.goal_tracker = goal_tracker
+        app.state.guardrail_checker = guardrail_checker
+
+        # Persona & Cloning
+        geographic_adapter = GeographicAdapter()
+        clone_manager = AgentCloneManager(repository=intel_repo, llm_service=llm_service)
+        persona_builder = PersonaBuilder(llm_service=llm_service, geographic_adapter=geographic_adapter)
+        app.state.geographic_adapter = geographic_adapter
+        app.state.clone_manager = clone_manager
+        app.state.persona_builder = persona_builder
+
+        # Intelligence scheduler (background tasks)
+        intel_tasks = await setup_intelligence_scheduler(
+            pattern_engine=pattern_engine,
+            autonomy_engine=autonomy_engine,
+            goal_tracker=goal_tracker,
+            insight_generator=insight_generator,
+            customer_view_service=customer_view_service,
+        )
+        await start_intelligence_scheduler_background(intel_tasks, app.state)
+
+        log.info("phase7.intelligence_initialized")
+    except Exception as exc:
+        log.warning("phase7.intelligence_init_failed", error=str(exc))
+        # Set all to None for graceful 503 responses
+        app.state.intelligence_repository = None
+        app.state.customer_view_service = None
+        app.state.pattern_engine = None
+        app.state.insight_generator = None
+        app.state.autonomy_engine = None
+        app.state.goal_tracker = None
+        app.state.guardrail_checker = None
+        app.state.geographic_adapter = None
+        app.state.clone_manager = None
+        app.state.persona_builder = None
+
     yield
 
     # ── Shutdown ──────────────────────────────────────────────────────────
@@ -387,6 +482,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     scheduler_tasks_refs = getattr(app.state, "learning_scheduler_tasks", None)
     if scheduler_tasks_refs:
         for task_ref in scheduler_tasks_refs:
+            task_ref.cancel()
+
+    # Clean up Phase 7 intelligence scheduler tasks
+    intel_scheduler_refs = getattr(app.state, "intelligence_scheduler_tasks", None)
+    if intel_scheduler_refs:
+        for task_ref in intel_scheduler_refs:
             task_ref.cancel()
 
     # Close long-term memory pool if it was initialized

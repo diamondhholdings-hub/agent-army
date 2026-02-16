@@ -227,11 +227,67 @@ _DEAL_STAGE_GUIDANCE: dict[DealStage, str] = {
 # ── Prompt Builders ─────────────────────────────────────────────────────────
 
 
+def build_persona_prompt_section(
+    clone_config: object | None = None,
+    geographic_adapter: object | None = None,
+    region: str | None = None,
+) -> str:
+    """Build a combined persona + geographic prompt section for injection.
+
+    Composes clone persona style guidance and geographic communication
+    adaptation into a single prompt section. Returns an empty string if
+    neither clone config nor geographic adapter is provided.
+
+    This section is designed to be injected AFTER methodology sections
+    (BANT/MEDDIC/QBS/Voss) and BEFORE closing rules, so it affects
+    communication STYLE only -- never the core sales methodology.
+
+    Args:
+        clone_config: Optional clone configuration object. Expected to have
+            a ``persona`` attribute compatible with
+            ``AgentCloneManager.build_clone_prompt_section()``.
+        geographic_adapter: Optional ``GeographicAdapter`` instance for
+            region-specific prompt section generation.
+        region: Optional region code (e.g. ``"apac"``, ``"emea"``).
+            Only used if ``geographic_adapter`` is provided.
+
+    Returns:
+        Combined prompt section string, or empty string if no inputs.
+    """
+    parts: list[str] = []
+
+    if clone_config is not None:
+        try:
+            from src.app.intelligence.persona.cloning import AgentCloneManager
+
+            # Build the clone prompt section using a lightweight manager instance
+            manager = AgentCloneManager(repository=None, llm_service=None)  # type: ignore[arg-type]
+            persona = getattr(clone_config, "persona", clone_config)
+            section = manager.build_clone_prompt_section(
+                persona, geographic_adapter=geographic_adapter
+            )
+            if section.strip():
+                parts.append(section.strip())
+        except Exception:
+            pass  # Graceful degradation -- no persona section
+
+    elif geographic_adapter is not None and region:
+        try:
+            section = geographic_adapter.build_geographic_prompt_section(region)
+            if section.strip():
+                parts.append(section.strip())
+        except Exception:
+            pass  # Graceful degradation -- no geographic section
+
+    return "\n\n".join(parts)
+
+
 def build_system_prompt(
     persona: PersonaType,
     channel: Channel,
     deal_stage: DealStage,
     qbs_guidance: str | None = None,
+    persona_section: str = "",
 ) -> str:
     """Compose a full system prompt from persona, channel, and deal stage.
 
@@ -243,6 +299,7 @@ def build_system_prompt(
     - Persona-specific communication guidance
     - Channel-specific formatting guidance
     - Deal stage context and focus areas
+    - Optional clone persona / geographic adaptation section
     - Key behavioral rules
 
     Args:
@@ -252,6 +309,9 @@ def build_system_prompt(
         qbs_guidance: Optional dynamic QBS guidance section produced by
             the QBS engine for the current conversation context. When
             provided, appended after the base QBS methodology prompt.
+        persona_section: Optional clone persona / geographic prompt section.
+            Injected AFTER methodology sections but BEFORE closing rules.
+            Defaults to empty string so all existing callers are unaffected.
 
     Returns:
         Complete system prompt string ready for LLM consumption.
@@ -261,7 +321,7 @@ def build_system_prompt(
     stage_guidance = _DEAL_STAGE_GUIDANCE[deal_stage]
 
     # Build persona section
-    persona_section = (
+    base_persona_section = (
         f"**Your Communication Style (adapted for {persona.value} persona):**\n"
         f"- Tone: {persona_config['tone']}\n"
         f"- Formality: {persona_config['formality']}\n"
@@ -313,11 +373,16 @@ def build_system_prompt(
         parts.append(qbs_guidance)
 
     parts.extend([
-        persona_section,
+        base_persona_section,
         channel_section,
         f"**Current Deal Stage:**\n{stage_guidance}",
-        rules_section,
     ])
+
+    # Inject clone persona / geographic section AFTER methodology but BEFORE rules
+    if persona_section:
+        parts.append(persona_section)
+
+    parts.append(rules_section)
 
     return "\n\n".join(parts)
 
