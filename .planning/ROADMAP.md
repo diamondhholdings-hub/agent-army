@@ -196,13 +196,32 @@ Plans:
 - [ ] 07-05-PLAN.md -- Autonomy engine: GuardrailChecker, GoalTracker, AutonomyEngine, ProactiveScheduler (Wave 3, depends on 07-01, 07-03, 07-04)
 - [ ] 07-06-PLAN.md -- API endpoints, main.py wiring, prompt integration, and integration tests (Wave 4, depends on all)
 
+### Phase 8: Meeting Real-Time Completion (GAP CLOSURE)
+**Goal**: Complete Phase 06 meeting capabilities by wiring real-time conversation pipeline, deploying avatar webapp, and enabling proactive meeting detection
+**Depends on**: Phase 6, Phase 7
+**Requirements**: SA-13, SA-14, SA-15 (complete partial implementations)
+**Gap Closure**: Closes 3 critical gaps from v1 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. RealtimePipeline instances are created when bot joins meeting and stored as `app.state.pipeline_{meeting_id}` -- WebSocket handler finds operational pipeline
+  2. Output Media webapp is deployed to accessible URL (Vercel/Netlify) and MEETING_BOT_WEBAPP_URL environment variable is configured
+  3. CalendarMonitor background task is started in main.py lifespan and polls for upcoming meetings every 15 minutes
+  4. Integration test verifies end-to-end flow: bot join → pipeline creation → WebSocket connection → transcript handling → cleanup on bot leave
+  5. Manual test confirms avatar renders in meeting grid when bot joins Google Meet
+**Plans**: 3 plans in 2 waves
+
+Plans:
+- [ ] 08-01-PLAN.md -- RealtimePipeline factory and bot lifecycle wiring (Wave 1)
+- [ ] 08-02-PLAN.md -- Output Media webapp deployment and configuration (Wave 1)
+- [ ] 08-03-PLAN.md -- CalendarMonitor background task and integration tests (Wave 2, depends on 08-01, 08-02)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 4.1 -> 4.2 -> 5 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 4.1 -> 4.2 -> 5 -> 6 -> 7 -> 8
 Note: Phase 4.1 was inserted to add learning capabilities before deal management complexity.
 Note: Phase 4.2 was inserted to add QBS methodology throughout all sales stages.
 Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after Phase 4.2.
+Note: Phase 8 closes critical gaps from v1 milestone audit (Phase 6 real-time conversation incomplete).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -214,8 +233,9 @@ Note: Phases 5 and 6 both depend on Phase 4 and could execute in parallel after 
 | 4.2. QBS Methodology Integration | 4/4 | Complete | 2026-02-12 |
 | 5. Deal Management | 6/6 | Complete | 2026-02-12 |
 | 6. Meeting Capabilities | 6/6 | Complete | 2026-02-13 |
-| 7. Intelligence & Autonomy | 0/6 | Planned | - |
+| 7. Intelligence & Autonomy | 6/6 | Complete | 2026-02-16 |
+| 8. Meeting Real-Time Completion | 0/3 | Planned | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-16 after Phase 7 planning*
+*Last updated: 2026-02-17 after Phase 8 gap closure planning*
