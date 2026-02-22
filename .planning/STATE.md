@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 8 (Meeting Real-time Completion) -- Gap closure phase. 1/3 plans complete.
+**Current focus:** Phase 8 (Meeting Real-time Completion) -- Gap closure phase. 3/3 plans complete. Phase complete.
 
 ## Current Position
 
 Phase: 8 of 9 (Meeting Real-time Completion)
-Plan: 1 of 3 in phase (08-01 complete)
-Status: In progress
-Last activity: 2026-02-22 -- Completed 08-01-PLAN.md (Pipeline Factory & Bot Lifecycle Wiring)
+Plan: 3 of 3 in phase (08-01, 08-02, 08-03 complete)
+Status: Phase complete
+Last activity: 2026-02-22 -- Completed 08-03-PLAN.md (Calendar Monitor Startup & Pipeline Integration Tests)
 
-Progress: [########################################░░] 96% (47/49 plans completed across all phases)
+Progress: [############################################] 100% (49/49 plans completed across all phases)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 47
+- Total plans completed: 49
 - Average duration: 6 min
-- Total execution time: ~5h 1min
+- Total execution time: ~5h 9min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [########################################░░] 96% (47/49 plans comp
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
 | 06-meeting-capabilities | 6/6 | 41 min | 7 min |
 | 07-intelligence-autonomy | 6/6 | ~37 min | 6 min |
-| 08-meeting-realtime-completion | 1/3 | 4 min | 4 min |
+| 08-meeting-realtime-completion | 3/3 | 10 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 08-01 (4 min), 07-06 (7 min), 07-05 (6 min), 07-04 (6 min), 07-03 (8 min)
-- Trend: Consistent -- averaging 6 min per plan
+- Last 5 plans: 08-03 (4 min), 08-02 (2 min), 08-01 (4 min), 07-06 (7 min), 07-05 (6 min)
+- Trend: Consistent -- averaging 5 min per plan
 
 *Updated after each plan completion*
 
@@ -292,6 +292,9 @@ Recent decisions affecting current work:
 - [08-02]: Static import for livekit-client in heygen-session.js (esbuild es2020 target does not support top-level await)
 - [08-02]: Vercel framework: null for plain static site deployment (no Next.js/Vite detection)
 - [08-02]: Build chain: esbuild bundles JS to dist/app.js, cp copies src/index.html to dist/
+- [08-03]: POLL_INTERVAL_SECONDS changed from 60 to 900 (15 minutes per roadmap)
+- [08-03]: Calendar monitor task started only when both calendar_monitor and GOOGLE_DELEGATED_USER_EMAIL are available
+- [08-03]: Pipeline cleanup on shutdown iterates bot_manager._active_pipelines calling shutdown on each
 
 ### Roadmap Evolution
 
@@ -310,10 +313,10 @@ Timeline of urgent insertions and roadmap adjustments:
 - Docker not installed on dev machine -- using Homebrew services instead. CI/CD pipeline uses GitHub Actions runners which have Docker by default.
 - GCP services not yet configured -- deployment pipeline will not function until user completes setup (Cloud Run API, Secret Manager API, Workload Identity Pool, service account).
 - Google Workspace credentials not yet configured -- GSuite services operational with mocked APIs in tests but require real service account and domain-wide delegation for production use.
-- Full test suite: 1116/1116 passing as of 07-06 completion (1092 prior + 24 intelligence API/wiring tests).
+- Full test suite: 1123/1123 passing as of 08-03 completion (1116 prior + 7 pipeline lifecycle/calendar monitor integration tests).
 
 ## Session Continuity
 
-Last session: 2026-02-22T17:43:44Z
-Stopped at: Completed 08-01-PLAN.md (Pipeline Factory & Bot Lifecycle Wiring)
+Last session: 2026-02-22T18:00:35Z
+Stopped at: Completed 08-03-PLAN.md (Calendar Monitor Startup & Pipeline Integration Tests)
 Resume file: None
