@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "name": "agent-army-meeting-bot",
+  "buildCommand": "npm install && npm run build && cp src/index.html dist/index.html",
+  "outputDirectory": "dist",
+  "framework": null
+}

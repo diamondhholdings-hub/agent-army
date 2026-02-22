@@ -19,15 +19,8 @@
 
 // Import livekit-client for WebRTC room management
 // This is the only npm dependency per RESEARCH Pitfall 2
-let Room, RoomEvent;
-
-try {
-  const lk = await import('livekit-client');
-  Room = lk.Room;
-  RoomEvent = lk.RoomEvent;
-} catch (err) {
-  console.warn('[heygen-session] livekit-client not available:', err.message);
-}
+// Static import for esbuild bundling (top-level await not supported in es2020 target)
+import { Room, RoomEvent } from 'livekit-client';
 
 // HeyGen Streaming API endpoint
 const HEYGEN_API_BASE = 'https://api.heygen.com/v1';
