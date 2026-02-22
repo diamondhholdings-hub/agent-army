@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Sales Agent autonomously executing enterprise sales methodology at top-1% level -- the foundation for the entire 8-agent crew
-**Current focus:** Phase 8 (Meeting Real-time Completion) -- Gap closure phase. 1/3 plans in progress (08-02 at checkpoint).
+**Current focus:** Phase 8 (Meeting Real-time Completion) -- Gap closure phase. 1/3 plans complete.
 
 ## Current Position
 
 Phase: 8 of 9 (Meeting Real-time Completion)
-Plan: 2 of 3 in phase (08-02 at checkpoint, awaiting deployment verification)
+Plan: 1 of 3 in phase (08-01 complete)
 Status: In progress
-Last activity: 2026-02-22 -- 08-02-PLAN.md Task 1 complete, checkpoint pending
+Last activity: 2026-02-22 -- Completed 08-01-PLAN.md (Pipeline Factory & Bot Lifecycle Wiring)
 
 Progress: [########################################░░] 96% (47/49 plans completed across all phases)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 46
+- Total plans completed: 47
 - Average duration: 6 min
-- Total execution time: ~4h 57min
+- Total execution time: ~5h 1min
 
 **By Phase:**
 
@@ -36,9 +36,10 @@ Progress: [########################################░░] 96% (47/49 plans comp
 | 04.2-qbs-methodology | 4/4 | 18 min | 5 min |
 | 06-meeting-capabilities | 6/6 | 41 min | 7 min |
 | 07-intelligence-autonomy | 6/6 | ~37 min | 6 min |
+| 08-meeting-realtime-completion | 1/3 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 07-06 (7 min), 07-05 (6 min), 07-04 (6 min), 07-03 (8 min), 07-02 (5 min)
+- Last 5 plans: 08-01 (4 min), 07-06 (7 min), 07-05 (6 min), 07-04 (6 min), 07-03 (8 min)
 - Trend: Consistent -- averaging 6 min per plan
 
 *Updated after each plan completion*
@@ -283,6 +284,11 @@ Recent decisions affecting current work:
 - [07-06]: All 10 Phase 7 app.state attributes set to None in except block for graceful 503 fallback
 - [07-06]: Intelligence scheduler tasks cancel during shutdown alongside Phase 4.1 learning tasks
 - [07-06]: _get_intelligence_service(request, service_name) pattern for 503 fallback (matching learning.py pattern)
+- [08-01]: _NoOpAvatar stub class (not MagicMock) for avatar fallback -- production-safe no-op with speak/react/stop methods
+- [08-01]: Cross-tenant get_meeting_by_bot_id query safe because bot_id is globally unique (Recall.ai assigned)
+- [08-01]: Pipeline stored as app.state.pipeline_{meeting.id} with UUID hyphenated string format
+- [08-01]: Pipeline creation is best-effort: missing API keys skip creation with warning log
+- [08-01]: TTS client for entrance greeting created separately in main.py (independent of pipeline lifecycle)
 - [08-02]: Static import for livekit-client in heygen-session.js (esbuild es2020 target does not support top-level await)
 - [08-02]: Vercel framework: null for plain static site deployment (no Next.js/Vite detection)
 - [08-02]: Build chain: esbuild bundles JS to dist/app.js, cp copies src/index.html to dist/
@@ -308,6 +314,6 @@ Timeline of urgent insertions and roadmap adjustments:
 
 ## Session Continuity
 
-Last session: 2026-02-22T17:42:40Z
-Stopped at: 08-02-PLAN.md Task 1 complete, checkpoint pending (deploy webapp to Vercel)
+Last session: 2026-02-22T17:43:44Z
+Stopped at: Completed 08-01-PLAN.md (Pipeline Factory & Bot Lifecycle Wiring)
 Resume file: None
