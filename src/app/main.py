@@ -308,6 +308,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         )
         app.state.briefing_generator = briefing_gen
 
+        # TTS client for entrance greeting (best-effort)
+        _tts_client_for_bot = None
+        if settings.ELEVENLABS_API_KEY:
+            try:
+                from src.app.meetings.realtime.tts import ElevenLabsTTS as _ElevenLabsTTS
+                _tts_client_for_bot = _ElevenLabsTTS(
+                    api_key=settings.ELEVENLABS_API_KEY,
+                    voice_id=settings.ELEVENLABS_VOICE_ID,
+                )
+            except Exception:
+                log.warning("phase6.tts_client_init_failed", exc_info=True)
+
         # Recall.ai bot management
         recall_client = None
         bot_manager = None
@@ -320,6 +332,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
                 recall_client=recall_client,
                 repository=meeting_repo,
                 settings=settings,
+                tts_client=_tts_client_for_bot,
+                deepgram_api_key=settings.DEEPGRAM_API_KEY,
+                elevenlabs_api_key=settings.ELEVENLABS_API_KEY,
+                elevenlabs_voice_id=settings.ELEVENLABS_VOICE_ID,
+                heygen_api_key=settings.HEYGEN_API_KEY,
+                heygen_avatar_id=settings.HEYGEN_AVATAR_ID,
+                llm_service=llm_service,
+                app_state=app.state,
             )
         app.state.bot_manager = bot_manager
 
