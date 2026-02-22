@@ -72,6 +72,9 @@ class Settings(BaseSettings):
     HEYGEN_API_KEY: str = ""
     HEYGEN_AVATAR_ID: str = ""  # Default avatar; tenant-specific overrides later
     MEETING_BOT_WEBAPP_URL: str = ""  # URL where the Output Media webapp is hosted
+    MEETING_BOT_NAME: str = "Sales Agent"  # Bot display name in meetings
+    COMPANY_NAME: str = ""  # Company name for entrance greeting
+    RECALL_AI_WEBHOOK_TOKEN: str = ""  # Optional webhook validation token
 
 
 @lru_cache
