@@ -36,7 +36,7 @@ patterns-established:
 # Metrics
 duration: 2min
 completed: 2026-02-22
-status: partial (checkpoint reached)
+status: complete
 ---
 
 # Phase 8 Plan 2: Webapp Deployment Config Summary
@@ -104,13 +104,16 @@ Each task was committed atomically:
 ## Issues Encountered
 None
 
-## User Setup Required
-None - no external service configuration required at this stage. Deployment and MEETING_BOT_WEBAPP_URL configuration will be handled at checkpoint.
+## Checkpoint: Deployment Complete
+
+- Deployed to Vercel: `https://agent-army-meeting-bot.vercel.app`
+- `MEETING_BOT_WEBAPP_URL=https://agent-army-meeting-bot.vercel.app` added to `.env`
+- Gap 2 fully closed: BotManager._build_output_media_url() now has a live URL
 
 ## Next Phase Readiness
-- Webapp is deployment-ready (vercel.json configured, build succeeds)
-- Checkpoint pending: User needs to deploy to Vercel and set MEETING_BOT_WEBAPP_URL env var
-- After deployment, MEETING_BOT_WEBAPP_URL bridges the gap between BotManager._build_output_media_url() and the actual hosted webapp
+- Webapp live at https://agent-army-meeting-bot.vercel.app ✓
+- MEETING_BOT_WEBAPP_URL configured in .env ✓
+- Gap 2 closed: Recall.ai headless browser can load the Output Media webapp
 
 ---
 *Phase: 08-meeting-realtime-completion*
