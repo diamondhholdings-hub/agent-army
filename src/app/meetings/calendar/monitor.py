@@ -40,7 +40,7 @@ logger = structlog.get_logger(__name__)
 
 BRIEFING_LEAD_TIME_HOURS = 2
 EARLY_JOIN_MINUTES = 3
-POLL_INTERVAL_SECONDS = 60
+POLL_INTERVAL_SECONDS = 900  # 15 minutes per roadmap
 
 
 class CalendarMonitor:

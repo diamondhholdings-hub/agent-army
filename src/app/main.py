@@ -6,6 +6,7 @@ CORS, Sentry, lifespan events for database initialization, and the v1 API router
 
 from __future__ import annotations
 
+import asyncio
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 
@@ -378,6 +379,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.minutes_distributor = minutes_dist
 
         # Calendar monitor with poll loop
+        calendar_monitor = None
         if calendar_service:
             calendar_monitor = CalendarMonitor(
                 calendar_service=calendar_service,
@@ -389,6 +391,28 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             log.info("phase6.calendar_monitor_ready")
         else:
             app.state.calendar_monitor = None
+
+        # Start calendar monitoring background task
+        if calendar_monitor and settings.GOOGLE_DELEGATED_USER_EMAIL:
+            try:
+                _monitor_task = asyncio.create_task(
+                    calendar_monitor.run_poll_loop(
+                        agent_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+                        tenant_id="system",
+                    ),
+                    name="calendar_monitor_poll",
+                )
+                app.state.calendar_monitor_task = _monitor_task
+                log.info(
+                    "phase6.calendar_monitor_started",
+                    agent_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
+                    poll_interval_seconds=900,
+                )
+            except Exception:
+                log.warning("phase6.calendar_monitor_start_failed", exc_info=True)
+                app.state.calendar_monitor_task = None
+        else:
+            app.state.calendar_monitor_task = None
 
         log.info("phase6.meeting_capabilities_initialized")
     except Exception as exc:
@@ -509,6 +533,29 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     if intel_scheduler_refs:
         for task_ref in intel_scheduler_refs:
             task_ref.cancel()
+
+    # Clean up Phase 6 calendar monitor task
+    calendar_monitor_task = getattr(app.state, "calendar_monitor_task", None)
+    if calendar_monitor_task and not calendar_monitor_task.done():
+        _cm = getattr(app.state, "calendar_monitor", None)
+        if _cm is not None:
+            _cm.stop()
+        calendar_monitor_task.cancel()
+        try:
+            await calendar_monitor_task
+        except asyncio.CancelledError:
+            pass
+        log.info("phase6.calendar_monitor_stopped")
+
+    # Clean up active real-time pipelines
+    bot_mgr = getattr(app.state, "bot_manager", None)
+    if bot_mgr is not None:
+        for mid, pipeline in getattr(bot_mgr, "_active_pipelines", {}).items():
+            try:
+                if hasattr(pipeline, "shutdown"):
+                    await pipeline.shutdown()
+            except Exception:
+                log.warning("phase6.pipeline_cleanup_error", meeting_id=mid, exc_info=True)
 
     # Close long-term memory pool if it was initialized
     ltm = getattr(app.state, "long_term_memory", None)
