@@ -206,6 +206,29 @@ class MeetingRepository:
                 return None
             return _model_to_meeting(model)
 
+    async def get_meeting_by_bot_id(self, bot_id: str) -> Meeting | None:
+        """Get a meeting by its Recall.ai bot ID (cross-tenant lookup).
+
+        Unlike other repository methods, this does NOT filter by tenant_id
+        because the Recall.ai webhook only provides the bot_id -- the tenant
+        is not known until the meeting is found.
+
+        Args:
+            bot_id: Recall.ai bot UUID string.
+
+        Returns:
+            Meeting if found, None otherwise.
+        """
+        async for session in self._session_factory():
+            stmt = select(MeetingModel).where(
+                MeetingModel.bot_id == bot_id,
+            )
+            result = await session.execute(stmt)
+            model = result.scalar_one_or_none()
+            if model is None:
+                return None
+            return _model_to_meeting(model)
+
     async def get_upcoming_meetings(
         self, tenant_id: str, from_time: datetime, to_time: datetime
     ) -> list[Meeting]:
