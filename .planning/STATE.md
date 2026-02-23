@@ -48,6 +48,8 @@ Progress: [████░░░░░░░░░░░░░░░░░░░
 - Single LLM call for all qualification signals (anti-pattern: no per-field calls)
 - Production secrets via GitHub Actions env_vars, not GCP Secret Manager (09-02)
 - SHA-tagged Docker images reused from staging to production (no rebuild)
+- Health endpoint checks 4 deps: DB, Redis, Qdrant, LiteLLM; "local"/"no_keys" count as healthy in dev (09-01)
+- Base64-encoded service account JSON for containerized deployments via get_service_account_path() (09-01)
 
 ### Open Blockers/Concerns
 
@@ -64,5 +66,5 @@ Progress: [████░░░░░░░░░░░░░░░░░░░
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 09-02-PLAN.md
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None

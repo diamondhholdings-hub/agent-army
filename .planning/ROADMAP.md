@@ -56,7 +56,7 @@ Full details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   5. A complete demo scenario runs end-to-end: meeting join with avatar, conversation capture, deal stage update, and email follow-up — all using real Skyvera data
 **Plans**: 5 plans
 Plans:
-- [ ] 09-01-PLAN.md — Code fixes: health endpoint (Qdrant + LiteLLM), config (Notion + base64 SA), NotionAdapter wiring
+- [x] 09-01-PLAN.md — Code fixes: health endpoint (Qdrant + LiteLLM), config (Notion + base64 SA), NotionAdapter wiring
 - [x] 09-02-PLAN.md — CI/CD pipeline: production deploy job + smoke test script
 - [ ] 09-03-PLAN.md — Credential provisioning guide + developer provisions all secrets
 - [ ] 09-04-PLAN.md — First production deploy + SC1/SC2 verification
@@ -199,7 +199,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 6. Meeting Capabilities | v1.0 | 6/6 | Complete | 2026-02-13 |
 | 7. Intelligence & Autonomy | v1.0 | 6/6 | Complete | 2026-02-16 |
 | 8. Meeting Real-Time Completion | v1.0 | 3/3 | Complete | 2026-02-22 |
-| 9. Production Deployment | v2.0 | 1/5 | In progress | - |
+| 9. Production Deployment | v2.0 | 2/5 | In progress | - |
 | 10. Solution Architect Agent | v2.0 | 0/TBD | Not started | - |
 | 11. Project Manager Agent | v2.0 | 0/TBD | Not started | - |
 | 12. Business Analyst Agent | v2.0 | 0/TBD | Not started | - |
