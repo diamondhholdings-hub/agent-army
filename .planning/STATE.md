@@ -66,5 +66,11 @@ Progress: [██████░░░░░░░░░░░░░░░░░
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 09-03-PLAN.md (Task 1 done, Task 2 checkpoint:human-action pending)
-Resume file: None
+Stopped at: Phase 9 execution paused at 09-03 credential checkpoint (Task 2 pending human action)
+Resume: /gsd:execute-phase 9 — then type "credentials configured" at the 09-03 checkpoint
+
+**To resume Phase 9 execution:**
+1. Follow docs/credential-setup.md to provision all 25 GitHub Actions secrets + external services
+2. Run /gsd:execute-phase 9 (Wave 1 plans 09-01 and 09-02 already complete; 09-03 will re-run its auto task and re-show the checkpoint)
+3. Type "credentials configured" to proceed to Wave 2 (first production deploy + SC1/SC2 verification)
+4. Then Wave 3 (demo guide + SC3/SC4/SC5 manual verification)
