@@ -45,3 +45,6 @@ qdrant_data/
 # Node.js
 node_modules/
 package-lock.json
+
+# Git worktrees
+.worktrees/
