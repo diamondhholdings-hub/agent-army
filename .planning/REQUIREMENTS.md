@@ -15,11 +15,11 @@
 
 ### Solution Architect Agent (SA)
 
-- [ ] **SA-01**: Solution Architect can map technical requirements from sales conversations and meeting transcripts into structured requirement documents
-- [ ] **SA-02**: Solution Architect can generate architecture overview narratives for proposed solutions tailored to prospect technical stack
-- [ ] **SA-03**: Solution Architect can scope POCs — deliverables, timeline, resource estimates, success criteria
-- [ ] **SA-04**: Solution Architect can prepare pre-emptive technical objection responses based on product knowledge and known competitor weaknesses
-- [ ] **SA-05**: Solution Architect integrates with Sales Agent handoff — receives technical questions from Sales Agent, returns answers + documentation
+- [x] **SA-01**: Solution Architect can map technical requirements from sales conversations and meeting transcripts into structured requirement documents
+- [x] **SA-02**: Solution Architect can generate architecture overview narratives for proposed solutions tailored to prospect technical stack
+- [x] **SA-03**: Solution Architect can scope POCs — deliverables, timeline, resource estimates, success criteria
+- [x] **SA-04**: Solution Architect can prepare pre-emptive technical objection responses based on product knowledge and known competitor weaknesses
+- [x] **SA-05**: Solution Architect integrates with Sales Agent handoff — receives technical questions from Sales Agent, returns answers + documentation
 
 ### Project Manager Agent (PM)
 
@@ -133,11 +133,11 @@
 | PROD-03 | Phase 9 | Pending |
 | PROD-04 | Phase 9 | Pending |
 | PROD-05 | Phase 9 | Pending |
-| SA-01 | Phase 10 | Pending |
-| SA-02 | Phase 10 | Pending |
-| SA-03 | Phase 10 | Pending |
-| SA-04 | Phase 10 | Pending |
-| SA-05 | Phase 10 | Pending |
+| SA-01 | Phase 10 | Complete |
+| SA-02 | Phase 10 | Complete |
+| SA-03 | Phase 10 | Complete |
+| SA-04 | Phase 10 | Complete |
+| SA-05 | Phase 10 | Complete |
 | PM-01 | Phase 11 | Pending |
 | PM-02 | Phase 11 | Pending |
 | PM-03 | Phase 11 | Pending |
