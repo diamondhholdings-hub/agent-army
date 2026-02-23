@@ -228,6 +228,37 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.coaching_extractor = None
         app.state.analytics_service = None
 
+    # ── Phase 10: Solution Architect Agent ────────────────────────────
+    # Follows the Sales Agent pattern: instantiate with shared services,
+    # register in AgentRegistry. Fail-tolerant -- SA unavailability
+    # does not prevent app startup.
+
+    try:
+        from src.app.agents.solution_architect import (
+            SolutionArchitectAgent,
+            create_sa_registration,
+        )
+
+        sa_registration = create_sa_registration()
+
+        sa_agent = SolutionArchitectAgent(
+            registration=sa_registration,
+            llm_service=getattr(app.state, "llm_service", None)
+            or locals().get("llm_service"),
+            rag_pipeline=getattr(app.state, "rag_pipeline", None)
+            or locals().get("rag_pipeline"),
+        )
+
+        # Register in agent registry
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(sa_registration)
+            sa_registration._agent_instance = sa_agent
+        app.state.solution_architect = sa_agent
+        log.info("phase10.solution_architect_initialized")
+    except Exception as exc:
+        log.warning("phase10.solution_architect_init_failed", error=str(exc))
+
     # ── Phase 5: Deal Management Module Initialization ──────────────
     try:
         from src.app.deals.repository import DealRepository
