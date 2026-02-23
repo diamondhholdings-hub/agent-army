@@ -113,9 +113,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         gsuite_auth = None
         gmail_service = None
         chat_service = None
-        if settings.GOOGLE_SERVICE_ACCOUNT_FILE:
+        sa_path = settings.get_service_account_path()
+        if sa_path:
             gsuite_auth = GSuiteAuthManager(
-                service_account_file=settings.GOOGLE_SERVICE_ACCOUNT_FILE,
+                service_account_file=sa_path,
                 delegated_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
             )
             gmail_service = GmailService(
@@ -257,9 +258,25 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         )
 
         # CRM sync engine (external adapter configured per tenant later)
+        _notion_adapter = None
+        if settings.NOTION_TOKEN and settings.NOTION_DATABASE_ID:
+            try:
+                from src.app.deals.crm.notion import NotionAdapter
+
+                _notion_adapter = NotionAdapter(
+                    token=settings.NOTION_TOKEN,
+                    database_id=settings.NOTION_DATABASE_ID,
+                )
+                log.info(
+                    "phase5.notion_adapter_initialized",
+                    database_id=settings.NOTION_DATABASE_ID,
+                )
+            except Exception:
+                log.warning("phase5.notion_adapter_init_failed", exc_info=True)
+
         app.state.sync_engine = SyncEngine(
             primary=PostgresAdapter(repository=deal_repository, tenant_id=""),
-            external=None,  # Configured per-tenant when Notion token is set
+            external=_notion_adapter,
             field_ownership=DEFAULT_FIELD_OWNERSHIP,
         )
 
@@ -287,12 +304,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         # Calendar service (reconstruct GSuite auth if credentials configured)
         calendar_service = None
         try:
-            if settings.GOOGLE_SERVICE_ACCOUNT_FILE:
+            _sa_path_cal = settings.get_service_account_path()
+            if _sa_path_cal:
                 from src.app.services.gsuite import GSuiteAuthManager as _GSuiteAuth
                 from src.app.services.gsuite.calendar import GoogleCalendarService
 
                 _gsuite_auth = _GSuiteAuth(
-                    service_account_file=settings.GOOGLE_SERVICE_ACCOUNT_FILE,
+                    service_account_file=_sa_path_cal,
                     delegated_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
                 )
                 calendar_service = GoogleCalendarService(auth_manager=_gsuite_auth)
@@ -356,12 +374,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         # Gmail service: reconstruct or get from app.state
         _gmail_svc = None
         try:
-            if settings.GOOGLE_SERVICE_ACCOUNT_FILE:
+            _sa_path_gmail = settings.get_service_account_path()
+            if _sa_path_gmail:
                 from src.app.services.gsuite import GmailService as _GmailSvc
                 from src.app.services.gsuite import GSuiteAuthManager as _GSuiteAuth2
 
                 _gsuite_auth2 = _GSuiteAuth2(
-                    service_account_file=settings.GOOGLE_SERVICE_ACCOUNT_FILE,
+                    service_account_file=_sa_path_gmail,
                     delegated_user_email=settings.GOOGLE_DELEGATED_USER_EMAIL,
                 )
                 _gmail_svc = _GmailSvc(

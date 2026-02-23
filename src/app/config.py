@@ -63,6 +63,13 @@ class Settings(BaseSettings):
     GOOGLE_DELEGATED_USER_EMAIL: str = ""  # Admin email for domain-wide delegation
     GOOGLE_CHAT_SPACE_ID: str = ""  # Default Google Chat space for internal team notifications
 
+    # Notion CRM Integration
+    NOTION_TOKEN: str = ""
+    NOTION_DATABASE_ID: str = ""
+
+    # Base64-encoded Google service account JSON (for containerized deployments)
+    GOOGLE_SERVICE_ACCOUNT_JSON_B64: str = ""
+
     # Meeting Capabilities -- External Service API Keys (Phase 6)
     RECALL_AI_API_KEY: str = ""
     RECALL_AI_REGION: str = "us-west-2"
@@ -75,6 +82,28 @@ class Settings(BaseSettings):
     MEETING_BOT_NAME: str = "Sales Agent"  # Bot display name in meetings
     COMPANY_NAME: str = ""  # Company name for entrance greeting
     RECALL_AI_WEBHOOK_TOKEN: str = ""  # Optional webhook validation token
+
+    def get_service_account_path(self) -> str | None:
+        """Return path to Google service account JSON file.
+
+        Prefers GOOGLE_SERVICE_ACCOUNT_FILE (direct path) if set.
+        Falls back to decoding GOOGLE_SERVICE_ACCOUNT_JSON_B64 into a temp file
+        for containerized deployments where mounting a file is impractical.
+        Returns None if neither is configured.
+        """
+        if self.GOOGLE_SERVICE_ACCOUNT_FILE:
+            return self.GOOGLE_SERVICE_ACCOUNT_FILE
+        if self.GOOGLE_SERVICE_ACCOUNT_JSON_B64:
+            import base64
+            import os
+            import tempfile
+
+            decoded = base64.b64decode(self.GOOGLE_SERVICE_ACCOUNT_JSON_B64)
+            tmp_path = os.path.join(tempfile.gettempdir(), "gcp-service-account.json")
+            with open(tmp_path, "wb") as f:
+                f.write(decoded)
+            return tmp_path
+        return None
 
 
 @lru_cache
