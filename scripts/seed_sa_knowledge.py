@@ -58,11 +58,16 @@ def _resolve_content_type(filename: str) -> str | None:
 
 
 async def seed(tenant_id: str, data_dir: str, dry_run: bool = False) -> None:
-    """Ingest SA knowledge documents into the vector store.
+    """Ingest SA knowledge documents and product docs into the vector store.
+
+    Processes two directories:
+    1. data_dir (SA knowledge): content_type overridden by filename prefix map.
+    2. data/products/ (product docs): metadata_overrides=None so MetadataExtractor
+       reads existing YAML frontmatter.
 
     Args:
         tenant_id: Tenant ID to associate with ingested chunks.
-        data_dir: Directory containing the .md knowledge files.
+        data_dir: Directory containing the .md SA knowledge files.
         dry_run: If True, only report what would be ingested without
             connecting to Qdrant or generating embeddings.
     """
@@ -78,16 +83,27 @@ async def seed(tenant_id: str, data_dir: str, dry_run: bool = False) -> None:
         print(f"Error: data directory does not exist: {data_path}")
         sys.exit(1)
 
-    # Collect .md files
-    md_files = sorted(data_path.glob("*.md"))
-    if not md_files:
-        print(f"No .md files found in {data_path}")
+    # Resolve products directory relative to project root (two levels up from scripts/)
+    project_root = Path(__file__).parent.parent
+    products_path = project_root / "data" / "products"
+
+    # Collect .md files from SA knowledge dir
+    sa_files = sorted(data_path.glob("*.md"))
+    # Collect top-level .md files from products dir (no subdirectories)
+    product_files = sorted(products_path.glob("*.md")) if products_path.is_dir() else []
+
+    if not sa_files and not product_files:
+        print(f"No .md files found in {data_path} or {products_path}")
         sys.exit(1)
 
-    print(f"Found {len(md_files)} markdown files in {data_path}")
-    for f in md_files:
+    print(f"Found {len(sa_files)} SA knowledge docs in {data_path}")
+    for f in sa_files:
         ct = _resolve_content_type(f.name)
         print(f"  {f.name} -> content_type: {ct or '(auto-detect)'}")
+
+    print(f"\nFound {len(product_files)} product docs in {products_path}")
+    for f in product_files:
+        print(f"  {f.name} -> content_type: (auto-detect from frontmatter)")
 
     if dry_run:
         print("\n[DRY RUN] No documents were ingested.")
@@ -115,12 +131,14 @@ async def seed(tenant_id: str, data_dir: str, dry_run: bool = False) -> None:
         extractor=extractor,
     )
 
-    # Process each file
-    total_chunks = 0
-    total_errors = 0
-    results_summary: list[dict[str, object]] = []
+    sa_chunks = 0
+    sa_errors = 0
+    product_chunks = 0
+    product_errors = 0
 
-    for md_file in md_files:
+    # ── Pass 1: SA knowledge docs ─────────────────────────────────────────
+    print(f"\nIngesting SA knowledge docs...")
+    for md_file in sa_files:
         content_type = _resolve_content_type(md_file.name)
         metadata_overrides: dict[str, str] | None = None
         if content_type:
@@ -132,13 +150,8 @@ async def seed(tenant_id: str, data_dir: str, dry_run: bool = False) -> None:
                 tenant_id=tenant_id,
                 metadata_overrides=metadata_overrides,
             )
-            total_chunks += result.chunks_created
-            total_errors += len(result.errors)
-            results_summary.append({
-                "file": md_file.name,
-                "chunks": result.chunks_created,
-                "errors": result.errors,
-            })
+            sa_chunks += result.chunks_created
+            sa_errors += len(result.errors)
 
             status = "OK" if not result.errors else "ERRORS"
             print(f"  [{status}] {md_file.name}: {result.chunks_created} chunks")
@@ -147,26 +160,49 @@ async def seed(tenant_id: str, data_dir: str, dry_run: bool = False) -> None:
 
         except Exception as e:
             error_msg = str(e)
-            # Check for Qdrant connection errors
             if _is_connection_error(e):
                 _handle_connection_error(e)
                 return
-            total_errors += 1
-            results_summary.append({
-                "file": md_file.name,
-                "chunks": 0,
-                "errors": [error_msg],
-            })
+            sa_errors += 1
             print(f"  [FAIL] {md_file.name}: {error_msg}")
+
+    # ── Pass 2: Product docs ──────────────────────────────────────────────
+    if product_files:
+        print(f"\nIngesting product docs...")
+        for md_file in product_files:
+            try:
+                result = await pipeline.ingest_document(
+                    file_path=md_file,
+                    tenant_id=tenant_id,
+                    metadata_overrides=None,
+                )
+                product_chunks += result.chunks_created
+                product_errors += len(result.errors)
+
+                status = "OK" if not result.errors else "ERRORS"
+                print(f"  [{status}] {md_file.name}: {result.chunks_created} chunks")
+                for err in result.errors:
+                    print(f"    Error: {err}")
+
+            except Exception as e:
+                error_msg = str(e)
+                if _is_connection_error(e):
+                    _handle_connection_error(e)
+                    return
+                product_errors += 1
+                print(f"  [FAIL] {md_file.name}: {error_msg}")
+
+    total_errors = sa_errors + product_errors
 
     # Print summary
     print(f"\n{'=' * 50}")
     print(f"Seed Summary")
     print(f"{'=' * 50}")
-    print(f"  Tenant:          {tenant_id}")
-    print(f"  Files processed: {len(md_files)}")
-    print(f"  Chunks created:  {total_chunks}")
-    print(f"  Errors:          {total_errors}")
+    print(f"  Tenant:              {tenant_id}")
+    print(f"  SA knowledge docs:   {len(sa_files)} files, {sa_chunks} chunks")
+    print(f"  Product docs:        {len(product_files)} files, {product_chunks} chunks")
+    print(f"  Total chunks:        {sa_chunks + product_chunks}")
+    print(f"  Errors:              {total_errors}")
 
     if total_errors > 0:
         print(f"\nWarning: {total_errors} error(s) occurred during ingestion.")

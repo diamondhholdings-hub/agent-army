@@ -26,6 +26,7 @@ from qdrant_client.models import (
     Filter,
     Fusion,
     FusionQuery,
+    MatchAny,
     MatchValue,
     PayloadSchemaType,
     PointStruct,
@@ -316,9 +317,14 @@ class QdrantKnowledgeStore:
 
         if filters:
             for field, value in filters.items():
-                must_conditions.append(
-                    FieldCondition(key=field, match=MatchValue(value=value))
-                )
+                if isinstance(value, list):
+                    must_conditions.append(
+                        FieldCondition(key=field, match=MatchAny(any=value))
+                    )
+                else:
+                    must_conditions.append(
+                        FieldCondition(key=field, match=MatchValue(value=value))
+                    )
 
         query_filter = Filter(must=must_conditions)
 

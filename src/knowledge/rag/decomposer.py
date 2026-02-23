@@ -30,7 +30,8 @@ Available source types:
 - "conversation": Previous conversation history, past discussions
 
 Available filter fields:
-- "content_type": "product", "methodology", "regional", "positioning", "pricing"
+- "content_type": "product", "methodology", "regional", "positioning", "pricing",
+               "competitor_analysis", "architecture_template", "poc_template"
 - "product_category": "monetization", "charging", "billing"
 - "region": "apac", "emea", "americas", "global"
 

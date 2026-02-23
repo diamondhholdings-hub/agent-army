@@ -111,6 +111,7 @@ class AgenticRAGPipeline:
         query: str,
         tenant_id: str,
         conversation_context: list[ConversationMessage] | None = None,
+        base_filters: dict[str, Any] | None = None,
     ) -> RAGResponse:
         """Execute the full agentic RAG pipeline.
 
@@ -118,6 +119,8 @@ class AgenticRAGPipeline:
             query: The user's natural language query.
             tenant_id: Tenant scope for all operations.
             conversation_context: Optional conversation history for context.
+            base_filters: Optional filters merged into every sub-query after
+                decomposition. LLM-generated filters take precedence on collision.
 
         Returns:
             RAGResponse with answer, sources, sub-queries, and metadata.
@@ -130,6 +133,12 @@ class AgenticRAGPipeline:
 
         # Step 1: Decompose
         state = await self._decompose(state)
+
+        # Merge caller-supplied base_filters into each sub_query.
+        # LLM-generated filters win on key collision.
+        if base_filters:
+            for sq in state.sub_queries:
+                sq.filters = {**base_filters, **sq.filters}
 
         # Steps 2-4: Retrieve-Grade-Rewrite loop
         while state.iterations < self._max_iterations:

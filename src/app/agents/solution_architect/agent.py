@@ -128,6 +128,7 @@ class SolutionArchitectAgent(BaseAgent):
             rag_context = await self._query_rag(
                 query=f"product features methodology for: {transcript[:200]}",
                 tenant_id=tenant_id,
+                content_types=["product", "methodology"],
             )
 
             messages = build_requirements_extraction_prompt(
@@ -172,6 +173,7 @@ class SolutionArchitectAgent(BaseAgent):
             rag_context = await self._query_rag(
                 query=f"architecture template integration patterns for: {tech_stack}",
                 tenant_id=tenant_id,
+                content_types=["architecture_template", "product"],
             )
 
             messages = build_architecture_narrative_prompt(
@@ -217,6 +219,7 @@ class SolutionArchitectAgent(BaseAgent):
             rag_context = await self._query_rag(
                 query="poc template proof of concept planning guidelines",
                 tenant_id=tenant_id,
+                content_types=["poc_template"],
             )
 
             messages = build_poc_scoping_prompt(
@@ -267,6 +270,7 @@ class SolutionArchitectAgent(BaseAgent):
             rag_context = await self._query_rag(
                 query=rag_query,
                 tenant_id=tenant_id,
+                content_types=["competitor_analysis", "positioning"],
             )
 
             messages = build_objection_response_prompt(
@@ -312,6 +316,7 @@ class SolutionArchitectAgent(BaseAgent):
             rag_context = await self._query_rag(
                 query=f"product methodology architecture: {question[:300]}",
                 tenant_id=tenant_id,
+                content_types=["product", "architecture_template", "methodology"],
             )
 
             messages = build_technical_handoff_prompt(
@@ -341,7 +346,12 @@ class SolutionArchitectAgent(BaseAgent):
 
     # ── Helpers ──────────────────────────────────────────────────────────────
 
-    async def _query_rag(self, query: str, tenant_id: str) -> str:
+    async def _query_rag(
+        self,
+        query: str,
+        tenant_id: str,
+        content_types: list[str] | None = None,
+    ) -> str:
         """Query the RAG pipeline for knowledge base context.
 
         Fail-open: returns empty string if the pipeline is None or the
@@ -350,6 +360,8 @@ class SolutionArchitectAgent(BaseAgent):
         Args:
             query: Natural language query for the knowledge base.
             tenant_id: Tenant scope for the RAG pipeline.
+            content_types: Optional list of content_type values to pre-filter
+                results. Forwarded as base_filters to the RAG pipeline.
 
         Returns:
             RAG answer text, or empty string on failure.
@@ -357,10 +369,13 @@ class SolutionArchitectAgent(BaseAgent):
         if self._rag_pipeline is None:
             return ""
 
+        base_filters = {"content_type": content_types} if content_types else None
+
         try:
             rag_response = await self._rag_pipeline.run(
                 query=query,
                 tenant_id=tenant_id,
+                base_filters=base_filters,
             )
             if rag_response and hasattr(rag_response, "answer"):
                 return rag_response.answer or ""
