@@ -133,5 +133,15 @@ The Sales Agent autonomously executes enterprise sales methodology at top-1% lev
 | Agent learning (INSERTED phase) | Agent improves over time from outcomes | ✓ Good — calibration + coaching operational |
 | Pipeline factory on bot join | Create pipeline on in_call_recording, destroy on call_ended | ✓ Good — clean lifecycle, no wasted connections |
 
+## Current Milestone: v2.0 Agent Crew
+
+**Goal:** Expand the validated Sales Agent template into a full 8-agent AI sales organization — with production deployment, voice capability, and cross-agent intelligence.
+
+**Target features:**
+- Production deployment (GCP Cloud Run, Vercel webapp, Google Workspace prod credentials, Notion CRM)
+- 7 remaining agents using Sales Agent as template (Solution Architect, PM, BA, TAM, Customer Success, Collections, BizOps)
+- Sales Agent advanced capabilities (voice calls via Vapi, Target Account Selling, Sandler, competitive battlecards, pricing negotiation)
+- Platform advanced features (cross-agent hive mind, predictive analytics, agent dashboards, tenant admin UI)
+
 ---
-*Last updated: 2026-02-22 after v1.0 milestone completion*
+*Last updated: 2026-02-22 after v2.0 milestone started*
