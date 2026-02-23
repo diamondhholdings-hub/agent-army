@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - id: auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github/providers/github
           service_account: github-actions@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
@@ -28,13 +28,13 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Build and push Docker image
-        run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE --timeout=600
+        run: gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE:${{ github.sha }} --timeout=600
 
       - name: Deploy to Cloud Run (staging)
-        uses: google-github-actions/deploy-cloudrun@v2
+        uses: google-github-actions/deploy-cloudrun@v3
         with:
           service: ${{ env.SERVICE }}-staging
-          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}
           region: ${{ env.REGION }}
           env_vars: |
             ENVIRONMENT=staging
@@ -51,3 +51,72 @@ jobs:
             --cpu=1
             --timeout=300
             --concurrency=80
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github/providers/github
+          service_account: github-actions@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Cloud Run (production)
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v3
+        with:
+          service: sales-agent-production
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/agent-army-api:${{ github.sha }}
+          region: ${{ secrets.GCP_REGION }}
+          env_vars_update_strategy: overwrite
+          env_vars: |
+            ENVIRONMENT=production
+            DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}
+            REDIS_URL=${{ secrets.PROD_REDIS_URL }}
+            JWT_SECRET_KEY=${{ secrets.PROD_JWT_SECRET_KEY }}
+            ANTHROPIC_API_KEY=${{ secrets.PROD_ANTHROPIC_API_KEY }}
+            OPENAI_API_KEY=${{ secrets.PROD_OPENAI_API_KEY }}
+            GOOGLE_SERVICE_ACCOUNT_JSON_B64=${{ secrets.PROD_GOOGLE_SERVICE_ACCOUNT_JSON_B64 }}
+            GOOGLE_DELEGATED_USER_EMAIL=${{ secrets.PROD_GOOGLE_DELEGATED_USER_EMAIL }}
+            NOTION_TOKEN=${{ secrets.PROD_NOTION_TOKEN }}
+            NOTION_DATABASE_ID=${{ secrets.PROD_NOTION_DATABASE_ID }}
+            KNOWLEDGE_QDRANT_URL=${{ secrets.PROD_QDRANT_URL }}
+            KNOWLEDGE_QDRANT_API_KEY=${{ secrets.PROD_QDRANT_API_KEY }}
+            KNOWLEDGE_OPENAI_API_KEY=${{ secrets.PROD_OPENAI_API_KEY }}
+            RECALL_AI_API_KEY=${{ secrets.PROD_RECALL_AI_API_KEY }}
+            DEEPGRAM_API_KEY=${{ secrets.PROD_DEEPGRAM_API_KEY }}
+            ELEVENLABS_API_KEY=${{ secrets.PROD_ELEVENLABS_API_KEY }}
+            ELEVENLABS_VOICE_ID=${{ secrets.PROD_ELEVENLABS_VOICE_ID }}
+            HEYGEN_API_KEY=${{ secrets.PROD_HEYGEN_API_KEY }}
+            HEYGEN_AVATAR_ID=${{ secrets.PROD_HEYGEN_AVATAR_ID }}
+            MEETING_BOT_WEBAPP_URL=${{ secrets.PROD_MEETING_BOT_WEBAPP_URL }}
+            LANGFUSE_PUBLIC_KEY=${{ secrets.PROD_LANGFUSE_PUBLIC_KEY }}
+            LANGFUSE_SECRET_KEY=${{ secrets.PROD_LANGFUSE_SECRET_KEY }}
+            SENTRY_DSN=${{ secrets.PROD_SENTRY_DSN }}
+            CORS_ALLOWED_ORIGINS=${{ secrets.PROD_CORS_ALLOWED_ORIGINS }}
+            COMPANY_NAME=Skyvera
+            MEETING_BOT_NAME=Sales Agent
+          flags: |
+            --min-instances=0
+            --max-instances=10
+            --memory=1Gi
+            --cpu=1
+            --timeout=300
+            --concurrency=80
+            --allow-unauthenticated
+
+      - name: Smoke test production
+        run: |
+          pip install httpx
+          python scripts/verify_production.py \
+            --webapp-url "${{ secrets.PROD_MEETING_BOT_WEBAPP_URL }}" \
+            --backend-url "${{ steps.deploy.outputs.url }}"
