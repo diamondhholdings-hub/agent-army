@@ -11,6 +11,7 @@ The execute() method routes tasks by type to specialized handlers:
 - process_reply: Process incoming customer reply with qualification + escalation + QBS
 - qualify: Force qualification extraction on conversation text
 - recommend_action: Get next-action recommendations
+- dispatch_technical_question: Detect and dispatch technical questions to Solution Architect
 
 Each handler follows the pattern:
 1. Compile context (RAG + conversation history + state)
@@ -136,6 +137,7 @@ class SalesAgent(BaseAgent):
             "process_reply": self._handle_process_reply,
             "qualify": self._handle_qualification,
             "recommend_action": self._handle_recommend_action,
+            "dispatch_technical_question": self._handle_dispatch_technical_question,
         }
 
         handler = handlers.get(task_type)
@@ -585,6 +587,94 @@ class SalesAgent(BaseAgent):
             "next_actions": [a.model_dump() for a in actions],
         }
 
+    async def _handle_dispatch_technical_question(
+        self, task: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Detect and dispatch a technical question to the Solution Architect.
+
+        When the Sales Agent encounters a question beyond its sales domain
+        expertise (e.g., integration architecture, API specifications, security
+        requirements, scalability concerns), it constructs a structured handoff
+        task for the Solution Architect agent.
+
+        The return value contains:
+        - handoff_task: A task dict ready to be routed to the SA agent
+          (type="technical_handoff" matching SA's execute() routing)
+        - question_payload: The validated TechnicalQuestionPayload
+        - status: "dispatched" on success, "failed" on error
+
+        The caller (typically the Supervisor or a test) is responsible for
+        actually routing the handoff_task to the SA agent and returning
+        the TechnicalAnswerPayload response.
+
+        Args:
+            task: Must contain "question" (str). Optional: "deal_id",
+                "prospect_tech_stack", "context_chunks", "account_id",
+                "contact_id".
+            context: Must contain "tenant_id".
+
+        Returns:
+            Dict with handoff_task, question_payload, and status.
+        """
+        from src.app.agents.solution_architect.schemas import (
+            TechnicalQuestionPayload,
+        )
+
+        tenant_id = context.get("tenant_id", "")
+        question = task.get("question", "")
+
+        if not question:
+            return {
+                "status": "failed",
+                "error": "No question provided in task",
+                "handoff_task": None,
+            }
+
+        # Build the typed payload
+        try:
+            payload = TechnicalQuestionPayload(
+                question=question,
+                deal_id=task.get("deal_id", ""),
+                prospect_tech_stack=task.get("prospect_tech_stack"),
+                context_chunks=task.get("context_chunks", []),
+            )
+        except Exception as exc:
+            logger.warning(
+                "technical_question_payload_invalid",
+                error=str(exc),
+                question=question[:100],
+            )
+            return {
+                "status": "failed",
+                "error": f"Invalid payload: {exc}",
+                "handoff_task": None,
+            }
+
+        # Construct the handoff task for the SA agent.
+        # This task dict matches SA's execute() handler routing:
+        # SA expects type="technical_handoff" with question, deal_id, etc.
+        handoff_task = {
+            "type": "technical_handoff",
+            "question": payload.question,
+            "deal_id": payload.deal_id,
+            "prospect_tech_stack": payload.prospect_tech_stack,
+            "context_chunks": payload.context_chunks,
+        }
+
+        logger.info(
+            "technical_question_dispatched",
+            deal_id=payload.deal_id,
+            question_length=len(payload.question),
+            tenant_id=tenant_id,
+        )
+
+        return {
+            "status": "dispatched",
+            "handoff_task": handoff_task,
+            "question_payload": payload.model_dump(),
+            "target_agent_id": "solution_architect",
+        }
+
     # ── Helpers ─────────────────────────────────────────────────────────────
 
     @staticmethod
@@ -679,3 +769,33 @@ class SalesAgent(BaseAgent):
             body_html = f"<p>{body_html.replace(chr(10) + chr(10), '</p><p>').replace(chr(10), '<br>')}</p>"
 
         return subject, body_html
+
+    @staticmethod
+    def _is_technical_question(text: str) -> bool:
+        """Heuristic check whether text contains a technical question.
+
+        Uses keyword matching as a fast pre-filter. For production use,
+        the Supervisor's LLM routing will make the final decision.
+        This heuristic helps the Sales Agent proactively flag questions
+        that should be routed to the Solution Architect.
+
+        Args:
+            text: The message or question text to check.
+
+        Returns:
+            True if text likely contains a technical question.
+        """
+        technical_keywords = {
+            "api", "integration", "webhook", "architecture", "scalability",
+            "latency", "throughput", "uptime", "sla", "sdk", "endpoint",
+            "authentication", "oauth", "ssl", "tls", "encryption",
+            "database", "migration", "schema", "deployment", "kubernetes",
+            "docker", "microservices", "rest", "graphql", "grpc",
+            "compliance", "soc2", "gdpr", "hipaa", "iso27001",
+            "load balancing", "rate limit", "retry", "timeout",
+            "data flow", "etl", "cdc", "sync",
+        }
+        text_lower = text.lower()
+        matches = sum(1 for kw in technical_keywords if kw in text_lower)
+        # Require at least 2 technical keyword matches to reduce false positives
+        return matches >= 2
