@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-02-22)
 
-**Core value:** The Sales Agent is a proven template — autonomously executing enterprise sales methodology at top-1% level, now ready to multiply across 7 additional agent roles
-**Current focus:** v2.0 Agent Crew — defining requirements and roadmap
+**Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
+**Current focus:** v2.0 Agent Crew — Phase 9: Production Deployment
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-22 — Milestone v2.0 started
+Phase: 9 of 19 (Production Deployment)
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-02-22 — v2.0 roadmap created (11 phases, 55 requirements mapped)
 
-Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/? plans, v2.0 in progress)
+Progress: [##########░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/? plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -23,7 +23,7 @@ Progress: [░░░░░░░░░░░░░░░░░░░░░░░
 - Average duration: 6 min/plan
 - Total execution time: ~5h 9min
 
-**By Phase:**
+**By Phase (v1.0):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -40,38 +40,27 @@ Progress: [░░░░░░░░░░░░░░░░░░░░░░░
 
 ## Accumulated Context
 
-### Key Production Setup Needed
-
-- Deploy Output Media webapp: `cd meeting-bot-webapp && vercel --prod` → set `MEETING_BOT_WEBAPP_URL`
-- GCP Cloud Run deployment: configure project, run deploy.yml, verify health checks
-- Google Workspace credentials: service account + domain-wide delegation for production
-- Notion CRM workspace: token + database IDs for bidirectional CRM sync
-
 ### Architecture Decisions Carried Forward
 
 - Sales Agent is the template — all 7 agents clone its structure (LangGraph, supervisor, event bus, RLS, Qdrant tenant namespace)
 - Fail-open pattern throughout — LLM errors return fallback, not 500
-- No auto-progression past NEGOTIATION — close decisions are human-only (preserved for all agents)
-- Async deal workflows before real-time (proven pattern)
+- No auto-progression past NEGOTIATION — close decisions are human-only
 - Single LLM call for all qualification signals (anti-pattern: no per-field calls)
 
 ### Open Blockers/Concerns
 
-- Docker not installed on dev machine — CI/CD uses GitHub Actions runners (Docker available there)
-- Full test suite: 1123/1123 passing as of v1.0 completion
-- GCP Cloud Run not human-verified (requires Cloud Run project setup)
-- Avatar render needs live manual test after Vercel deployment
+- Docker not installed on dev machine — CI/CD uses GitHub Actions runners
+- GCP Cloud Run not human-verified (Phase 9 addresses this)
+- Avatar render needs live manual test after Vercel deployment (Phase 9 addresses this)
 - CalendarMonitor bot-join trigger partially implemented (manual bot join via REST works)
 
-### Roadmap Evolution (v1.0)
+### Roadmap Evolution
 
-v1.0 introduced 2 INSERTED phases and 1 GAP CLOSURE phase:
-- Phase 4.1 (INSERTED): Agent Learning & Performance Feedback
-- Phase 4.2 (INSERTED): QBS Methodology Integration
-- Phase 8 (GAP CLOSURE): Meeting Real-Time Completion
+- v1.0: 10 phases (including 2 INSERTED + 1 GAP CLOSURE), 49 plans
+- v2.0: 11 phases (9-19), 55 requirements across 11 categories
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: v2.0 milestone started — requirements and roadmap being defined
-Resume file: None — run /gsd:new-milestone to continue
+Stopped at: v2.0 roadmap created — ready to plan Phase 9 (Production Deployment)
+Resume file: None — run /gsd:plan-phase 9
