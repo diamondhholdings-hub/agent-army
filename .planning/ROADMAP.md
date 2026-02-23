@@ -74,11 +74,11 @@ Plans:
   5. The Sales Agent can hand off a technical question to the Solution Architect and receive a structured answer back through the event bus
 **Plans**: 5 plans
 Plans:
-- [ ] 10-01-PLAN.md — Shared model extension (content types, handoff types) + SA schemas + prompts
-- [ ] 10-02-PLAN.md — SA agent core implementation (5 capability handlers + capabilities + package init)
-- [ ] 10-03-PLAN.md — Knowledge seed data (competitor analysis, architecture templates, POC templates) + seed script
-- [ ] 10-04-PLAN.md — Registration, main.py wiring + integration tests
-- [ ] 10-05-PLAN.md — Sales Agent technical question dispatch + round-trip handoff test
+- [x] 10-01-PLAN.md — Shared model extension (content types, handoff types) + SA schemas + prompts
+- [x] 10-02-PLAN.md — SA agent core implementation (5 capability handlers + capabilities + package init)
+- [x] 10-03-PLAN.md — Knowledge seed data (competitor analysis, architecture templates, POC templates) + seed script
+- [x] 10-04-PLAN.md — Registration, main.py wiring + integration tests
+- [x] 10-05-PLAN.md — Sales Agent technical question dispatch + round-trip handoff test
 
 ### Phase 11: Project Manager Agent
 **Goal**: A Project Manager agent exists that creates PMBOK-compliant project plans, detects schedule risks, auto-adjusts plans on scope changes, generates status reports, and integrates with CRM
@@ -90,7 +90,13 @@ Plans:
   3. When a scope change is introduced, the Project Manager produces an adjusted plan showing impact on timeline and deliverables
   4. The Project Manager generates a status report and distributes it to stakeholders via email or chat
   5. Project records in the CRM are linked to opportunities, and deal stage updates when project milestones complete
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 11-01-PLAN.md — PM Pydantic schemas (20 models), earned value module, handoff validator registration
+- [ ] 11-02-PLAN.md — PM prompt templates (system prompt + 6 builders) + NotionPMAdapter for CRM operations
+- [ ] 11-03-PLAN.md — ProjectManagerAgent core (6 handlers) + capabilities + scheduler + package init
+- [ ] 11-04-PLAN.md — APScheduler dependency + main.py wiring + integration tests (12 tests)
+- [ ] 11-05-PLAN.md — Sales Agent project trigger dispatch + round-trip handoff tests
 
 ### Phase 12: Business Analyst Agent
 **Goal**: A Business Analyst agent exists that extracts requirements from conversations, performs gap analysis against product capabilities, detects contradictions, generates user stories, and produces process documentation
@@ -207,7 +213,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 8. Meeting Real-Time Completion | v1.0 | 3/3 | Complete | 2026-02-22 |
 | 9. Production Deployment | v2.0 | 2/5 | In progress | - |
 | 10. Solution Architect Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
-| 11. Project Manager Agent | v2.0 | 0/TBD | Not started | - |
+| 11. Project Manager Agent | v2.0 | 0/5 | Not started | - |
 | 12. Business Analyst Agent | v2.0 | 0/TBD | Not started | - |
 | 13. Technical Account Manager Agent | v2.0 | 0/TBD | Not started | - |
 | 14. Customer Success Agent | v2.0 | 0/TBD | Not started | - |
@@ -220,4 +226,4 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 ---
 *Roadmap created: 2026-02-10*
 *v2.0 roadmap added: 2026-02-22*
-*Last updated: 2026-02-22*
+*Last updated: 2026-02-23*
