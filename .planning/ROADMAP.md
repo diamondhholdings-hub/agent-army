@@ -54,7 +54,13 @@ Full details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   3. The Sales Agent can send a Gmail and read a Calendar event using production Google Workspace credentials
   4. The Sales Agent can create and read CRM records in the production Notion workspace
   5. A complete demo scenario runs end-to-end: meeting join with avatar, conversation capture, deal stage update, and email follow-up — all using real Skyvera data
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 09-01-PLAN.md — Code fixes: health endpoint (Qdrant + LiteLLM), config (Notion + base64 SA), NotionAdapter wiring
+- [ ] 09-02-PLAN.md — CI/CD pipeline: production deploy job + smoke test script
+- [ ] 09-03-PLAN.md — Credential provisioning guide + developer provisions all secrets
+- [ ] 09-04-PLAN.md — First production deploy + SC1/SC2 verification
+- [ ] 09-05-PLAN.md — Demo guide + SC3/SC4/SC5 manual verification
 
 ### Phase 10: Solution Architect Agent
 **Goal**: A Solution Architect agent exists that maps technical requirements from sales conversations, generates architecture narratives, scopes POCs, prepares technical objection responses, and integrates with the Sales Agent via handoff protocol
@@ -193,7 +199,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 6. Meeting Capabilities | v1.0 | 6/6 | Complete | 2026-02-13 |
 | 7. Intelligence & Autonomy | v1.0 | 6/6 | Complete | 2026-02-16 |
 | 8. Meeting Real-Time Completion | v1.0 | 3/3 | Complete | 2026-02-22 |
-| 9. Production Deployment | v2.0 | 0/TBD | Not started | - |
+| 9. Production Deployment | v2.0 | 0/5 | Planned | - |
 | 10. Solution Architect Agent | v2.0 | 0/TBD | Not started | - |
 | 11. Project Manager Agent | v2.0 | 0/TBD | Not started | - |
 | 12. Business Analyst Agent | v2.0 | 0/TBD | Not started | - |
