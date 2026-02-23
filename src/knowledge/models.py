@@ -55,7 +55,16 @@ class ChunkMetadata(BaseModel):
         default_factory=list,
         description="Geographic scope: apac, emea, americas, global",
     )
-    content_type: Literal["product", "methodology", "regional", "positioning", "pricing"]
+    content_type: Literal[
+        "product",
+        "methodology",
+        "regional",
+        "positioning",
+        "pricing",
+        "competitor_analysis",
+        "architecture_template",
+        "poc_template",
+    ]
     source_document: str
     version: int = 1
     valid_from: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

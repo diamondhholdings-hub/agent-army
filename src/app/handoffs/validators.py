@@ -65,6 +65,8 @@ class StrictnessConfig:
             "research_result": ValidationStrictness.STRICT,
             "status_update": ValidationStrictness.LENIENT,
             "notification": ValidationStrictness.LENIENT,
+            "technical_question": ValidationStrictness.STRICT,
+            "technical_answer": ValidationStrictness.STRICT,
         }
 
     def get_strictness(self, handoff_type: str) -> ValidationStrictness:
