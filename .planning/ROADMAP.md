@@ -72,12 +72,13 @@ Plans:
   3. Given a deal scope, the Solution Architect outputs a POC plan with deliverables, timeline, resource estimates, and success criteria
   4. The Solution Architect responds to technical objections with evidence-based differentiation using product knowledge and competitor weakness data
   5. The Sales Agent can hand off a technical question to the Solution Architect and receive a structured answer back through the event bus
-**Plans**: 4 plans
+**Plans**: 5 plans
 Plans:
 - [ ] 10-01-PLAN.md — Shared model extension (content types, handoff types) + SA schemas + prompts
 - [ ] 10-02-PLAN.md — SA agent core implementation (5 capability handlers + capabilities + package init)
 - [ ] 10-03-PLAN.md — Knowledge seed data (competitor analysis, architecture templates, POC templates) + seed script
-- [ ] 10-04-PLAN.md — Routing, registration, main.py wiring + integration tests
+- [ ] 10-04-PLAN.md — Registration, main.py wiring + integration tests
+- [ ] 10-05-PLAN.md — Sales Agent technical question dispatch + round-trip handoff test
 
 ### Phase 11: Project Manager Agent
 **Goal**: A Project Manager agent exists that creates PMBOK-compliant project plans, detects schedule risks, auto-adjusts plans on scope changes, generates status reports, and integrates with CRM
@@ -205,7 +206,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 7. Intelligence & Autonomy | v1.0 | 6/6 | Complete | 2026-02-16 |
 | 8. Meeting Real-Time Completion | v1.0 | 3/3 | Complete | 2026-02-22 |
 | 9. Production Deployment | v2.0 | 2/5 | In progress | - |
-| 10. Solution Architect Agent | v2.0 | 0/4 | Not started | - |
+| 10. Solution Architect Agent | v2.0 | 0/5 | Not started | - |
 | 11. Project Manager Agent | v2.0 | 0/TBD | Not started | - |
 | 12. Business Analyst Agent | v2.0 | 0/TBD | Not started | - |
 | 13. Technical Account Manager Agent | v2.0 | 0/TBD | Not started | - |
