@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 12 of 19 (Business Analyst Agent)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-24 — Completed 12-01-PLAN.md
+Last activity: 2026-02-24 — Completed 12-02-PLAN.md
 
-Progress: [██████████████████████████░░░░░░░░░░░░░░░░░░░░] 25% (14/55 plans, v2.0 phases 9-19)
+Progress: [███████████████████████████░░░░░░░░░░░░░░░░░░░] 27% (15/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -76,6 +76,9 @@ Progress: [███████████████████████
 - BA schemas define 10 Pydantic models with model_validator for auto-computed is_low_confidence and field_validator for Fibonacci story points (12-01)
 - BA prompt builders return str (not list[dict]), embedding model_json_schema() for structured LLM output (12-01)
 - BA handoff type requirements_analysis registered as STRICT in StrictnessConfig (12-01)
+- BA unknown-type returns error dict (fail-open) unlike SA/PM which raise ValueError -- deliberate divergence for sales flow (12-02)
+- BA SA escalation uses TechnicalQuestionPayload with lazy import (SAHandoffRequest doesn't exist) (12-02)
+- BA LLM calls use .completion() pattern matching all other agents, not .generate() (12-02)
 
 ### Open Blockers/Concerns
 
@@ -92,7 +95,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 12-01-PLAN.md
+Stopped at: Completed 12-02-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 in progress -- plan 01 complete, ready for 12-02.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 in progress -- plans 01-02 complete, ready for 12-03.
