@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 13 of 19 (Technical Account Manager Agent)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-24 — Completed 13-02-PLAN.md
+Last activity: 2026-02-24 — Completed 13-03-PLAN.md
 
-Progress: [████████████████████████████████░░░░░░░░░░░░░░░] 36% (20/55 plans, v2.0 phases 9-19)
+Progress: [█████████████████████████████████░░░░░░░░░░░░░░] 38% (21/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -98,6 +98,11 @@ Progress: [███████████████████████
 - TAM escalation alert email is also a draft -- rep reviews and manually sends both alert and outreach (13-02)
 - TAM escalation alerts rate-limited to max 5 per scan run to prevent alert fatigue (13-02)
 - GmailService.create_draft added for TAM draft-only communication pattern (13-02)
+- HealthScorer uses keyword-only constructor args for per-tenant threshold customization (13-03)
+- TicketClient pre-sync approach: reads from Notion DB, avoids Kayako/Jira API dependencies (13-03)
+- NotionTAMAdapter stores relationship profiles as sub-pages (not embedded sections) for growth flexibility (13-03)
+- TAMScheduler rate-limits escalation alerts to max 5 per daily scan run (13-03)
+- Heartbeat None = "not monitored" (no penalty), not "silent" (penalty) -- prevents false at-risk for new accounts (13-03)
 
 ### Open Blockers/Concerns
 
@@ -114,7 +119,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 13-02-PLAN.md
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 in progress -- plans 01-02 (schemas, prompts, handoff types, agent core, capabilities) complete. Plans 03-05 remain.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 in progress -- plans 01-03 (schemas, prompts, handoff types, agent core, capabilities, infrastructure) complete. Plans 04-05 remain.
