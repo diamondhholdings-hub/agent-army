@@ -44,13 +44,14 @@ logger = structlog.get_logger(__name__)
 class ProjectManagerAgent(BaseAgent):
     """Project lifecycle management agent handling planning, risk, and reporting.
 
-    Extends BaseAgent with 6 capability handlers:
+    Extends BaseAgent with 7 capability handlers:
     - create_project_plan: Generate PMBOK-compliant 3-level WBS project plans
     - detect_risks: Analyse milestone progress and flag schedule delays
     - adjust_plan: Produce scope change delta reports for plan adjustments
     - generate_status_report: Generate internal/external status reports with EV
     - write_crm_records: Write project data to Notion CRM via NotionPMAdapter
     - process_trigger: Process trigger events to initiate project planning
+    - dispatch_scope_change_analysis: Dispatch scope change impact analysis to BA
 
     Each handler follows fail-open semantics: on LLM or parse error, the
     handler returns a partial result dict with ``{"error": ..., "confidence":
@@ -112,6 +113,7 @@ class ProjectManagerAgent(BaseAgent):
             "generate_status_report": self._handle_generate_status_report,
             "write_crm_records": self._handle_write_crm_records,
             "process_trigger": self._handle_process_trigger,
+            "dispatch_scope_change_analysis": self._handle_dispatch_scope_change_analysis,
         }
 
         handler = handlers.get(task_type)
@@ -668,6 +670,53 @@ class ProjectManagerAgent(BaseAgent):
                 error_type=type(exc).__name__,
             )
             return {"error": str(exc), "confidence": "low", "partial": True}
+
+    async def _handle_dispatch_scope_change_analysis(
+        self, task: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Dispatch scope change impact analysis to the Business Analyst agent.
+
+        When a scope change occurs on a project, the PM asks the BA to
+        analyze the impact on requirements. Uses lazy import pattern.
+        """
+        conversation_text = task.get("conversation_text", "")
+        deal_id = task.get("deal_id", "")
+
+        if not conversation_text or not deal_id:
+            return {
+                "status": "failed",
+                "error": "conversation_text and deal_id are required for scope change analysis",
+            }
+
+        # Lazy import to avoid circular dependency
+        from src.app.agents.business_analyst.schemas import BAHandoffRequest
+
+        request = BAHandoffRequest(
+            conversation_text=conversation_text,
+            deal_id=deal_id,
+            tenant_id=context.get("tenant_id", ""),
+            analysis_scope="gap_only",  # Scope changes need gap analysis
+        )
+
+        handoff_task = {
+            "type": "gap_analysis",
+            "conversation_text": conversation_text,
+            "deal_id": deal_id,
+            "existing_requirements": task.get("existing_requirements", []),
+        }
+
+        self._log.info(
+            "scope_change_analysis_dispatched",
+            deal_id=deal_id,
+            tenant_id=context.get("tenant_id", ""),
+        )
+
+        return {
+            "status": "dispatched",
+            "handoff_task": handoff_task,
+            "payload": request.model_dump_json(),
+            "target_agent_id": "business_analyst",
+        }
 
     # ── Helpers ──────────────────────────────────────────────────────────────
 

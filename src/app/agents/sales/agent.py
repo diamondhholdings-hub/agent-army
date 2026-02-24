@@ -13,6 +13,7 @@ The execute() method routes tasks by type to specialized handlers:
 - recommend_action: Get next-action recommendations
 - dispatch_technical_question: Detect and dispatch technical questions to Solution Architect
 - dispatch_project_trigger: Dispatch project trigger events to Project Manager
+- dispatch_requirements_analysis: Dispatch requirements analysis to Business Analyst
 
 Each handler follows the pattern:
 1. Compile context (RAG + conversation history + state)
@@ -56,6 +57,16 @@ from src.app.agents.sales.state_repository import ConversationStateRepository
 from src.app.services.gsuite.models import ChatMessage, EmailMessage
 
 logger = structlog.get_logger(__name__)
+
+# Explicit mapping from BAHandoffRequest.analysis_scope to BA agent task_type.
+# DO NOT use .replace("_only", "") -- it produces 'gap', 'stories', 'process'
+# which silently hit the BA agent's unknown-type error path.
+SCOPE_TO_TASK_TYPE = {
+    "full": "requirements_extraction",
+    "gap_only": "gap_analysis",
+    "stories_only": "user_story_generation",
+    "process_only": "process_documentation",
+}
 
 
 class SalesAgent(BaseAgent):
@@ -140,6 +151,7 @@ class SalesAgent(BaseAgent):
             "recommend_action": self._handle_recommend_action,
             "dispatch_technical_question": self._handle_dispatch_technical_question,
             "dispatch_project_trigger": self._handle_dispatch_project_trigger,
+            "dispatch_requirements_analysis": self._handle_dispatch_requirements_analysis,
         }
 
         handler = handlers.get(task_type)
@@ -742,6 +754,58 @@ class SalesAgent(BaseAgent):
             "target_agent_id": "project_manager",
         }
 
+    async def _handle_dispatch_requirements_analysis(
+        self, task: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Dispatch requirements analysis to the Business Analyst agent.
+
+        Uses lazy import to avoid circular dependency.
+        """
+        conversation_text = task.get("conversation_text", "")
+        deal_id = task.get("deal_id", "")
+
+        if not conversation_text or not deal_id:
+            return {
+                "status": "failed",
+                "error": "conversation_text and deal_id are required",
+            }
+
+        # Lazy import to avoid circular dependency
+        from src.app.agents.business_analyst.schemas import BAHandoffRequest
+
+        request = BAHandoffRequest(
+            conversation_text=conversation_text,
+            deal_id=deal_id,
+            tenant_id=context.get("tenant_id", ""),
+            analysis_scope=task.get("analysis_scope", "full"),
+        )
+
+        # Use explicit dict mapping -- NOT .replace("_only", "")
+        task_type = SCOPE_TO_TASK_TYPE.get(
+            request.analysis_scope, "requirements_extraction"
+        )
+
+        handoff_task = {
+            "type": task_type,
+            "conversation_text": conversation_text,
+            "deal_id": deal_id,
+        }
+
+        logger.info(
+            "requirements_analysis_dispatched",
+            deal_id=deal_id,
+            analysis_scope=request.analysis_scope,
+            task_type=task_type,
+            tenant_id=context.get("tenant_id", ""),
+        )
+
+        return {
+            "status": "dispatched",
+            "handoff_task": handoff_task,
+            "payload": request.model_dump_json(),
+            "target_agent_id": "business_analyst",
+        }
+
     # ── Helpers ─────────────────────────────────────────────────────────────
 
     @staticmethod
@@ -894,3 +958,27 @@ class SalesAgent(BaseAgent):
         if context.get("complex_deal"):
             return "complex_deal"
         return None
+
+    @staticmethod
+    def _is_ba_trigger(text: str, deal_stage: str) -> bool:
+        """Detect if message should trigger BA requirements analysis.
+
+        Triggers on:
+        1. Keyword signals in message text (2+ matches required to reduce false positives)
+        2. Deal reaching technical_evaluation stage
+
+        Returns True if either condition met.
+        """
+        BA_KEYWORDS = [
+            "we need", "our process requires", "does it support",
+            "requirement", "must have", "should have", "our workflow",
+            "current process", "pain point", "gap in", "can it handle",
+            "business need", "use case", "acceptance criteria",
+        ]
+        keyword_matches = sum(1 for kw in BA_KEYWORDS if kw in text.lower())
+        keyword_trigger = keyword_matches >= 2
+
+        stage_normalized = deal_stage.lower().replace(" ", "_")
+        stage_trigger = stage_normalized in ("technical_evaluation", "evaluation", "discovery")
+
+        return keyword_trigger or stage_trigger
