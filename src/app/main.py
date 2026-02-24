@@ -259,6 +259,41 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         log.warning("phase10.solution_architect_init_failed", error=str(exc))
 
+    # ── Phase 11: Project Manager Agent ─────────────────────────────
+    # PMBOK-certified project lifecycle management agent. Follows the
+    # Sales Agent / SA Agent pattern: instantiate with shared services,
+    # register in AgentRegistry. Fail-tolerant -- PM unavailability
+    # does not prevent app startup.
+
+    try:
+        from src.app.agents.project_manager import (
+            ProjectManagerAgent,
+            create_pm_registration,
+        )
+
+        pm_registration = create_pm_registration()
+
+        pm_agent = ProjectManagerAgent(
+            registration=pm_registration,
+            llm_service=getattr(app.state, "llm_service", None)
+            or locals().get("llm_service"),
+            rag_pipeline=getattr(app.state, "rag_pipeline", None)
+            or locals().get("rag_pipeline"),
+            notion_pm=None,  # Configured when Projects DB is initialized
+            gmail_service=getattr(app.state, "gmail_service", None)
+            or locals().get("gmail_service"),
+        )
+
+        # Register in agent registry
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(pm_registration)
+            pm_registration._agent_instance = pm_agent
+        app.state.project_manager = pm_agent
+        log.info("phase11.project_manager_initialized")
+    except Exception as exc:
+        log.warning("phase11.project_manager_init_failed", error=str(exc))
+
     # ── Phase 5: Deal Management Module Initialization ──────────────
     try:
         from src.app.deals.repository import DealRepository

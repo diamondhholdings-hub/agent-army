@@ -56,6 +56,8 @@ dependencies = [
     # Meeting Capabilities (Phase 6)
     "deepgram-sdk>=3.7.0",
     "elevenlabs>=1.15.0",
+    # Project Manager Agent (Phase 11)
+    "apscheduler>=3.10.0",
 ]
 
 [project.optional-dependencies]
