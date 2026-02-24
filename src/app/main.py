@@ -325,6 +325,62 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         log.warning("phase12.business_analyst_init_failed", error=str(exc))
 
+    # -- Phase 13: Technical Account Manager Agent ----------------------------
+    # Health monitoring and escalation prediction agent. Follows SA/PM/BA
+    # pattern: instantiate with shared services, register in AgentRegistry.
+    # TAM additionally needs gmail_service (for create_draft), chat_service,
+    # health_scorer, and optionally ticket_client + notion_tam.
+    # Includes TAMScheduler for daily health scans (APScheduler, same as PM).
+    # Fail-tolerant -- TAM unavailability does not prevent app startup.
+
+    try:
+        from src.app.agents.technical_account_manager import (
+            TAMAgent,
+            create_tam_registration,
+        )
+        from src.app.agents.technical_account_manager.health_scorer import HealthScorer
+        from src.app.agents.technical_account_manager.scheduler import TAMScheduler
+
+        tam_registration = create_tam_registration()
+        health_scorer = HealthScorer()
+
+        tam_agent = TAMAgent(
+            registration=tam_registration,
+            llm_service=getattr(app.state, "llm_service", None)
+            or locals().get("llm_service"),
+            gmail_service=getattr(app.state, "gmail_service", None)
+            or locals().get("gmail_service"),
+            chat_service=getattr(app.state, "chat_service", None)
+            or locals().get("chat_service"),
+            event_bus=getattr(app.state, "event_bus", None)
+            or locals().get("event_bus"),
+            health_scorer=health_scorer,
+        )
+
+        # Register in agent registry
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(tam_registration)
+            tam_registration._agent_instance = tam_agent
+        app.state.technical_account_manager = tam_agent
+
+        # Start TAMScheduler for daily health scans + monthly check-ins
+        # Mirrors PMScheduler pattern: instantiate, start, store on app.state
+        tam_scheduler = TAMScheduler(
+            tam_agent=tam_agent,
+            notion_tam=getattr(tam_agent, "_notion_tam", None),
+        )
+        tam_scheduler_started = tam_scheduler.start()
+        if tam_scheduler_started:
+            app.state.tam_scheduler = tam_scheduler
+            log.info("phase13.tam_scheduler_started")
+        else:
+            log.warning("phase13.tam_scheduler_not_started", reason="APScheduler unavailable or start failed")
+
+        log.info("phase13.technical_account_manager_initialized")
+    except Exception as exc:
+        log.warning("phase13.technical_account_manager_init_failed", error=str(exc))
+
     # ── Phase 5: Deal Management Module Initialization ──────────────
     try:
         from src.app.deals.repository import DealRepository
@@ -649,6 +705,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     if intel_scheduler_refs:
         for task_ref in intel_scheduler_refs:
             task_ref.cancel()
+
+    # Clean up Phase 13 TAM scheduler
+    tam_scheduler_ref = getattr(app.state, "tam_scheduler", None)
+    if tam_scheduler_ref:
+        tam_scheduler_ref.stop()
 
     # Clean up Phase 6 calendar monitor task
     calendar_monitor_task = getattr(app.state, "calendar_monitor_task", None)
