@@ -1,0 +1,620 @@
+"""Pydantic data models for the Project Manager agent domain.
+
+Defines all structured types used across the Project Manager agent:
+WBS project plans, risk signals, scope change deltas, internal/external
+status reports, earned value metrics, change requests, trigger events,
+and inter-agent handoff payloads. These models are the foundational types
+that every PM capability handler, prompt builder, and Notion adapter
+depends on.
+"""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any, Literal
+
+from pydantic import BaseModel, Field
+
+
+# ── WBS (Work Breakdown Structure) ────────────────────────────────────────────
+
+
+class WBSTask(BaseModel):
+    """Lowest level of the Work Breakdown Structure -- an individual task.
+
+    Represents a single unit of work assigned to one owner, with explicit
+    duration, dependency tracking, and status. Uses the 0/100 rule for
+    earned value: a task is either 0% (not completed) or 100% (completed).
+
+    Attributes:
+        task_id: Unique identifier for this task within the project plan.
+        name: Human-readable task name.
+        owner: Person or role responsible for completing this task.
+        duration_days: Estimated effort in person-days (must be >= 0).
+        dependencies: List of task_ids that must complete before this task
+            can start. Empty list means no dependencies.
+        status: Current execution status of the task.
+    """
+
+    task_id: str
+    name: str
+    owner: str
+    duration_days: float = Field(ge=0, description="Estimated effort in person-days")
+    dependencies: list[str] = Field(
+        default_factory=list,
+        description="Task IDs that must complete before this task can start",
+    )
+    status: Literal["not_started", "in_progress", "completed", "blocked"]
+
+
+class WBSMilestone(BaseModel):
+    """Middle level of the WBS -- a milestone grouping related tasks.
+
+    Milestones represent key delivery points with target dates and
+    success criteria. Their status is derived from constituent task
+    progress and timeline adherence.
+
+    Attributes:
+        milestone_id: Unique identifier for this milestone.
+        name: Human-readable milestone name.
+        target_date: Planned completion date for this milestone.
+        tasks: List of tasks that must complete for this milestone.
+        success_criteria: Description of what constitutes milestone completion.
+        status: Current status reflecting task progress and timeline.
+    """
+
+    milestone_id: str
+    name: str
+    target_date: datetime
+    tasks: list[WBSTask]
+    success_criteria: str
+    status: Literal[
+        "not_started", "in_progress", "completed", "at_risk", "overdue"
+    ]
+
+
+class WBSPhase(BaseModel):
+    """Top level of the WBS -- a project phase containing milestones.
+
+    Phases are the broadest grouping in the work breakdown structure,
+    typically corresponding to major project stages (e.g., Discovery,
+    Implementation, Go-Live).
+
+    Attributes:
+        phase_id: Unique identifier for this phase.
+        name: Human-readable phase name.
+        milestones: Milestones within this phase.
+        resource_estimate_days: Total estimated effort for the phase
+            in person-days (must be >= 0).
+    """
+
+    phase_id: str
+    name: str
+    milestones: list[WBSMilestone]
+    resource_estimate_days: float = Field(
+        ge=0, description="Total estimated effort in person-days"
+    )
+
+
+# ── Risk Management ───────────────────────────────────────────────────────────
+
+
+class RiskThresholds(BaseModel):
+    """Configurable per-project thresholds for risk signal detection.
+
+    These thresholds control when the PM agent generates risk signals.
+    They can be tuned per project to account for different project sizes,
+    customer expectations, and organizational risk tolerance.
+
+    Attributes:
+        milestone_overdue_days_short: Days overdue before alerting for
+            milestones with duration < 1 week.
+        milestone_overdue_days_long: Days overdue before alerting for
+            milestones with duration >= 2 weeks.
+        resource_exceeded_pct: Percentage overrun (as decimal, e.g. 0.2 = 20%)
+            that triggers a resource risk signal.
+        stalled_days: Days of no CRM activity before generating a
+            deal-stage-stalled risk signal.
+    """
+
+    milestone_overdue_days_short: int = Field(
+        default=1,
+        description="Threshold for milestones < 1 week",
+    )
+    milestone_overdue_days_long: int = Field(
+        default=3,
+        description="Threshold for milestones >= 2 weeks",
+    )
+    resource_exceeded_pct: float = Field(
+        default=0.2,
+        description="20% overrun triggers risk",
+    )
+    stalled_days: int = Field(
+        default=7,
+        description="Days of no CRM activity before stall alert",
+    )
+
+
+class RiskSignal(BaseModel):
+    """A detected risk signal requiring attention or automatic adjustment.
+
+    Risk signals are generated by the PM agent's monitoring capabilities
+    when project metrics cross configured thresholds. High/critical
+    severity signals may trigger automatic plan adjustments.
+
+    Attributes:
+        risk_id: Unique identifier for this risk signal.
+        signal_type: Category of risk detected.
+        severity: Impact severity classification.
+        description: Human-readable explanation of the risk.
+        affected_milestone_id: Milestone impacted by this risk, if any.
+        recommended_action: Suggested response to mitigate this risk.
+        auto_adjustment: Machine-readable adjustment to apply automatically,
+            if applicable. None means manual intervention required.
+        detected_at: UTC timestamp when this risk was detected.
+    """
+
+    risk_id: str
+    signal_type: Literal[
+        "milestone_overdue",
+        "critical_path_blocked",
+        "resource_exceeded",
+        "deal_stage_stalled",
+    ]
+    severity: Literal["low", "medium", "high", "critical"]
+    description: str
+    affected_milestone_id: str | None = None
+    recommended_action: str
+    auto_adjustment: dict[str, Any] | None = None
+    detected_at: datetime
+
+
+class RiskLogEntry(BaseModel):
+    """A record in the project risk log for tracking and audit.
+
+    Risk log entries persist risk signals through their lifecycle from
+    detection to resolution, supporting audit trails and retrospectives.
+
+    Attributes:
+        risk_id: Unique identifier matching the originating RiskSignal.
+        signal_type: Category of risk (matches RiskSignal.signal_type).
+        severity: Impact severity at time of logging.
+        description: Human-readable description of the risk.
+        owner: Person or role responsible for managing this risk.
+        status: Current lifecycle status of the risk.
+        created_at: UTC timestamp when the risk was first logged.
+        resolved_at: UTC timestamp when the risk was resolved, if applicable.
+    """
+
+    risk_id: str
+    signal_type: str
+    severity: str
+    description: str
+    owner: str
+    status: Literal["open", "mitigated", "closed", "accepted"]
+    created_at: datetime
+    resolved_at: datetime | None = None
+
+
+# ── Project Plan ──────────────────────────────────────────────────────────────
+
+
+class ProjectPlan(BaseModel):
+    """Complete PMBOK-style project plan with WBS, versioning, and risk config.
+
+    The central model for the PM agent. Contains the full work breakdown
+    structure, version tracking for scope change management, and
+    configurable risk thresholds. The total_budget_days is computed from
+    phase-level resource estimates.
+
+    Attributes:
+        plan_id: Unique identifier for this project plan.
+        deal_id: Associated CRM deal/opportunity identifier.
+        project_name: Human-readable project name.
+        phases: Ordered list of project phases comprising the WBS.
+        created_at: UTC timestamp when this plan version was created.
+        updated_at: UTC timestamp of the last modification.
+        version: Plan version number, incremented on each scope change.
+        trigger_source: What initiated this project plan.
+        risk_thresholds: Configurable thresholds for risk signal detection.
+        total_budget_days: Total estimated effort across all phases in
+            person-days. Computed as sum of phase resource_estimate_days.
+    """
+
+    plan_id: str
+    deal_id: str
+    project_name: str
+    phases: list[WBSPhase]
+    created_at: datetime
+    updated_at: datetime
+    version: int = Field(default=1)
+    trigger_source: Literal["deal_won", "poc_scoped", "complex_deal", "manual"]
+    risk_thresholds: RiskThresholds = Field(default_factory=RiskThresholds)
+    total_budget_days: float = Field(
+        ge=0,
+        description="Total effort across all phases, computed from phase estimates",
+    )
+
+
+# ── Status Reporting ──────────────────────────────────────────────────────────
+
+
+class MilestoneProgress(BaseModel):
+    """Per-milestone progress snapshot for status reporting.
+
+    Captures task-level completion metrics and timeline status for a
+    single milestone, used in both internal and external status reports.
+
+    Attributes:
+        milestone_id: Identifier of the milestone being reported on.
+        name: Human-readable milestone name.
+        total_tasks: Total number of tasks in this milestone.
+        completed_tasks: Number of tasks with status "completed".
+        pct_complete: Percentage complete (0.0 to 100.0).
+        status: Current health status of the milestone.
+        target_date: Original planned completion date.
+        projected_date: Estimated actual completion date based on
+            current velocity. None if not yet calculated.
+    """
+
+    milestone_id: str
+    name: str
+    total_tasks: int
+    completed_tasks: int
+    pct_complete: float
+    status: Literal["on_track", "at_risk", "overdue", "completed"]
+    target_date: datetime
+    projected_date: datetime | None = None
+
+
+class ActionItem(BaseModel):
+    """A next-step action item tracked in status reports.
+
+    Attributes:
+        action_id: Unique identifier for this action item.
+        description: What needs to be done.
+        owner: Person or role responsible for this action.
+        due_date: When this action should be completed.
+        status: Current status of the action item.
+    """
+
+    action_id: str
+    description: str
+    owner: str
+    due_date: datetime
+    status: Literal["pending", "in_progress", "completed"]
+
+
+class EarnedValueMetrics(BaseModel):
+    """Earned value management metrics using the 0/100 completion rule.
+
+    Standard PMBOK earned value calculations where tasks are binary
+    (0% or 100% complete). This avoids subjective percent-complete
+    estimates and provides objective project health indicators.
+
+    CPI > 1.0 means under budget; CPI < 1.0 means over budget.
+    SPI > 1.0 means ahead of schedule; SPI < 1.0 means behind schedule.
+
+    Attributes:
+        bcwp: Budgeted Cost of Work Performed (earned value) -- sum of
+            budget for completed tasks.
+        acwp: Actual Cost of Work Performed -- actual effort spent.
+        bcws: Budgeted Cost of Work Scheduled (planned value) -- budget
+            for work that should be done by now.
+        cpi: Cost Performance Index = BCWP / ACWP. Efficiency of spend.
+        spi: Schedule Performance Index = BCWP / BCWS. Schedule adherence.
+    """
+
+    bcwp: float = Field(description="Budgeted Cost of Work Performed (earned value)")
+    acwp: float = Field(description="Actual Cost of Work Performed")
+    bcws: float = Field(description="Budgeted Cost of Work Scheduled (planned value)")
+    cpi: float = Field(description="Cost Performance Index = BCWP/ACWP")
+    spi: float = Field(description="Schedule Performance Index = BCWP/BCWS")
+
+
+class InternalStatusReport(BaseModel):
+    """Full-detail status report for internal team consumption.
+
+    Contains comprehensive project health data including earned value
+    metrics, detailed milestone progress, risk log, and contextual
+    information from the deal and other agents. Not suitable for
+    external/customer distribution.
+
+    Attributes:
+        report_id: Unique identifier for this report.
+        project_id: Project plan identifier this report covers.
+        report_date: UTC timestamp when this report was generated.
+        overall_rag: Red/Amber/Green health indicator.
+        milestone_progress: Per-milestone progress snapshots.
+        risks_and_issues: Current risk log entries.
+        next_actions: Upcoming action items.
+        earned_value: Earned value management metrics.
+        deal_context: CRM deal data for context (stage, value, contacts).
+        agent_notes: Free-text notes from the PM agent's analysis.
+        sa_summary: Summary from the Solution Architect agent, if available.
+    """
+
+    report_id: str
+    project_id: str
+    report_date: datetime
+    overall_rag: Literal["red", "amber", "green"]
+    milestone_progress: list[MilestoneProgress]
+    risks_and_issues: list[RiskLogEntry]
+    next_actions: list[ActionItem]
+    earned_value: EarnedValueMetrics
+    deal_context: dict[str, Any]
+    agent_notes: str
+    sa_summary: str
+
+
+# ── External (Customer-Facing) Reporting ──────────────────────────────────────
+
+
+class MilestoneSummary(BaseModel):
+    """Polished milestone information suitable for customer communication.
+
+    A simplified view of milestone progress designed for external
+    stakeholders who do not need task-level detail or internal metrics.
+
+    Attributes:
+        name: Human-readable milestone name.
+        status: Customer-friendly status description.
+        estimated_completion: Human-readable completion estimate
+            (e.g., "Week of March 15" or "On track for Q2").
+    """
+
+    name: str
+    status: str
+    estimated_completion: str
+
+
+class ExternalStatusReport(BaseModel):
+    """Customer-facing status report with polished, non-technical content.
+
+    Structurally different from InternalStatusReport -- this is NOT a
+    subset. It uses customer-friendly language, omits earned value
+    metrics and risk logs, and presents milestone summaries rather
+    than detailed progress data.
+
+    Attributes:
+        report_id: Unique identifier for this report.
+        project_name: Customer-visible project name.
+        report_date: UTC timestamp when this report was generated.
+        overall_status: Customer-friendly overall project status.
+        milestone_summary: Polished milestone progress summaries.
+        key_accomplishments: List of recent accomplishments to highlight.
+        upcoming_activities: List of planned next steps.
+        items_requiring_attention: Issues needing customer awareness or action.
+    """
+
+    report_id: str
+    project_name: str
+    report_date: datetime
+    overall_status: Literal["On Track", "At Risk", "Delayed"]
+    milestone_summary: list[MilestoneSummary]
+    key_accomplishments: list[str]
+    upcoming_activities: list[str]
+    items_requiring_attention: list[str]
+
+
+# ── Scope Change Management ───────────────────────────────────────────────────
+
+
+class PlanDelta(BaseModel):
+    """A single change element within a scope change delta.
+
+    Represents one atomic modification to the project plan at any
+    WBS level (phase, milestone, or task).
+
+    Attributes:
+        element_type: Which WBS level this change applies to.
+        element_id: Identifier of the affected element.
+        field: Name of the field that changed.
+        original_value: Previous value (as string for universal comparison).
+        revised_value: New value (as string for universal comparison).
+        change_type: Nature of the change.
+    """
+
+    element_type: Literal["phase", "milestone", "task"]
+    element_id: str
+    field: str
+    original_value: str
+    revised_value: str
+    change_type: Literal["added", "removed", "modified"]
+
+
+class ScopeChangeDelta(BaseModel):
+    """Delta report showing differences between two plan versions.
+
+    Captures all changes between plan versions with impact analysis,
+    used for scope change review and approval workflows.
+
+    Attributes:
+        change_request_id: Identifier linking this delta to a ChangeRequest.
+        original_plan_version: Plan version before the change.
+        revised_plan_version: Plan version after the change.
+        trigger: What caused this scope change.
+        changes: List of individual change elements.
+        timeline_impact_days: Net impact on project timeline in days
+            (positive = longer, negative = shorter).
+        resource_impact_days: Net impact on resource effort in person-days.
+        affected_milestones: List of milestone IDs impacted by this change.
+        risk_assessment: Human-readable assessment of risk introduced
+            by this scope change.
+        recommendation: PM agent's recommendation for this scope change.
+    """
+
+    change_request_id: str
+    original_plan_version: int
+    revised_plan_version: int
+    trigger: Literal["sa_updated_requirements", "manual_input"]
+    changes: list[PlanDelta]
+    timeline_impact_days: int
+    resource_impact_days: float
+    affected_milestones: list[str]
+    risk_assessment: str
+    recommendation: Literal[
+        "approve", "approve_with_conditions", "reject_recommend_descope"
+    ]
+
+
+class ChangeRequest(BaseModel):
+    """Audit log entry for a scope change request.
+
+    Tracks the full lifecycle of a change request from submission
+    through approval or decline, with optional scope change delta
+    attachment.
+
+    Attributes:
+        request_id: Unique identifier for this change request.
+        project_id: Project plan this change request applies to.
+        requested_by: Person or agent that initiated the change request.
+        description: Human-readable description of the requested change.
+        status: Current approval status.
+        scope_change_delta: Detailed delta analysis, if computed.
+        created_at: UTC timestamp when the request was created.
+        resolved_at: UTC timestamp when the request was resolved, if applicable.
+        resolved_by: Person or agent that resolved the request, if applicable.
+    """
+
+    request_id: str
+    project_id: str
+    requested_by: str
+    description: str
+    status: Literal["pending", "approved", "declined"]
+    scope_change_delta: ScopeChangeDelta | None = None
+    created_at: datetime
+    resolved_at: datetime | None = None
+    resolved_by: str | None = None
+
+
+# ── Trigger Events ────────────────────────────────────────────────────────────
+
+
+class PMTriggerEvent(BaseModel):
+    """Trigger event from the event bus that initiates PM agent actions.
+
+    Received when the PM agent needs to create or update a project plan,
+    typically from deal lifecycle events or SA agent outputs.
+
+    Attributes:
+        trigger_type: What event triggered this PM action.
+        deal_id: Associated CRM deal identifier.
+        tenant_id: Tenant context for multi-tenant isolation.
+        poc_plan: POC plan data from the SA agent, if trigger is poc_scoped.
+        deliverables: List of expected deliverables.
+        timeline: Human-readable timeline description, if provided.
+        stakeholders: List of stakeholder names or roles.
+        metadata: Additional context from the triggering event.
+    """
+
+    trigger_type: Literal["deal_won", "poc_scoped", "complex_deal", "manual"]
+    deal_id: str
+    tenant_id: str
+    poc_plan: dict[str, Any] | None = None
+    deliverables: list[str] = Field(default_factory=list)
+    timeline: str | None = None
+    stakeholders: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# ── Inter-Agent Handoff Payloads ──────────────────────────────────────────────
+
+
+class ProjectPlanHandoffPayload(BaseModel):
+    """Handoff payload from PM agent when distributing a project plan.
+
+    Sent to other agents (e.g., Sales Agent, SA) to inform them of
+    a new or updated project plan. Contains summary data rather than
+    the full plan to keep handoff payloads lightweight.
+
+    Attributes:
+        project_id: Project plan identifier.
+        plan_id: Specific plan version identifier.
+        deal_id: Associated CRM deal identifier.
+        summary: Human-readable summary of the project plan.
+        milestone_count: Number of milestones in the plan.
+        total_budget_days: Total estimated effort in person-days.
+        risk_count: Number of currently open risk signals.
+    """
+
+    project_id: str
+    plan_id: str
+    deal_id: str
+    summary: str
+    milestone_count: int
+    total_budget_days: float
+    risk_count: int
+
+
+class StatusReportHandoffPayload(BaseModel):
+    """Handoff payload from PM agent for status report distribution.
+
+    Sent when a status report needs to be distributed to stakeholders
+    via other agents (e.g., email agent, notification agent).
+
+    Attributes:
+        report_id: Status report identifier.
+        project_id: Project plan this report covers.
+        report_type: Whether this is an internal or external report.
+        recipients: List of recipient identifiers (email, user ID, etc.).
+        subject: Email/notification subject line.
+        body_html: Rendered HTML content of the status report.
+    """
+
+    report_id: str
+    project_id: str
+    report_type: Literal["internal", "external"]
+    recipients: list[str]
+    subject: str
+    body_html: str
+
+
+class RiskAlertHandoffPayload(BaseModel):
+    """Handoff payload from PM agent when a risk signal is detected.
+
+    Sent to trigger automatic responses or notifications when a risk
+    exceeds configured thresholds. STRICT validation is applied because
+    risk alerts can trigger automatic plan adjustments.
+
+    Attributes:
+        risk_id: Risk signal identifier.
+        project_id: Project plan affected by this risk.
+        deal_id: Associated CRM deal identifier.
+        signal_type: Category of risk detected.
+        severity: Impact severity classification.
+        description: Human-readable explanation of the risk.
+        recommended_action: Suggested response to mitigate this risk.
+    """
+
+    risk_id: str
+    project_id: str
+    deal_id: str
+    signal_type: str
+    severity: str
+    description: str
+    recommended_action: str
+
+
+__all__ = [
+    "WBSTask",
+    "WBSMilestone",
+    "WBSPhase",
+    "RiskThresholds",
+    "ProjectPlan",
+    "RiskSignal",
+    "RiskLogEntry",
+    "MilestoneProgress",
+    "ActionItem",
+    "EarnedValueMetrics",
+    "InternalStatusReport",
+    "MilestoneSummary",
+    "ExternalStatusReport",
+    "PlanDelta",
+    "ScopeChangeDelta",
+    "ChangeRequest",
+    "PMTriggerEvent",
+    "ProjectPlanHandoffPayload",
+    "StatusReportHandoffPayload",
+    "RiskAlertHandoffPayload",
+]
