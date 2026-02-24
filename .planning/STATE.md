@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (plan 01 complete, 4 remaining)
+**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (plan 02 complete, 3 remaining)
 
 ## Current Position
 
 Phase: 11 of 19 (Project Manager Agent)
-Plan: 1 of 5 in current phase (11-01 complete)
+Plan: 2 of 5 in current phase (11-02 complete)
 Status: In progress
-Last activity: 2026-02-23 — Completed 11-01-PLAN.md
+Last activity: 2026-02-23 — Completed 11-02-PLAN.md
 
-Progress: [████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 16% (9/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░] 18% (10/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -62,6 +62,9 @@ Progress: [████████████████░░░░░░░
 - PM total_budget_days is a plain Field(ge=0) not computed_field -- caller computes from phase estimates (11-01)
 - PM handoff types: project_plan STRICT, status_report LENIENT, risk_alert STRICT (11-01)
 - PM earned value uses 0/100 rule: tasks binary complete/incomplete, no subjective percent-complete (11-01)
+- PM prompt builders embed JSON schema in user message, same pattern as SA (11-02)
+- NotionPMAdapter takes pre-authenticated AsyncClient, not token string (11-02)
+- PM block renderers are module-level functions decoupled from adapter (11-02)
 
 ### Open Blockers/Concerns
 
@@ -78,7 +81,7 @@ Progress: [████████████████░░░░░░░
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 11-01-PLAN.md
+Stopped at: Completed 11-02-PLAN.md
 Resume file: None
 
 **Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 10 execution started in parallel.
