@@ -51,6 +51,14 @@ class SentEmailResult(BaseModel):
     label_ids: list[str] = Field(default_factory=list)
 
 
+class DraftResult(BaseModel):
+    """Result from creating a Gmail draft."""
+
+    draft_id: str
+    message_id: str = ""
+    thread_id: str = ""
+
+
 class SentChatResult(BaseModel):
     """Result from sending a chat message via Google Chat API."""
 

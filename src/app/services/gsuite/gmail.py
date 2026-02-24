@@ -16,6 +16,7 @@ import structlog
 
 from src.app.services.gsuite.auth import GSuiteAuthManager
 from src.app.services.gsuite.models import (
+    DraftResult,
     EmailMessage,
     EmailThread,
     EmailThreadMessage,
@@ -111,6 +112,56 @@ class GmailService:
             message_id=result.get("id", ""),
             thread_id=result.get("threadId", ""),
             label_ids=result.get("labelIds", []),
+        )
+
+    async def create_draft(
+        self,
+        email: EmailMessage,
+        user_email: str | None = None,
+    ) -> DraftResult:
+        """Create a Gmail draft in the user's inbox.
+
+        Follows the same pattern as send_email but uses drafts.create
+        instead of messages.send. The draft appears in the user's
+        Drafts folder for review before manual sending.
+
+        Args:
+            email: The email message to create as a draft.
+            user_email: Sender email (for delegation). Defaults to
+                the configured default_user_email.
+
+        Returns:
+            DraftResult with draft_id, message_id, and thread_id.
+        """
+        sender = user_email or self._default_user_email
+        service = self._auth.get_gmail_service(sender)
+        raw = self._build_mime_message(email)
+
+        body: dict[str, Any] = {"message": {"raw": raw}}
+        if email.thread_id:
+            body["message"]["threadId"] = email.thread_id
+
+        def _create() -> dict:
+            return (
+                service.users()
+                .drafts()
+                .create(userId="me", body=body)
+                .execute()
+            )
+
+        logger.info(
+            "creating_draft",
+            to=email.to,
+            subject=email.subject,
+            thread_id=email.thread_id,
+        )
+        result = await asyncio.to_thread(_create)
+
+        message_data = result.get("message", {})
+        return DraftResult(
+            draft_id=result.get("id", ""),
+            message_id=message_data.get("id", ""),
+            thread_id=message_data.get("threadId", ""),
         )
 
     async def get_thread(
