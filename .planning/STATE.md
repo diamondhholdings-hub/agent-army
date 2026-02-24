@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 13 in progress: Technical Account Manager Agent
+**Current focus:** v2.0 Agent Crew — Phase 13 complete: Technical Account Manager Agent
 
 ## Current Position
 
 Phase: 13 of 19 (Technical Account Manager Agent)
-Plan: 6 of 7 in current phase (13-06 gap closure remaining)
-Status: In progress
-Last activity: 2026-02-24 — Completed 13-07-PLAN.md (gap closure: reclassified Gap 2 as working-as-designed)
+Plan: 7 of 7 in current phase
+Status: Phase complete
+Last activity: 2026-02-24 — Completed 13-06-PLAN.md (gap closure: NotionTAMAdapter CRUD)
 
-Progress: [██████████████████████████████████████░░░░░░░░░] 44% (24/55 plans, v2.0 phases 9-19)
+Progress: [████████████████████████████████████████░░░░░░░] 45% (25/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -111,6 +111,10 @@ Progress: [███████████████████████
 - TAMScheduler started and stored on app.state.tam_scheduler with shutdown cleanup in shutdown section (13-04)
 - Real HealthScorer used in tests (not mocked) since it's pure Python and deterministic (13-04)
 - All trigger heuristics (_is_technical_question, _is_ba_trigger, _is_project_trigger, _is_tam_trigger) are supervisor-level static methods by established pattern -- NOT wired internally in _handle_process_reply() (13-07)
+- NotionTAMAdapter.get_relationship_profile uses pragmatic block parsing (string splitting on ": " and " | ") for LLM prompt context, not exact round-trip (13-06)
+- NotionTAMAdapter.update_relationship_profile tries RelationshipProfile model first, falls back to paragraph blocks (13-06)
+- NotionTAMAdapter.log_communication accepts both dict and CommunicationRecord, converts dict to model before delegating (13-06)
+- NotionTAMAdapter.get_account returns both `id` and `account_id` keys for agent.py compatibility (13-06)
 
 ### Open Blockers/Concerns
 
@@ -127,7 +131,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 13-07-PLAN.md (Gap 2 reclassification)
+Stopped at: Completed 13-06-PLAN.md (Phase 13 complete)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 has 6/7 plans complete -- 13-06 (NotionTAMAdapter gap closure) still pending. Gap 2 reclassified as working-as-designed in 13-07.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 complete -- all 7 plans executed (5 core + 2 gap closure). Ready for Phase 14.

@@ -133,8 +133,8 @@ Plans:
 - [x] 13-03-PLAN.md — NotionTAMAdapter + HealthScorer + TicketClient + TAMScheduler + GmailService.create_draft
 - [x] 13-04-PLAN.md — main.py wiring + integration tests (20+ tests)
 - [x] 13-05-PLAN.md — Sales Agent TAM dispatch + round-trip handoff tests
-- [ ] 13-06-PLAN.md — Gap closure: Add 4 missing methods to NotionTAMAdapter + tests
-- [ ] 13-07-PLAN.md — Gap closure: Reclassify _is_tam_trigger as working-as-designed in VERIFICATION.md
+- [x] 13-06-PLAN.md — Gap closure: Add 4 missing methods to NotionTAMAdapter + tests
+- [x] 13-07-PLAN.md — Gap closure: Reclassify _is_tam_trigger as working-as-designed in VERIFICATION.md
 
 ### Phase 14: Customer Success Agent
 **Goal**: A Customer Success agent exists that calculates account health scores, predicts churn risk 60+ days in advance, identifies expansion opportunities, prepares QBR materials, and tracks feature adoption
@@ -229,7 +229,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 | 10. Solution Architect Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
 | 11. Project Manager Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
 | 12. Business Analyst Agent | v2.0 | 5/5 | Complete | 2026-02-24 |
-| 13. Technical Account Manager Agent | v2.0 | 5/7 | Gap closure | - |
+| 13. Technical Account Manager Agent | v2.0 | 7/7 | Complete | 2026-02-24 |
 | 14. Customer Success Agent | v2.0 | 0/TBD | Not started | - |
 | 15. Collections Agent | v2.0 | 0/TBD | Not started | - |
 | 16. Business Operations Agent | v2.0 | 0/TBD | Not started | - |
