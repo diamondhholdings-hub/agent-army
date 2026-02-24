@@ -21,6 +21,7 @@ Exports:
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from typing import Any
 
@@ -637,6 +638,391 @@ class NotionTAMAdapter:
                     return block["id"]
 
         return None
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type(Exception),
+    )
+    async def get_relationship_profile(
+        self,
+        account_id: str,
+    ) -> dict:
+        """Fetch and parse the Technical Relationship Profile for an account.
+
+        Finds the relationship profile sub-page under the account page,
+        reads all blocks, and parses them into a dict structure suitable
+        for LLM prompt builders.
+
+        Args:
+            account_id: Notion page ID of the account page.
+
+        Returns:
+            Dict with profile data (account_id, stakeholders, integrations,
+            etc.) or empty dict if no profile sub-page exists.
+        """
+        profile_page_id = await self.get_relationship_profile_page(account_id)
+        if profile_page_id is None:
+            return {}
+
+        response = await self._client.blocks.children.list(
+            block_id=profile_page_id,
+        )
+
+        blocks = response.get("results", [])
+
+        # Parse blocks into sections
+        profile: dict[str, Any] = {
+            "account_id": account_id,
+            "account_name": "",
+            "stakeholders": [],
+            "integrations": [],
+            "feature_adoption": [],
+            "customer_environment": [],
+            "communication_history": [],
+            "co_dev_opportunities": [],
+            "health_score": None,
+            "health_rag": None,
+            "profile_page_id": profile_page_id,
+        }
+
+        current_section: str | None = None
+
+        for block in blocks:
+            block_type = block.get("type", "")
+
+            # Extract heading text to identify sections
+            if block_type == "heading_2":
+                rich_text = block.get("heading_2", {}).get("rich_text", [])
+                heading_text = rich_text[0]["plain_text"] if rich_text else ""
+                if heading_text.startswith("Technical Relationship Profile"):
+                    # Extract account name from title
+                    parts = heading_text.split(" - ", 1)
+                    if len(parts) > 1:
+                        profile["account_name"] = parts[1].strip()
+                continue
+
+            if block_type == "heading_3":
+                rich_text = block.get("heading_3", {}).get("rich_text", [])
+                heading_text = rich_text[0]["plain_text"] if rich_text else ""
+                heading_lower = heading_text.lower()
+                if "stakeholder" in heading_lower:
+                    current_section = "stakeholders"
+                elif "integration" in heading_lower:
+                    current_section = "integrations"
+                elif "feature adoption" in heading_lower:
+                    current_section = "feature_adoption"
+                elif "customer environment" in heading_lower:
+                    current_section = "customer_environment"
+                elif "communication" in heading_lower:
+                    current_section = "communication_history"
+                elif "co-development" in heading_lower or "co_dev" in heading_lower:
+                    current_section = "co_dev_opportunities"
+                elif "health" in heading_lower:
+                    current_section = "health_dashboard"
+                else:
+                    current_section = None
+                continue
+
+            # Parse bulleted_list_item blocks based on current section
+            if block_type == "bulleted_list_item" and current_section:
+                rich_text = block.get("bulleted_list_item", {}).get(
+                    "rich_text", []
+                )
+                text = rich_text[0]["plain_text"] if rich_text else ""
+                if not text:
+                    continue
+
+                if current_section == "stakeholders":
+                    # Format: "Name: Role | Maturity: level"
+                    parts = text.split(": ", 1)
+                    name = parts[0].strip() if parts else text
+                    rest = parts[1] if len(parts) > 1 else ""
+                    role_parts = rest.split(" | ")
+                    role = role_parts[0].strip() if role_parts else ""
+                    maturity = "medium"
+                    for rp in role_parts:
+                        if "maturity" in rp.lower():
+                            mat_val = rp.split(":", 1)[-1].strip().lower()
+                            if mat_val in ("low", "medium", "high"):
+                                maturity = mat_val
+                    profile["stakeholders"].append(
+                        {"name": name, "role": role, "technical_maturity": maturity}
+                    )
+
+                elif current_section == "integrations":
+                    # Format: "Name: Status"
+                    parts = text.split(": ", 1)
+                    name = parts[0].strip() if parts else text
+                    status = parts[1].strip() if len(parts) > 1 else ""
+                    profile["integrations"].append(
+                        {"integration_name": name, "status": status}
+                    )
+
+                elif current_section == "feature_adoption":
+                    # Format: "FeatureName: Status | Source: source"
+                    parts = text.split(": ", 1)
+                    name = parts[0].strip() if parts else text
+                    status = parts[1].strip() if len(parts) > 1 else ""
+                    profile["feature_adoption"].append(
+                        {"feature_name": name, "status": status}
+                    )
+
+                elif current_section == "customer_environment":
+                    profile["customer_environment"].append(text)
+
+                elif current_section == "communication_history":
+                    # Format: "date | type | subject"
+                    parts = text.split(" | ")
+                    entry: dict[str, str] = {}
+                    if len(parts) >= 3:
+                        entry = {
+                            "date": parts[0].strip(),
+                            "communication_type": parts[1].strip(),
+                            "subject": parts[2].strip(),
+                        }
+                    else:
+                        entry = {"raw": text}
+                    profile["communication_history"].append(entry)
+
+                elif current_section == "co_dev_opportunities":
+                    # Format: "Name: Description | Status: status"
+                    parts = text.split(": ", 1)
+                    name = parts[0].strip() if parts else text
+                    desc = parts[1].strip() if len(parts) > 1 else ""
+                    profile["co_dev_opportunities"].append(
+                        {"opportunity_name": name, "description": desc}
+                    )
+
+            # Parse paragraph blocks for health dashboard
+            if block_type == "paragraph" and current_section == "health_dashboard":
+                rich_text = block.get("paragraph", {}).get("rich_text", [])
+                text = rich_text[0]["plain_text"] if rich_text else ""
+                if not text:
+                    continue
+
+                score_match = re.search(r"Current Score:\s*(\d+)/100", text)
+                if score_match:
+                    profile["health_score"] = int(score_match.group(1))
+
+                status_match = re.search(r"Status:\s*(\w+)", text)
+                if status_match:
+                    profile["health_rag"] = status_match.group(1)
+
+        logger.info(
+            "notion_tam.relationship_profile_fetched",
+            account_id=account_id,
+            profile_page_id=profile_page_id,
+        )
+        return profile
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type(Exception),
+    )
+    async def get_account(
+        self,
+        account_id: str,
+    ) -> dict:
+        """Retrieve a single account page and parse its properties.
+
+        Returns a dict with the same structure as items from
+        ``query_all_accounts()``: id, name, health_score, health_rag,
+        last_heartbeat, hours_since_heartbeat.
+
+        Args:
+            account_id: Notion page ID of the account page.
+
+        Returns:
+            Account dict with keys: id, account_id, name, health_score,
+            health_rag, last_heartbeat, hours_since_heartbeat.
+        """
+        page = await self._client.pages.retrieve(page_id=account_id)
+        props = page.get("properties", {})
+
+        # Extract account name from title property
+        name_parts = props.get("Name", {}).get("title", [])
+        name = name_parts[0]["plain_text"] if name_parts else "Unknown"
+
+        # Extract health properties
+        health_score_prop = props.get("Health Score", {}).get("number")
+        health_status_prop = props.get("Health Status", {}).get("select")
+        health_rag = (
+            health_status_prop["name"] if health_status_prop else None
+        )
+
+        # Extract heartbeat data
+        last_heartbeat_prop = props.get("Last Heartbeat", {}).get("date")
+        last_heartbeat = None
+        hours_since_heartbeat = None
+        if last_heartbeat_prop and last_heartbeat_prop.get("start"):
+            last_heartbeat = last_heartbeat_prop["start"]
+            try:
+                hb_dt = datetime.fromisoformat(
+                    last_heartbeat.replace("Z", "+00:00")
+                )
+                if hb_dt.tzinfo is None:
+                    hb_dt = hb_dt.replace(tzinfo=timezone.utc)
+                delta = datetime.now(timezone.utc) - hb_dt
+                hours_since_heartbeat = delta.total_seconds() / 3600.0
+            except (ValueError, TypeError):
+                pass
+
+        logger.info(
+            "notion_tam.account_fetched",
+            account_id=account_id,
+        )
+        return {
+            "id": page["id"],
+            "account_id": page["id"],
+            "name": name,
+            "health_score": health_score_prop,
+            "health_rag": health_rag,
+            "last_heartbeat": last_heartbeat,
+            "hours_since_heartbeat": hours_since_heartbeat,
+        }
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type(Exception),
+    )
+    async def log_communication(
+        self,
+        account_id: str,
+        comm_record: dict | CommunicationRecord,
+    ) -> None:
+        """Log a communication record to the relationship profile sub-page.
+
+        Finds the relationship profile sub-page for the account and appends
+        the communication record using ``append_communication_log()``.
+        Accepts both plain dicts and CommunicationRecord instances.
+
+        Args:
+            account_id: Notion page ID of the account page.
+            comm_record: Communication data as dict or CommunicationRecord.
+        """
+        # Convert dict to CommunicationRecord if needed
+        if isinstance(comm_record, dict):
+            record = CommunicationRecord(**comm_record)
+        else:
+            record = comm_record
+
+        profile_page_id = await self.get_relationship_profile_page(account_id)
+        if profile_page_id is None:
+            logger.warning(
+                "notion_tam.log_communication_no_subpage",
+                account_id=account_id,
+                msg="No relationship profile sub-page found, skipping log",
+            )
+            return
+
+        await self.append_communication_log(profile_page_id, record)
+
+        logger.info(
+            "notion_tam.communication_logged",
+            account_id=account_id,
+            communication_type=record.communication_type,
+        )
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type(Exception),
+    )
+    async def update_relationship_profile(
+        self,
+        page_id: str,
+        profile_dict: dict,
+    ) -> None:
+        """Replace the content of an existing relationship profile sub-page.
+
+        Deletes all existing blocks from the sub-page and rebuilds it
+        from the provided profile dict. Attempts to construct a
+        RelationshipProfile model for proper block rendering; falls back
+        to paragraph blocks on parse failure.
+
+        Args:
+            page_id: Notion page ID of the relationship profile sub-page.
+            profile_dict: Full profile data to write.
+        """
+        # Step 1: Delete all existing blocks
+        existing_response = await self._client.blocks.children.list(
+            block_id=page_id,
+        )
+        for block in existing_response.get("results", []):
+            await self._client.blocks.delete(block_id=block["id"])
+
+        # Step 2: Build new blocks from profile_dict
+        blocks: list[dict] = []
+
+        try:
+            # Attempt to construct RelationshipProfile for proper rendering
+            valid_fields = {
+                k: v
+                for k, v in profile_dict.items()
+                if k in RelationshipProfile.model_fields
+            }
+            profile_model = RelationshipProfile(**valid_fields)
+            blocks.extend(render_relationship_profile_blocks(profile_model))
+
+            # Add health dashboard if score is available
+            if (
+                profile_model.health_score is not None
+                and profile_model.health_rag is not None
+            ):
+                health_result = HealthScoreResult(
+                    account_id=profile_model.account_id,
+                    score=profile_model.health_score,
+                    rag_status=profile_model.health_rag,
+                    scan_timestamp=(
+                        profile_model.last_health_scan
+                        or datetime.now(timezone.utc)
+                    ),
+                )
+                blocks.extend(render_health_dashboard_blocks(health_result))
+        except Exception:
+            # Fallback: render dict as paragraph blocks
+            account_name = profile_dict.get("account_name", "Unknown")
+            blocks.append(
+                _heading_block(
+                    f"Technical Relationship Profile - {account_name}",
+                    level=2,
+                )
+            )
+            for key, value in profile_dict.items():
+                if key in ("account_id", "profile_page_id"):
+                    continue
+                if isinstance(value, list):
+                    blocks.append(_heading_block(key.replace("_", " ").title(), level=3))
+                    for item in value:
+                        blocks.append(
+                            _bulleted_list_block(
+                                str(item) if not isinstance(item, dict)
+                                else ", ".join(f"{k}: {v}" for k, v in item.items())
+                            )
+                        )
+                elif value is not None:
+                    blocks.append(
+                        _paragraph_block(f"{key.replace('_', ' ').title()}: {value}")
+                    )
+
+        # Step 3: Append new blocks in 100-block batches
+        remaining = blocks
+        while remaining:
+            batch = remaining[:100]
+            remaining = remaining[100:]
+            await self._client.blocks.children.append(
+                block_id=page_id,
+                children=batch,
+            )
+
+        logger.info(
+            "notion_tam.relationship_profile_updated",
+            page_id=page_id,
+            block_count=len(blocks),
+        )
 
 
 __all__ = [
