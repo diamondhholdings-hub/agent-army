@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (plan 03 complete, 2 remaining)
+**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (plan 04 complete, 1 remaining)
 
 ## Current Position
 
 Phase: 11 of 19 (Project Manager Agent)
-Plan: 3 of 5 in current phase (11-03 complete)
+Plan: 4 of 5 in current phase (11-04 complete)
 Status: In progress
-Last activity: 2026-02-23 — Completed 11-03-PLAN.md
+Last activity: 2026-02-24 — Completed 11-04-PLAN.md
 
-Progress: [████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░] 20% (11/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░] 22% (12/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -68,6 +68,8 @@ Progress: [████████████████████░░░
 - PM auto-risk adjustments use trigger="manual_input" since ScopeChangeDelta Literal doesn't include auto_risk_response (11-03)
 - PM detect_risks uses raw JSON parsing for flexible risk list structure (11-03)
 - PMScheduler gracefully handles missing APScheduler -- start() returns False (11-03)
+- PM agent wired in main.py lifespan between Phase 10 (SA) and Phase 5 (Deals), stored on app.state.project_manager (11-04)
+- APScheduler is runtime dependency (not dev-only) since PMScheduler uses it in production (11-04)
 
 ### Open Blockers/Concerns
 
@@ -83,8 +85,8 @@ Progress: [████████████████████░░░
 
 ## Session Continuity
 
-Last session: 2026-02-23
-Stopped at: Completed 11-03-PLAN.md
+Last session: 2026-02-24
+Stopped at: Completed 11-04-PLAN.md
 Resume file: None
 
 **Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 10 execution started in parallel.
