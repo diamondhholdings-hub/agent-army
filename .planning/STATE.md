@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 12 in progress: Business Analyst Agent
+**Current focus:** v2.0 Agent Crew — Phase 12 complete: Business Analyst Agent
 
 ## Current Position
 
 Phase: 12 of 19 (Business Analyst Agent)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-02-24 — Completed 12-04-PLAN.md
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-02-24 — Completed 12-05-PLAN.md
 
-Progress: [█████████████████████████████░░░░░░░░░░░░░░░░░░] 31% (17/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████████████░░░░░░░░░░░░░░░░░] 33% (18/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -85,6 +85,10 @@ Progress: [███████████████████████
 - User stories dual-grouped by epic_theme (full details in toggles) and stakeholder_domain (cross-reference list) (12-03)
 - BA agent wired in main.py lifespan between Phase 11 (PM) and Phase 5 (Deals), stored on app.state.business_analyst (12-04)
 - BA agent wiring pattern identical to SA/PM: try/except, import inside try, create registration, register in AgentRegistry (12-04)
+- SCOPE_TO_TASK_TYPE uses explicit dict mapping, NOT .replace("_only", "") which produces wrong BA task keys (12-05)
+- Sales Agent _is_ba_trigger requires 2+ keyword matches, same threshold as _is_technical_question (12-05)
+- PM Agent scope change dispatch hardcodes analysis_scope="gap_only" since scope changes need gap analysis (12-05)
+- BA trigger heuristic stages: technical_evaluation, evaluation, discovery -- normalized with lower().replace(" ", "_") (12-05)
 
 ### Open Blockers/Concerns
 
@@ -101,7 +105,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 12-04-PLAN.md
+Stopped at: Completed 12-05-PLAN.md (Phase 12 complete)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 in progress -- plans 01-04 complete, ready for 12-05.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 (Business Analyst Agent) complete -- all 5 plans executed. Ready for Phase 13.
