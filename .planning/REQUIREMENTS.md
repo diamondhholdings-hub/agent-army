@@ -138,11 +138,11 @@
 | SA-03 | Phase 10 | Complete |
 | SA-04 | Phase 10 | Complete |
 | SA-05 | Phase 10 | Complete |
-| PM-01 | Phase 11 | Pending |
-| PM-02 | Phase 11 | Pending |
-| PM-03 | Phase 11 | Pending |
-| PM-04 | Phase 11 | Pending |
-| PM-05 | Phase 11 | Pending |
+| PM-01 | Phase 11 | Complete |
+| PM-02 | Phase 11 | Complete |
+| PM-03 | Phase 11 | Complete |
+| PM-04 | Phase 11 | Complete |
+| PM-05 | Phase 11 | Complete |
 | BA-01 | Phase 12 | Pending |
 | BA-02 | Phase 12 | Pending |
 | BA-03 | Phase 12 | Pending |
