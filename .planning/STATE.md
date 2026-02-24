@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 11 complete, ready for Phase 12: Customer Success Agent
+**Current focus:** v2.0 Agent Crew — Phase 12 in progress: Business Analyst Agent
 
 ## Current Position
 
-Phase: 11 of 19 (Project Manager Agent)
-Plan: 5 of 5 in current phase (Phase 11 complete)
-Status: Phase complete
-Last activity: 2026-02-24 — Completed 11-05-PLAN.md
+Phase: 12 of 19 (Business Analyst Agent)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-02-24 — Completed 12-01-PLAN.md
 
-Progress: [████████████████████████░░░░░░░░░░░░░░░░░░░░░░] 24% (13/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████████░░░░░░░░░░░░░░░░░░░░] 25% (14/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -73,6 +73,9 @@ Progress: [███████████████████████
 - Sales Agent dispatch_project_trigger uses lazy import for PM schemas, same pattern as SA dispatch (11-05)
 - Handoff task key must be "trigger_type" (not "trigger") to match PM agent's task.get("trigger_type") reader (11-05)
 - _is_project_trigger normalizes stage with lower().replace(" ", "_") for case-insensitive matching (11-05)
+- BA schemas define 10 Pydantic models with model_validator for auto-computed is_low_confidence and field_validator for Fibonacci story points (12-01)
+- BA prompt builders return str (not list[dict]), embedding model_json_schema() for structured LLM output (12-01)
+- BA handoff type requirements_analysis registered as STRICT in StrictnessConfig (12-01)
 
 ### Open Blockers/Concerns
 
@@ -89,7 +92,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 11-05-PLAN.md (Phase 11 complete)
+Stopped at: Completed 12-01-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 11 complete -- ready for Phase 12.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 in progress -- plan 01 complete, ready for 12-02.
