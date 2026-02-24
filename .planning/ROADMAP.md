@@ -108,7 +108,13 @@ Plans:
   3. When requirements contain contradictions, the Business Analyst surfaces them with specific conflict descriptions and resolution suggestions
   4. The Business Analyst converts business requirements into user stories in standard As-a / I-want / So-that format
   5. Given workflow conversations, the Business Analyst produces process documentation showing current state, future state, and delta
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 12-01-PLAN.md — BA Pydantic schemas (10 models) + prompt templates (4 builders) + handoff validator registration
+- [ ] 12-02-PLAN.md — BusinessAnalystAgent core (4 handlers) + capabilities + package init
+- [ ] 12-03-PLAN.md — NotionBAAdapter + 4 module-level block renderers
+- [ ] 12-04-PLAN.md — main.py wiring + integration tests (14+ tests)
+- [ ] 12-05-PLAN.md — Sales Agent + PM Agent BA dispatch + round-trip handoff tests
 
 ### Phase 13: Technical Account Manager Agent
 **Goal**: A TAM agent exists that monitors technical health metrics per account, predicts escalation risk, generates technical advocacy communications, tracks technical relationship status, and aligns customer-product roadmaps
@@ -214,7 +220,7 @@ Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15 →
 | 9. Production Deployment | v2.0 | 2/5 | In progress | - |
 | 10. Solution Architect Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
 | 11. Project Manager Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
-| 12. Business Analyst Agent | v2.0 | 0/TBD | Not started | - |
+| 12. Business Analyst Agent | v2.0 | 0/5 | Not started | - |
 | 13. Technical Account Manager Agent | v2.0 | 0/TBD | Not started | - |
 | 14. Customer Success Agent | v2.0 | 0/TBD | Not started | - |
 | 15. Collections Agent | v2.0 | 0/TBD | Not started | - |
