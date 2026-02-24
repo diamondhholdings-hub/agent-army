@@ -31,11 +31,11 @@
 
 ### Business Analyst Agent (BA)
 
-- [ ] **BA-01**: Business Analyst can extract structured requirements from meeting transcripts and conversation history
-- [ ] **BA-02**: Business Analyst can perform gap analysis between stated requirements and product capabilities, identifying coverage and gaps
-- [ ] **BA-03**: Business Analyst can detect contradictions in stated requirements and surface them for resolution
-- [ ] **BA-04**: Business Analyst can generate user stories from business requirements in standard format (As a / I want / So that)
-- [ ] **BA-05**: Business Analyst can produce process documentation from workflow conversations (current state, future state, delta)
+- [x] **BA-01**: Business Analyst can extract structured requirements from meeting transcripts and conversation history
+- [x] **BA-02**: Business Analyst can perform gap analysis between stated requirements and product capabilities, identifying coverage and gaps
+- [x] **BA-03**: Business Analyst can detect contradictions in stated requirements and surface them for resolution
+- [x] **BA-04**: Business Analyst can generate user stories from business requirements in standard format (As a / I want / So that)
+- [x] **BA-05**: Business Analyst can produce process documentation from workflow conversations (current state, future state, delta)
 
 ### Technical Account Manager Agent (TAM)
 
@@ -143,11 +143,11 @@
 | PM-03 | Phase 11 | Complete |
 | PM-04 | Phase 11 | Complete |
 | PM-05 | Phase 11 | Complete |
-| BA-01 | Phase 12 | Pending |
-| BA-02 | Phase 12 | Pending |
-| BA-03 | Phase 12 | Pending |
-| BA-04 | Phase 12 | Pending |
-| BA-05 | Phase 12 | Pending |
+| BA-01 | Phase 12 | Complete |
+| BA-02 | Phase 12 | Complete |
+| BA-03 | Phase 12 | Complete |
+| BA-04 | Phase 12 | Complete |
+| BA-05 | Phase 12 | Complete |
 | TAM-01 | Phase 13 | Pending |
 | TAM-02 | Phase 13 | Pending |
 | TAM-03 | Phase 13 | Pending |
