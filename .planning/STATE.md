@@ -11,10 +11,10 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 
 Phase: 13 of 19 (Technical Account Manager Agent)
 Plan: 5 of 5 in current phase
-Status: In progress (plan 04 remaining)
-Last activity: 2026-02-24 — Completed 13-05-PLAN.md
+Status: Phase complete
+Last activity: 2026-02-24 — Completed 13-04-PLAN.md
 
-Progress: [████████████████████████████████████░░░░░░░░░░░] 40% (22/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████████████████████░░░░░░░░░] 42% (23/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -107,6 +107,9 @@ Progress: [███████████████████████
 - TAM_REQUEST_TO_TASK_TYPE uses identity mapping (request type == task type) since TAM types already match handler keys (13-05)
 - _is_tam_trigger requires 2+ keyword matches from 17 TAM-specific keywords, same threshold as other triggers (13-05)
 - TAM trigger stages: closed_won, onboarding, active_customer, renewal, account_management -- normalized with lower().replace(" ", "_") (13-05)
+- TAM agent wired in main.py lifespan between Phase 12 (BA) and Phase 5 (Deals), stored on app.state.technical_account_manager (13-04)
+- TAMScheduler started and stored on app.state.tam_scheduler with shutdown cleanup in shutdown section (13-04)
+- Real HealthScorer used in tests (not mocked) since it's pure Python and deterministic (13-04)
 
 ### Open Blockers/Concerns
 
@@ -123,7 +126,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 13-05-PLAN.md
+Stopped at: Completed 13-04-PLAN.md (Phase 13 complete)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 in progress -- plans 01-03, 05 (schemas, prompts, handoff types, agent core, capabilities, infrastructure, handoff) complete. Plan 04 (TAM wiring in main.py) remains.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 complete -- all 5 plans (schemas, agent core, infrastructure, wiring+tests, handoff) executed. Ready for Phase 14.
