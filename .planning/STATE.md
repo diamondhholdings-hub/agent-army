@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 13 of 19 (Technical Account Manager Agent)
-Plan: 5 of 5 in current phase
-Status: Phase complete
-Last activity: 2026-02-24 — Completed 13-04-PLAN.md
+Plan: 6 of 7 in current phase (13-06 gap closure remaining)
+Status: In progress
+Last activity: 2026-02-24 — Completed 13-07-PLAN.md (gap closure: reclassified Gap 2 as working-as-designed)
 
-Progress: [██████████████████████████████████████░░░░░░░░░] 42% (23/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████████████████████░░░░░░░░░] 44% (24/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -110,6 +110,7 @@ Progress: [███████████████████████
 - TAM agent wired in main.py lifespan between Phase 12 (BA) and Phase 5 (Deals), stored on app.state.technical_account_manager (13-04)
 - TAMScheduler started and stored on app.state.tam_scheduler with shutdown cleanup in shutdown section (13-04)
 - Real HealthScorer used in tests (not mocked) since it's pure Python and deterministic (13-04)
+- All trigger heuristics (_is_technical_question, _is_ba_trigger, _is_project_trigger, _is_tam_trigger) are supervisor-level static methods by established pattern -- NOT wired internally in _handle_process_reply() (13-07)
 
 ### Open Blockers/Concerns
 
@@ -126,7 +127,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 13-04-PLAN.md (Phase 13 complete)
+Stopped at: Completed 13-07-PLAN.md (Gap 2 reclassification)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 complete -- all 5 plans (schemas, agent core, infrastructure, wiring+tests, handoff) executed. Ready for Phase 14.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 has 6/7 plans complete -- 13-06 (NotionTAMAdapter gap closure) still pending. Gap 2 reclassified as working-as-designed in 13-07.
