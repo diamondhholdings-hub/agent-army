@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 12 complete: Business Analyst Agent
+**Current focus:** v2.0 Agent Crew — Phase 13 in progress: Technical Account Manager Agent
 
 ## Current Position
 
-Phase: 12 of 19 (Business Analyst Agent)
-Plan: 5 of 5 in current phase
-Status: Phase complete
-Last activity: 2026-02-24 — Completed 12-05-PLAN.md
+Phase: 13 of 19 (Technical Account Manager Agent)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-02-24 — Completed 13-01-PLAN.md
 
-Progress: [██████████████████████████████░░░░░░░░░░░░░░░░░] 33% (18/55 plans, v2.0 phases 9-19)
+Progress: [███████████████████████████████░░░░░░░░░░░░░░░░] 35% (19/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -89,6 +89,11 @@ Progress: [███████████████████████
 - Sales Agent _is_ba_trigger requires 2+ keyword matches, same threshold as _is_technical_question (12-05)
 - PM Agent scope change dispatch hardcodes analysis_scope="gap_only" since scope changes need gap analysis (12-05)
 - BA trigger heuristic stages: technical_evaluation, evaluation, discovery -- normalized with lower().replace(" ", "_") (12-05)
+- TAM schemas define 13 Pydantic models; HealthScoreResult auto-computes should_escalate via model_validator (13-01)
+- TAM handoff types: health_report STRICT, escalation_alert STRICT (13-01)
+- TAM prompt output schemas are plain dicts (not Pydantic models) since they describe LLM output shapes (13-01)
+- TAM prompt builders return str with embedded JSON schema, same pattern as BA/SA (13-01)
+- All TAM communications are DRAFT-only -- TAM never sends email autonomously (13-01)
 
 ### Open Blockers/Concerns
 
@@ -105,7 +110,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 12-05-PLAN.md (Phase 12 complete)
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 (Business Analyst Agent) complete -- all 5 plans executed. Ready for Phase 13.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 13 in progress -- plan 01 (schemas + prompts + handoff types) complete. Plans 02-05 remain.
