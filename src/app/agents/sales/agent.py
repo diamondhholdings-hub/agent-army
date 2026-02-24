@@ -14,6 +14,7 @@ The execute() method routes tasks by type to specialized handlers:
 - dispatch_technical_question: Detect and dispatch technical questions to Solution Architect
 - dispatch_project_trigger: Dispatch project trigger events to Project Manager
 - dispatch_requirements_analysis: Dispatch requirements analysis to Business Analyst
+- dispatch_tam_health_check: Dispatch health check or communication request to TAM
 
 Each handler follows the pattern:
 1. Compile context (RAG + conversation history + state)
@@ -66,6 +67,16 @@ SCOPE_TO_TASK_TYPE = {
     "gap_only": "gap_analysis",
     "stories_only": "user_story_generation",
     "process_only": "process_documentation",
+}
+
+# Explicit mapping from TAM request types to TAM agent task_type keys.
+TAM_REQUEST_TO_TASK_TYPE = {
+    "health_scan": "health_scan",
+    "escalation_outreach": "escalation_outreach",
+    "release_notes": "release_notes",
+    "roadmap_preview": "roadmap_preview",
+    "health_checkin": "health_checkin",
+    "customer_success_review": "customer_success_review",
 }
 
 
@@ -152,6 +163,7 @@ class SalesAgent(BaseAgent):
             "dispatch_technical_question": self._handle_dispatch_technical_question,
             "dispatch_project_trigger": self._handle_dispatch_project_trigger,
             "dispatch_requirements_analysis": self._handle_dispatch_requirements_analysis,
+            "dispatch_tam_health_check": self._handle_dispatch_tam_health_check,
         }
 
         handler = handlers.get(task_type)
@@ -982,3 +994,92 @@ class SalesAgent(BaseAgent):
         stage_trigger = stage_normalized in ("technical_evaluation", "evaluation", "discovery")
 
         return keyword_trigger or stage_trigger
+
+    @staticmethod
+    def _is_tam_trigger(text: str, deal_stage: str) -> bool:
+        """Detect if message should trigger TAM health check or account review.
+
+        Triggers on:
+        1. Keyword signals in message text (2+ matches required to reduce false positives)
+        2. Deal in post-sale or account management stages
+
+        Returns True if either condition met.
+        """
+        TAM_KEYWORDS = [
+            "health check", "account health", "technical issues",
+            "integration problem", "api error", "downtime", "outage",
+            "escalation", "at risk", "ticket", "support issue",
+            "technical review", "health report", "customer success",
+            "release notes", "roadmap preview", "check-in",
+        ]
+        keyword_matches = sum(1 for kw in TAM_KEYWORDS if kw in text.lower())
+        keyword_trigger = keyword_matches >= 2
+
+        stage_normalized = deal_stage.lower().replace(" ", "_")
+        stage_trigger = stage_normalized in (
+            "closed_won", "onboarding", "active_customer",
+            "renewal", "account_management",
+        )
+
+        return keyword_trigger or stage_trigger
+
+    async def _handle_dispatch_tam_health_check(
+        self, task: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Dispatch health check or communication request to the TAM agent.
+
+        Uses lazy import to avoid circular dependency.
+
+        Args:
+            task: Must include 'account_id'. Optional: 'request_type'
+                  (health_scan|escalation_outreach|release_notes|roadmap_preview|
+                  health_checkin|customer_success_review). Defaults to health_scan.
+            context: Execution context with tenant_id.
+
+        Returns:
+            Dict with status, handoff_task, payload, and target_agent_id.
+        """
+        account_id = task.get("account_id", "")
+        if not account_id:
+            return {
+                "status": "failed",
+                "error": "account_id is required for TAM dispatch",
+            }
+
+        # Lazy import to avoid circular dependency
+        from src.app.agents.technical_account_manager.schemas import TAMHandoffRequest
+
+        request_type = task.get("request_type", "health_scan")
+
+        request = TAMHandoffRequest(
+            account_id=account_id,
+            tenant_id=context.get("tenant_id", ""),
+            deal_id=task.get("deal_id"),
+            request_type=request_type,
+        )
+
+        # Use explicit dict mapping
+        task_type = TAM_REQUEST_TO_TASK_TYPE.get(request_type, "health_scan")
+
+        handoff_task = {
+            "type": task_type,
+            "account_id": account_id,
+            "deal_id": task.get("deal_id", ""),
+            "release_info": task.get("release_info", {}),
+            "metadata": task.get("metadata", {}),
+        }
+
+        logger.info(
+            "tam_health_check_dispatched",
+            account_id=account_id,
+            request_type=request_type,
+            task_type=task_type,
+            tenant_id=context.get("tenant_id", ""),
+        )
+
+        return {
+            "status": "dispatched",
+            "handoff_task": handoff_task,
+            "payload": request.model_dump_json(),
+            "target_agent_id": "technical_account_manager",
+        }
