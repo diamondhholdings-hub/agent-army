@@ -34,7 +34,7 @@ Full details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - [ ] **Phase 10: Solution Architect Agent** — Technical guidance agent that maps requirements and scopes POCs
 - [ ] **Phase 11: Project Manager Agent** — PMBOK-certified delivery management agent
 - [ ] **Phase 12: Business Analyst Agent** — Requirements gathering, gap analysis, and process documentation agent
-- [ ] **Phase 13: Technical Account Manager Agent** — Technical health monitoring and escalation prediction agent
+- [x] **Phase 13: Technical Account Manager Agent** — Technical health monitoring and escalation prediction agent
 - [ ] **Phase 14: Customer Success Agent** — Account health scoring, churn prediction, and expansion identification agent
 - [ ] **Phase 15: Collections Agent** — AR tracking, payment prediction, and adaptive collection agent
 - [ ] **Phase 16: Business Operations Agent** — CRM audit, pipeline forecasting, and process compliance agent
