@@ -822,3 +822,500 @@ class TestGmailCreateDraftOutput:
         email_arg = call_args[0][0]
         # EmailMessage should have to, subject, body_html
         assert hasattr(email_arg, "to") or "to" in dir(email_arg)
+
+
+# -- Tests: NotionTAMAdapter 4 New Methods ------------------------------------
+
+
+class TestNotionTAMAdapterMethods:
+    """Tests for the 4 new NotionTAMAdapter methods: get_relationship_profile,
+    get_account, log_communication, update_relationship_profile."""
+
+    @pytest.fixture
+    def notion_adapter(self):
+        """Create a NotionTAMAdapter with mocked Notion AsyncClient."""
+        from src.app.agents.technical_account_manager.notion_tam import (
+            NotionTAMAdapter,
+        )
+
+        mock_client = AsyncMock()
+        # Set up nested namespace mocks for Notion client API
+        mock_client.pages = AsyncMock()
+        mock_client.pages.retrieve = AsyncMock()
+        mock_client.pages.create = AsyncMock()
+        mock_client.pages.update = AsyncMock()
+        mock_client.blocks = AsyncMock()
+        mock_client.blocks.children = AsyncMock()
+        mock_client.blocks.children.list = AsyncMock()
+        mock_client.blocks.children.append = AsyncMock()
+        mock_client.blocks.delete = AsyncMock()
+        mock_client.databases = AsyncMock()
+        mock_client.databases.query = AsyncMock()
+
+        adapter = NotionTAMAdapter(
+            client=mock_client,
+            accounts_database_id="test-db-id",
+        )
+        return adapter, mock_client
+
+    # -- Test 1: get_relationship_profile returns dict -----------------------
+
+    @pytest.mark.asyncio
+    async def test_get_relationship_profile_returns_dict(self, notion_adapter):
+        """get_relationship_profile finds sub-page, parses blocks, returns dict with profile_page_id."""
+        adapter, mock_client = notion_adapter
+
+        # First call: get_relationship_profile_page -> blocks.children.list (find sub-page)
+        # Second call: get_relationship_profile -> blocks.children.list (get sub-page content)
+        sub_page_id = "sub-page-uuid-001"
+
+        mock_client.blocks.children.list = AsyncMock(
+            side_effect=[
+                # First call: find the child_page block (get_relationship_profile_page)
+                {
+                    "results": [
+                        {
+                            "id": sub_page_id,
+                            "type": "child_page",
+                            "child_page": {
+                                "title": "Technical Relationship Profile - Acme Corp"
+                            },
+                        }
+                    ]
+                },
+                # Second call: sub-page content blocks
+                {
+                    "results": [
+                        {
+                            "type": "heading_2",
+                            "heading_2": {
+                                "rich_text": [
+                                    {
+                                        "plain_text": "Technical Relationship Profile - Acme Corp"
+                                    }
+                                ]
+                            },
+                        },
+                        {
+                            "type": "heading_3",
+                            "heading_3": {
+                                "rich_text": [
+                                    {"plain_text": "Stakeholder Map"}
+                                ]
+                            },
+                        },
+                        {
+                            "type": "bulleted_list_item",
+                            "bulleted_list_item": {
+                                "rich_text": [
+                                    {
+                                        "plain_text": "Alice Smith: CTO | Maturity: high"
+                                    }
+                                ]
+                            },
+                        },
+                        {
+                            "type": "heading_3",
+                            "heading_3": {
+                                "rich_text": [
+                                    {"plain_text": "Health Dashboard"}
+                                ]
+                            },
+                        },
+                        {
+                            "type": "paragraph",
+                            "paragraph": {
+                                "rich_text": [
+                                    {
+                                        "plain_text": "Current Score: 85/100 | Status: Green"
+                                    }
+                                ]
+                            },
+                        },
+                    ]
+                },
+            ]
+        )
+
+        result = await adapter.get_relationship_profile("acct-123")
+
+        assert isinstance(result, dict)
+        assert result["profile_page_id"] == sub_page_id
+        assert result["account_id"] == "acct-123"
+        assert result["account_name"] == "Acme Corp"
+        # Stakeholder parsed
+        assert len(result["stakeholders"]) == 1
+        assert result["stakeholders"][0]["name"] == "Alice Smith"
+        assert result["stakeholders"][0]["technical_maturity"] == "high"
+        # Health dashboard parsed
+        assert result["health_score"] == 85
+        assert result["health_rag"] == "Green"
+
+    # -- Test 2: get_relationship_profile returns empty when no subpage ------
+
+    @pytest.mark.asyncio
+    async def test_get_relationship_profile_returns_empty_when_no_subpage(
+        self, notion_adapter
+    ):
+        """get_relationship_profile returns {} when no sub-page exists."""
+        adapter, mock_client = notion_adapter
+
+        # No child_page blocks found
+        mock_client.blocks.children.list = AsyncMock(
+            return_value={"results": []}
+        )
+
+        result = await adapter.get_relationship_profile("acct-missing")
+
+        assert result == {}
+
+    # -- Test 3: get_account returns single account dict ---------------------
+
+    @pytest.mark.asyncio
+    async def test_get_account_returns_single_account_dict(self, notion_adapter):
+        """get_account retrieves page and returns dict with same structure as query_all_accounts."""
+        adapter, mock_client = notion_adapter
+
+        mock_client.pages.retrieve = AsyncMock(
+            return_value={
+                "id": "page-id-123",
+                "properties": {
+                    "Name": {
+                        "title": [{"plain_text": "Acme Corp"}],
+                    },
+                    "Health Score": {"number": 75},
+                    "Health Status": {"select": {"name": "Amber"}},
+                    "Last Heartbeat": {
+                        "date": {
+                            "start": "2026-02-20T10:00:00.000Z",
+                        }
+                    },
+                },
+            }
+        )
+
+        result = await adapter.get_account("page-id-123")
+
+        assert result["id"] == "page-id-123"
+        assert result["account_id"] == "page-id-123"
+        assert result["name"] == "Acme Corp"
+        assert result["health_score"] == 75
+        assert result["health_rag"] == "Amber"
+        assert result["last_heartbeat"] == "2026-02-20T10:00:00.000Z"
+        assert result["hours_since_heartbeat"] is not None
+        assert result["hours_since_heartbeat"] > 0
+
+    # -- Test 4: log_communication finds subpage and appends ----------------
+
+    @pytest.mark.asyncio
+    async def test_log_communication_finds_subpage_and_appends(
+        self, notion_adapter
+    ):
+        """log_communication finds sub-page and calls append_communication_log."""
+        adapter, mock_client = notion_adapter
+
+        sub_page_id = "profile-page-uuid"
+
+        # get_relationship_profile_page finds the sub-page
+        mock_client.blocks.children.list = AsyncMock(
+            return_value={
+                "results": [
+                    {
+                        "id": sub_page_id,
+                        "type": "child_page",
+                        "child_page": {
+                            "title": "Technical Relationship Profile - Test"
+                        },
+                    }
+                ]
+            }
+        )
+
+        mock_client.blocks.children.append = AsyncMock(return_value={})
+
+        comm_record = {
+            "date": "2026-02-24",
+            "communication_type": "health_checkin",
+            "subject": "Check-in",
+            "outcome": "",
+        }
+
+        await adapter.log_communication("acct-123", comm_record)
+
+        # append_communication_log uses blocks.children.append
+        mock_client.blocks.children.append.assert_called_once()
+        call_kwargs = mock_client.blocks.children.append.call_args
+        assert call_kwargs[1]["block_id"] == sub_page_id
+
+    # -- Test 5: log_communication noop when no subpage ---------------------
+
+    @pytest.mark.asyncio
+    async def test_log_communication_noop_when_no_subpage(self, notion_adapter):
+        """log_communication does nothing (no-op) when no sub-page exists."""
+        adapter, mock_client = notion_adapter
+
+        # No child_page blocks found
+        mock_client.blocks.children.list = AsyncMock(
+            return_value={"results": []}
+        )
+
+        comm_record = {
+            "date": "2026-02-24",
+            "communication_type": "health_checkin",
+            "subject": "Test",
+            "outcome": "",
+        }
+
+        await adapter.log_communication("acct-missing", comm_record)
+
+        # blocks.children.append was NOT called
+        mock_client.blocks.children.append.assert_not_called()
+
+    # -- Test 6: update_relationship_profile clears and rebuilds ------------
+
+    @pytest.mark.asyncio
+    async def test_update_relationship_profile_clears_and_rebuilds(
+        self, notion_adapter
+    ):
+        """update_relationship_profile deletes existing blocks and appends new content."""
+        adapter, mock_client = notion_adapter
+
+        existing_block_ids = ["block-1", "block-2"]
+
+        # blocks.children.list returns existing blocks
+        mock_client.blocks.children.list = AsyncMock(
+            return_value={
+                "results": [
+                    {"id": bid, "type": "paragraph"} for bid in existing_block_ids
+                ]
+            }
+        )
+
+        mock_client.blocks.delete = AsyncMock(return_value={})
+        mock_client.blocks.children.append = AsyncMock(return_value={})
+
+        profile_dict = {
+            "account_id": "acct-123",
+            "account_name": "Acme Corp",
+            "stakeholders": [
+                {"name": "Bob", "role": "VP Eng", "technical_maturity": "high"}
+            ],
+            "integrations": [],
+            "feature_adoption": [],
+            "customer_environment": ["AWS", "Kubernetes"],
+            "communication_history": [],
+            "co_dev_opportunities": [],
+        }
+
+        await adapter.update_relationship_profile("profile-page-123", profile_dict)
+
+        # Delete called for each existing block
+        assert mock_client.blocks.delete.call_count == len(existing_block_ids)
+        for bid in existing_block_ids:
+            mock_client.blocks.delete.assert_any_call(block_id=bid)
+
+        # Append called with new content
+        assert mock_client.blocks.children.append.call_count >= 1
+        append_call = mock_client.blocks.children.append.call_args
+        assert append_call[1]["block_id"] == "profile-page-123"
+        assert len(append_call[1]["children"]) > 0
+
+    # -- Test 7: All agent handlers no AttributeError -----------------------
+
+    @pytest.mark.asyncio
+    async def test_all_agent_handlers_no_attribute_error(self):
+        """All 7 TAM handlers work end-to-end with mock NotionTAMAdapter without AttributeError.
+
+        This is the most critical integration test: it proves that all handlers
+        can call the 4 new methods (get_relationship_profile, get_account,
+        log_communication, update_relationship_profile) without raising
+        AttributeError.
+        """
+        # Create mock NotionTAMAdapter with ALL 9 methods
+        mock_notion_tam = AsyncMock()
+        mock_notion_tam.get_relationship_profile = AsyncMock(
+            return_value={
+                "account_id": "acct-1",
+                "account_name": "Test Corp",
+                "stakeholders": [],
+                "integrations": [],
+                "feature_adoption": [],
+                "customer_environment": [],
+                "communication_history": [],
+                "co_dev_opportunities": [],
+                "health_score": 80,
+                "health_rag": "Green",
+                "profile_page_id": "profile-page-123",
+            }
+        )
+        mock_notion_tam.get_account = AsyncMock(
+            return_value={
+                "id": "acct-1",
+                "account_id": "acct-1",
+                "name": "Test Corp",
+                "health_score": 80,
+                "health_rag": "Green",
+                "last_heartbeat": None,
+                "hours_since_heartbeat": None,
+            }
+        )
+        mock_notion_tam.log_communication = AsyncMock(return_value=None)
+        mock_notion_tam.update_relationship_profile = AsyncMock(return_value=None)
+        mock_notion_tam.query_all_accounts = AsyncMock(return_value=[])
+        mock_notion_tam.create_relationship_profile = AsyncMock(
+            return_value="page-123"
+        )
+        mock_notion_tam.update_health_score = AsyncMock(return_value=None)
+        mock_notion_tam.get_relationship_profile_page = AsyncMock(
+            return_value="profile-page-123"
+        )
+        mock_notion_tam.append_communication_log = AsyncMock(return_value=None)
+
+        # Mock other services
+        mock_gmail = _make_mock_gmail_service()
+        mock_chat = AsyncMock()
+        mock_event_bus = AsyncMock()
+        mock_ticket_client = AsyncMock()
+        mock_ticket_client.get_open_tickets = AsyncMock(return_value=[])
+        mock_ticket_client.get_p1_p2_tickets = AsyncMock(return_value=[])
+
+        health_scorer = HealthScorer()
+        registration = create_tam_registration()
+
+        agent = TAMAgent(
+            registration=registration,
+            llm_service=None,  # Will set per handler
+            notion_tam=mock_notion_tam,
+            gmail_service=mock_gmail,
+            chat_service=mock_chat,
+            event_bus=mock_event_bus,
+            ticket_client=mock_ticket_client,
+            health_scorer=health_scorer,
+        )
+
+        context = {"tenant_id": "test-tenant"}
+
+        # -- 1. health_scan (single account) --
+        # health_scan doesn't use LLM, just HealthScorer
+        result = await agent.execute(
+            {"type": "health_scan", "account_id": "acct-1"},
+            context,
+        )
+        assert result["task_type"] == "health_scan"
+        # No AttributeError -- get_account was called
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+        mock_notion_tam.get_account.assert_called()
+
+        # -- 2. escalation_outreach --
+        mock_llm = _make_mock_llm(_make_escalation_outreach_json())
+        agent._llm_service = mock_llm
+
+        result = await agent.execute(
+            {
+                "type": "escalation_outreach",
+                "account_id": "acct-1",
+                "rep_email": "rep@example.com",
+                "health_score": {"score": 30, "rag_status": "Red"},
+            },
+            context,
+        )
+        assert result["task_type"] == "escalation_outreach"
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+        mock_notion_tam.get_relationship_profile.assert_called()
+
+        # -- 3. release_notes --
+        agent._llm_service = _make_mock_llm(_make_release_notes_json())
+
+        result = await agent.execute(
+            {
+                "type": "release_notes",
+                "account_id": "acct-1",
+                "rep_email": "rep@example.com",
+                "release_info": {"version": "2.5"},
+            },
+            context,
+        )
+        assert result["task_type"] == "release_notes"
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+
+        # -- 4. roadmap_preview --
+        agent._llm_service = _make_mock_llm(_make_roadmap_preview_json())
+
+        result = await agent.execute(
+            {
+                "type": "roadmap_preview",
+                "account_id": "acct-1",
+                "rep_email": "rep@example.com",
+                "roadmap_items": [{"name": "Feature X", "timeline": "Q3"}],
+            },
+            context,
+        )
+        assert result["task_type"] == "roadmap_preview"
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+
+        # -- 5. health_checkin --
+        agent._llm_service = _make_mock_llm(_make_health_checkin_json())
+
+        result = await agent.execute(
+            {
+                "type": "health_checkin",
+                "account_id": "acct-1",
+                "rep_email": "rep@example.com",
+                "health_score": {"score": 85, "rag_status": "Green"},
+            },
+            context,
+        )
+        assert result["task_type"] == "health_checkin"
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+        # log_communication should have been called
+        mock_notion_tam.log_communication.assert_called()
+
+        # -- 6. customer_success_review --
+        agent._llm_service = _make_mock_llm(
+            _make_customer_success_review_json()
+        )
+
+        result = await agent.execute(
+            {
+                "type": "customer_success_review",
+                "account_id": "acct-1",
+                "rep_email": "rep@example.com",
+                "health_score": {"score": 72, "rag_status": "Amber"},
+            },
+            context,
+        )
+        assert result["task_type"] == "customer_success_review"
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+
+        # -- 7. update_relationship_profile --
+        result = await agent.execute(
+            {
+                "type": "update_relationship_profile",
+                "account_id": "acct-1",
+                "profile_updates": {"customer_environment": ["AWS", "GCP"]},
+            },
+            context,
+        )
+        assert result["task_type"] == "update_relationship_profile"
+        error_val = result.get("error")
+        if error_val:
+            assert "AttributeError" not in str(error_val)
+        # update_relationship_profile should have been called (profile had page_id)
+        mock_notion_tam.update_relationship_profile.assert_called()
+
+        # Final verification: get_relationship_profile was called across handlers
+        # (escalation_outreach, release_notes, roadmap_preview, health_checkin,
+        # customer_success_review, update_relationship_profile = 6 handlers)
+        assert mock_notion_tam.get_relationship_profile.call_count >= 6
