@@ -73,6 +73,9 @@ class StrictnessConfig:
             "risk_alert": ValidationStrictness.STRICT,
             # BA agent handoff types
             "requirements_analysis": ValidationStrictness.STRICT,
+            # TAM agent handoff types
+            "health_report": ValidationStrictness.STRICT,
+            "escalation_alert": ValidationStrictness.STRICT,
         }
 
     def get_strictness(self, handoff_type: str) -> ValidationStrictness:
