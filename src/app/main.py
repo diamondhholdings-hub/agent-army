@@ -294,6 +294,37 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         log.warning("phase11.project_manager_init_failed", error=str(exc))
 
+    # ── Phase 12: Business Analyst Agent ──────────────────────────────
+    # Requirements engineering agent. Follows the SA/PM Agent pattern:
+    # instantiate with shared services, register in AgentRegistry.
+    # Fail-tolerant -- BA unavailability does not prevent app startup.
+
+    try:
+        from src.app.agents.business_analyst import (
+            BusinessAnalystAgent,
+            create_ba_registration,
+        )
+
+        ba_registration = create_ba_registration()
+
+        ba_agent = BusinessAnalystAgent(
+            registration=ba_registration,
+            llm_service=getattr(app.state, "llm_service", None)
+            or locals().get("llm_service"),
+            rag_pipeline=getattr(app.state, "rag_pipeline", None)
+            or locals().get("rag_pipeline"),
+        )
+
+        # Register in agent registry
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(ba_registration)
+            ba_registration._agent_instance = ba_agent
+        app.state.business_analyst = ba_agent
+        log.info("phase12.business_analyst_initialized")
+    except Exception as exc:
+        log.warning("phase12.business_analyst_init_failed", error=str(exc))
+
     # ── Phase 5: Deal Management Module Initialization ──────────────
     try:
         from src.app.deals.repository import DealRepository
