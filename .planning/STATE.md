@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 12 of 19 (Business Analyst Agent)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-24 — Completed 12-03-PLAN.md
+Last activity: 2026-02-24 — Completed 12-04-PLAN.md
 
-Progress: [████████████████████████████░░░░░░░░░░░░░░░░░░] 29% (16/55 plans, v2.0 phases 9-19)
+Progress: [█████████████████████████████░░░░░░░░░░░░░░░░░░] 31% (17/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -83,6 +83,8 @@ Progress: [███████████████████████
 - BA block renderers are module-level functions decoupled from adapter class (12-03)
 - create_requirements_page returns page_id (UUID), matching NotionPMAdapter return pattern (12-03)
 - User stories dual-grouped by epic_theme (full details in toggles) and stakeholder_domain (cross-reference list) (12-03)
+- BA agent wired in main.py lifespan between Phase 11 (PM) and Phase 5 (Deals), stored on app.state.business_analyst (12-04)
+- BA agent wiring pattern identical to SA/PM: try/except, import inside try, create registration, register in AgentRegistry (12-04)
 
 ### Open Blockers/Concerns
 
@@ -99,7 +101,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 12-03-PLAN.md
+Stopped at: Completed 12-04-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 in progress -- plans 01-03 complete, ready for 12-04.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 12 in progress -- plans 01-04 complete, ready for 12-05.
