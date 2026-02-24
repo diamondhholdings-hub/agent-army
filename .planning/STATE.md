@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (plan 04 complete, 1 remaining)
+**Current focus:** v2.0 Agent Crew — Phase 11 complete, ready for Phase 12: Customer Success Agent
 
 ## Current Position
 
 Phase: 11 of 19 (Project Manager Agent)
-Plan: 4 of 5 in current phase (11-04 complete)
-Status: In progress
-Last activity: 2026-02-24 — Completed 11-04-PLAN.md
+Plan: 5 of 5 in current phase (Phase 11 complete)
+Status: Phase complete
+Last activity: 2026-02-24 — Completed 11-05-PLAN.md
 
-Progress: [██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░] 22% (12/55 plans, v2.0 phases 9-19)
+Progress: [████████████████████████░░░░░░░░░░░░░░░░░░░░░░] 24% (13/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -70,6 +70,9 @@ Progress: [██████████████████████░
 - PMScheduler gracefully handles missing APScheduler -- start() returns False (11-03)
 - PM agent wired in main.py lifespan between Phase 10 (SA) and Phase 5 (Deals), stored on app.state.project_manager (11-04)
 - APScheduler is runtime dependency (not dev-only) since PMScheduler uses it in production (11-04)
+- Sales Agent dispatch_project_trigger uses lazy import for PM schemas, same pattern as SA dispatch (11-05)
+- Handoff task key must be "trigger_type" (not "trigger") to match PM agent's task.get("trigger_type") reader (11-05)
+- _is_project_trigger normalizes stage with lower().replace(" ", "_") for case-insensitive matching (11-05)
 
 ### Open Blockers/Concerns
 
@@ -86,7 +89,7 @@ Progress: [██████████████████████░
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed 11-04-PLAN.md
+Stopped at: Completed 11-05-PLAN.md (Phase 11 complete)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 10 execution started in parallel.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 11 complete -- ready for Phase 12.
