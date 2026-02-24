@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (Phase 10 complete)
+**Current focus:** v2.0 Agent Crew — Phase 11: Project Manager Agent (plan 01 complete, 4 remaining)
 
 ## Current Position
 
-Phase: 10 of 19 (Solution Architect Agent)
-Plan: 5 of 5 in current phase (10-01, 10-02, 10-03, 10-04, 10-05 complete)
-Status: Phase complete
-Last activity: 2026-02-23 — Completed 10-05-PLAN.md
+Phase: 11 of 19 (Project Manager Agent)
+Plan: 1 of 5 in current phase (11-01 complete)
+Status: In progress
+Last activity: 2026-02-23 — Completed 11-01-PLAN.md
 
-Progress: [██████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 15% (8/55 plans, v2.0 phases 9-19)
+Progress: [████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 16% (9/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -59,6 +59,9 @@ Progress: [██████████████░░░░░░░░░
 - Fictional competitors: BillingPro (legacy), ChargeStack (modern), RevenueOS (enterprise) covering 3 archetype patterns (10-03)
 - Sales Agent dispatch_technical_question uses lazy import for SA schemas to avoid circular deps (10-05)
 - _is_technical_question heuristic requires 2+ keyword matches to reduce false positives (10-05)
+- PM total_budget_days is a plain Field(ge=0) not computed_field -- caller computes from phase estimates (11-01)
+- PM handoff types: project_plan STRICT, status_report LENIENT, risk_alert STRICT (11-01)
+- PM earned value uses 0/100 rule: tasks binary complete/incomplete, no subjective percent-complete (11-01)
 
 ### Open Blockers/Concerns
 
@@ -75,7 +78,7 @@ Progress: [██████████████░░░░░░░░░
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed 10-05-PLAN.md (Phase 10 complete)
+Stopped at: Completed 11-01-PLAN.md
 Resume file: None
 
 **Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 10 execution started in parallel.
