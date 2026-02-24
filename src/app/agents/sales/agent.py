@@ -12,6 +12,7 @@ The execute() method routes tasks by type to specialized handlers:
 - qualify: Force qualification extraction on conversation text
 - recommend_action: Get next-action recommendations
 - dispatch_technical_question: Detect and dispatch technical questions to Solution Architect
+- dispatch_project_trigger: Dispatch project trigger events to Project Manager
 
 Each handler follows the pattern:
 1. Compile context (RAG + conversation history + state)
@@ -138,6 +139,7 @@ class SalesAgent(BaseAgent):
             "qualify": self._handle_qualification,
             "recommend_action": self._handle_recommend_action,
             "dispatch_technical_question": self._handle_dispatch_technical_question,
+            "dispatch_project_trigger": self._handle_dispatch_project_trigger,
         }
 
         handler = handlers.get(task_type)
@@ -675,6 +677,71 @@ class SalesAgent(BaseAgent):
             "target_agent_id": "solution_architect",
         }
 
+    async def _handle_dispatch_project_trigger(
+        self, task: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Dispatch a project trigger event to the Project Manager agent.
+
+        Triggered when a deal is won, POC is scoped, or a complex deal is
+        identified. Uses lazy import to avoid circular dependency.
+
+        Args:
+            task: Must include 'trigger_type' (deal_won|poc_scoped|complex_deal|manual)
+                  and 'deal_id'. Optional: 'deliverables', 'timeline', 'stakeholders'.
+            context: Execution context with tenant_id.
+
+        Returns:
+            Dict with status, handoff_task, payload, and target_agent_id.
+        """
+        trigger_type = task.get("trigger_type", "")
+        deal_id = task.get("deal_id", "")
+
+        if not trigger_type or not deal_id:
+            return {
+                "status": "failed",
+                "error": "trigger_type and deal_id are required",
+            }
+
+        # Lazy import to avoid circular dependency (same pattern as SA dispatch)
+        from src.app.agents.project_manager.schemas import PMTriggerEvent
+
+        trigger_payload = PMTriggerEvent(
+            trigger_type=trigger_type,
+            deal_id=deal_id,
+            tenant_id=context.get("tenant_id", ""),
+            deliverables=task.get("deliverables", []),
+            timeline=task.get("timeline"),
+            stakeholders=task.get("stakeholders", []),
+            poc_plan=task.get("poc_plan"),
+            metadata=task.get("metadata", {}),
+        )
+
+        # Build handoff task for the PM agent's execute() router.
+        # PM agent's _handle_process_trigger reads "trigger_type" from the task.
+        handoff_task = {
+            "type": "process_trigger",
+            "trigger_type": trigger_type,
+            "deal_id": deal_id,
+            "deliverables": trigger_payload.deliverables,
+            "timeline": trigger_payload.timeline,
+            "stakeholders": trigger_payload.stakeholders,
+            "poc_plan": trigger_payload.poc_plan,
+        }
+
+        logger.info(
+            "project_trigger_dispatched",
+            trigger_type=trigger_type,
+            deal_id=deal_id,
+            tenant_id=context.get("tenant_id", ""),
+        )
+
+        return {
+            "status": "dispatched",
+            "handoff_task": handoff_task,
+            "payload": trigger_payload.model_dump_json(),
+            "target_agent_id": "project_manager",
+        }
+
     # ── Helpers ─────────────────────────────────────────────────────────────
 
     @staticmethod
@@ -799,3 +866,31 @@ class SalesAgent(BaseAgent):
         matches = sum(1 for kw in technical_keywords if kw in text_lower)
         # Require at least 2 technical keyword matches to reduce false positives
         return matches >= 2
+
+    @staticmethod
+    def _is_project_trigger(deal_stage: str, context: dict[str, Any]) -> str | None:
+        """Determine if a deal state warrants a PM trigger.
+
+        Returns the trigger type string if a PM trigger should fire,
+        or None if no trigger is warranted.
+
+        Trigger conditions:
+        - deal_stage == "closed_won" or "won" -> "deal_won"
+        - context contains "poc_scoped": True -> "poc_scoped"
+        - context contains "complex_deal": True -> "complex_deal"
+
+        Args:
+            deal_stage: Current deal stage string (case-insensitive).
+            context: Execution context that may contain trigger flags.
+
+        Returns:
+            Trigger type string or None.
+        """
+        stage_lower = deal_stage.lower().replace(" ", "_")
+        if stage_lower in ("closed_won", "won"):
+            return "deal_won"
+        if context.get("poc_scoped"):
+            return "poc_scoped"
+        if context.get("complex_deal"):
+            return "complex_deal"
+        return None
