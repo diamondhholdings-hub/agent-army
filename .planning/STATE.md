@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 15 of 19 (Collections Agent)
-Plan: 4 of 7 in current phase (plans 01, 02, 03, 04 complete; 05, 06, 07 remain)
+Plan: 5 of 7 in current phase (plans 01, 02, 03, 04, 05 complete; 06, 07 remain)
 Status: In progress
-Last activity: 2026-02-25 — Completed 15-03-PLAN.md
+Last activity: 2026-02-25 — Completed 15-05-PLAN.md
 
-Progress: [████████████████████████████████████████████████████████░] 65% (36/55 plans, v2.0 phases 9-19)
+Progress: [█████████████████████████████████████████████████████████░] 67% (37/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -150,6 +150,11 @@ Progress: [███████████████████████
 - handle_run_escalation_check: deterministic STAGE_TIME_FLOORS + messages_unanswered check; stages 1-4 call handle_generate_collection_message internally; stage 5 calls build_escalation_check_prompt + LLM for rep+finance dual-draft (15-03)
 - Stage 0 has no time floor -- time_floor_met=True for stage 0, advance immediately if messages_unanswered >= 1 (15-03)
 - Finance team email priority: task dict → kwargs → settings.FINANCE_TEAM_EMAIL; missing = skip with warning, not error (15-03)
+- CollectionsAgent.execute() reads request_type (not type) -- distinguishes from CSM/TAM task key convention (15-05)
+- CollectionsAgent post-check: execute() inspects result dict after payment_risk_assessment, calls receive_collections_risk() on RED/CRITICAL (15-05)
+- receive_collections_risk only dispatches RED/CRITICAL to CSM; GREEN/AMBER return immediately; fail-open wraps csm call in try/except (15-05)
+- CollectionsScheduler has 2 cron jobs: daily AR scan at 6am, daily escalation check at 7am (15-05)
+- CollectionsScheduler.start() wrapped in try/except returns False on any error including no event loop (15-05)
 
 ### Open Blockers/Concerns
 
@@ -165,8 +170,8 @@ Progress: [███████████████████████
 
 ## Session Continuity
 
-Last session: 2026-02-25T18:00:18Z
-Stopped at: Completed 15-03-PLAN.md (Phase 15, plan 3 of 7 — prompt builders + handlers)
+Last session: 2026-02-25T18:07:44Z
+Stopped at: Completed 15-05-PLAN.md (Phase 15, plan 5 of 7 — CollectionsAgent + CollectionsScheduler)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas), 15-02 (scorer TDD), 15-03 (prompt builders + handlers), 15-04 (NotionCollectionsAdapter) done; plans 05, 06, 07 remaining.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas), 15-02 (scorer TDD), 15-03 (prompt builders + handlers), 15-04 (NotionCollectionsAdapter), 15-05 (agent + scheduler) done; plans 06, 07 remaining.
