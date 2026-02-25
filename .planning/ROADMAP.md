@@ -166,7 +166,15 @@ Plans:
   3. The Collections agent generates collection messages calibrated to payment stage, relationship value, and account importance
   4. The Collections agent escalates delinquent accounts through a configurable escalation ladder — soft reminder, firm notice, human handoff
   5. The Collections agent surfaces payment plan structuring options for accounts with genuine cash flow issues, with human approval required for terms
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 15-01-PLAN.md — Collections schemas (11 models) + CSMHealthSignals collections_risk field
+- [ ] 15-02-PLAN.md — TDD: PaymentRiskScorer (4-signal deterministic) + compute_tone_modifier
+- [ ] 15-03-PLAN.md — 5 prompt builders + 5 task handlers (fail-open, deterministic escalation)
+- [ ] 15-04-PLAN.md — NotionCollectionsAdapter (6 async methods) + 4 config fields
+- [ ] 15-05-PLAN.md — CollectionsAgent (5 task routing) + CollectionsScheduler (2 cron jobs)
+- [ ] 15-06-PLAN.md — main.py wiring + CSMHealthScorer collections_risk cap (0.80x/0.90x)
+- [ ] 15-07-PLAN.md — Tests: schemas + handlers + adapter + wiring + Collections→CSM round-trip
 
 ### Phase 16: Business Operations Agent
 **Goal**: A BizOps agent exists that audits CRM data quality, generates pipeline forecasts, detects process breakdowns, produces pipeline analytics, and automates recurring reporting
@@ -239,7 +247,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 | 12. Business Analyst Agent | v2.0 | 5/5 | Complete | 2026-02-24 |
 | 13. Technical Account Manager Agent | v2.0 | 7/7 | Complete | 2026-02-24 |
 | 14. Customer Success Agent | v2.0 | 7/7 | Complete | 2026-02-25 |
-| 15. Collections Agent | v2.0 | 0/TBD | Not started | - |
+| 15. Collections Agent | v2.0 | 0/7 | Planned | - |
 | 16. Business Operations Agent | v2.0 | 0/TBD | Not started | - |
 | 17. Sales Agent Voice Capability | v2.0 | 0/TBD | Not started | - |
 | 18. Sales Agent Advanced Methodology | v2.0 | 0/TBD | Not started | - |
