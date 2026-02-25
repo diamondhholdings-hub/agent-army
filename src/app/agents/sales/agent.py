@@ -164,6 +164,7 @@ class SalesAgent(BaseAgent):
             "dispatch_project_trigger": self._handle_dispatch_project_trigger,
             "dispatch_requirements_analysis": self._handle_dispatch_requirements_analysis,
             "dispatch_tam_health_check": self._handle_dispatch_tam_health_check,
+            "handle_expansion_opportunity": self._handle_expansion_opportunity,
         }
 
         handler = handlers.get(task_type)
@@ -817,6 +818,116 @@ class SalesAgent(BaseAgent):
             "payload": request.model_dump_json(),
             "target_agent_id": "business_analyst",
         }
+
+    async def _handle_expansion_opportunity(
+        self, task: dict[str, Any], context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Handle an expansion opportunity dispatched from the CSM agent.
+
+        Creates a Gmail draft with expansion details for the rep to review.
+        This is the receiving end of the first reverse-direction cross-agent
+        handoff (CSM -> Sales).
+
+        Args:
+            task: Must contain 'account_id', 'opportunity_type', 'evidence'.
+                  Optional: 'estimated_arr_impact', 'recommended_talk_track',
+                  'confidence'.
+            context: Execution context with tenant_id.
+
+        Returns:
+            Dict with task_type, account_id, opportunity_type, draft_id,
+            and confidence.
+        """
+        try:
+            account_id = task.get("account_id", "")
+            opportunity_type = task.get("opportunity_type", "")
+            evidence = task.get("evidence", "")
+            estimated_arr_impact = task.get("estimated_arr_impact")
+            recommended_talk_track = task.get("recommended_talk_track", "")
+            confidence = task.get("confidence", "medium")
+
+            # Create Gmail draft with expansion details for rep review
+            draft_id: str | None = None
+            if self._gmail_service is not None:
+                try:
+                    from src.app.services.gsuite.models import EmailMessage
+
+                    arr_line = ""
+                    if estimated_arr_impact is not None:
+                        arr_line = (
+                            f"<p><strong>Estimated ARR Impact:</strong> "
+                            f"${estimated_arr_impact:,.0f}</p>"
+                        )
+
+                    subject = (
+                        f"Expansion Opportunity: {account_id} — "
+                        f"{opportunity_type} ({confidence})"
+                    )
+                    body_html = (
+                        f"<p><strong>CSM-identified expansion opportunity</strong> "
+                        f"for account <strong>{account_id}</strong>.</p>"
+                        f"<p><strong>Type:</strong> {opportunity_type}</p>"
+                        f"<p><strong>Evidence:</strong> {evidence}</p>"
+                        f"{arr_line}"
+                        f"<p><strong>Recommended Talk Track:</strong> "
+                        f"{recommended_talk_track or 'N/A'}</p>"
+                        f"<p><strong>Confidence:</strong> {confidence}</p>"
+                        f"<p>Please review and follow up with the customer.</p>"
+                    )
+
+                    draft_email = EmailMessage(
+                        to="",  # Rep email resolved by Gmail service default
+                        subject=subject,
+                        body_html=body_html,
+                    )
+                    draft_result = await self._gmail_service.create_draft(draft_email)
+                    draft_id = (
+                        draft_result.draft_id
+                        if hasattr(draft_result, "draft_id")
+                        else draft_result.get("draft_id", "")
+                        if isinstance(draft_result, dict)
+                        else None
+                    )
+                except Exception as draft_err:
+                    logger.warning(
+                        "expansion_opportunity_draft_failed",
+                        account_id=account_id,
+                        error=str(draft_err),
+                    )
+            else:
+                logger.warning(
+                    "expansion_opportunity_draft_skipped",
+                    account_id=account_id,
+                    reason="gmail_service not configured",
+                )
+
+            logger.info(
+                "expansion_opportunity_handled",
+                account_id=account_id,
+                opportunity_type=opportunity_type,
+                draft_id=draft_id,
+            )
+
+            return {
+                "task_type": "handle_expansion_opportunity",
+                "account_id": account_id,
+                "opportunity_type": opportunity_type,
+                "draft_id": draft_id,
+                "confidence": "high",
+            }
+
+        except Exception as exc:
+            logger.warning(
+                "expansion_opportunity_failed",
+                error=str(exc),
+                error_type=type(exc).__name__,
+            )
+            return {
+                "task_type": "handle_expansion_opportunity",
+                "error": str(exc),
+                "confidence": "low",
+                "partial": True,
+            }
 
     # ── Helpers ─────────────────────────────────────────────────────────────
 
