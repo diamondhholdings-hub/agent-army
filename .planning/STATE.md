@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 15 of 19 (Collections Agent)
-Plan: 1 of 7 in current phase
+Plan: 4 of 7 in current phase (plans 01, 04 complete; 02, 03, 05, 06, 07 remain)
 Status: In progress
-Last activity: 2026-02-25 — Completed 15-01-PLAN.md
+Last activity: 2026-02-25 — Completed 15-04-PLAN.md
 
-Progress: [███████████████████████████████████████████████████░] 60% (33/55 plans, v2.0 phases 9-19)
+Progress: [████████████████████████████████████████████████████░] 62% (34/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -138,6 +138,11 @@ Progress: [███████████████████████
 - CSMScheduler started and stored on app.state.csm_scheduler with shutdown cleanup in shutdown section (14-05)
 - CSM registration created inline in main.py (no capabilities.py yet) with agent_id="customer_success_manager" (14-05)
 - CustomerSuccessAgent receives sales_agent reference from app.state.sales_agent for expansion dispatch (14-05)
+- NotionCollectionsAdapter follows same pre-authenticated AsyncClient + keyword-only DB ID pattern as NotionCSMAdapter (15-04)
+- Collections adapter fail-open pattern: public method = try/except + log.exception + safe default; private _method = @retry decorated (15-04)
+- NotionCollectionsAdapter create_payment_plan_page writes to events_db (3 DBs: AR, escalation, events -- no separate payments DB) (15-04)
+- EscalationState default on Notion not-found is EscalationState(account_id=account_id) with stage=0 (not None) (15-04)
+- FINANCE_TEAM_EMAIL added to Settings for stage 5 human handoff in collections workflow (15-04)
 
 ### Open Blockers/Concerns
 
@@ -153,8 +158,8 @@ Progress: [███████████████████████
 
 ## Session Continuity
 
-Last session: 2026-02-25T17:44:21Z
-Stopped at: Completed 15-01-PLAN.md (Phase 15, plan 1 of 7)
+Last session: 2026-02-25T17:50:11Z
+Stopped at: Completed 15-04-PLAN.md (Phase 15, plan 4 of 7)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 started -- 15-01 done (schemas foundation), 6 plans remaining in phase.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas) and 15-04 (NotionCollectionsAdapter) done, plans 02, 03, 05, 06, 07 remaining.
