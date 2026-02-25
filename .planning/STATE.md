@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** The Sales Agent is a proven template — multiply its architecture across 7 additional agent roles to deliver a complete AI-powered enterprise sales organization
-**Current focus:** v2.0 Agent Crew — Phase 14 complete, ready for Phase 15
+**Current focus:** v2.0 Agent Crew — Phase 15 in progress (Collections Agent)
 
 ## Current Position
 
-Phase: 14 of 19 (Customer Success Agent)
-Plan: 7 of 7 in current phase
-Status: Phase complete
-Last activity: 2026-02-25 — Completed 14-07-PLAN.md
+Phase: 15 of 19 (Collections Agent)
+Plan: 1 of 7 in current phase
+Status: In progress
+Last activity: 2026-02-25 — Completed 15-01-PLAN.md
 
-Progress: [██████████████████████████████████████████████████░] 58% (32/55 plans, v2.0 phases 9-19)
+Progress: [███████████████████████████████████████████████████░] 60% (33/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -115,6 +115,11 @@ Progress: [███████████████████████
 - NotionTAMAdapter.update_relationship_profile tries RelationshipProfile model first, falls back to paragraph blocks (13-06)
 - NotionTAMAdapter.log_communication accepts both dict and CommunicationRecord, converts dict to model before delegating (13-06)
 - NotionTAMAdapter.get_account returns both `id` and `account_id` keys for agent.py compatibility (13-06)
+- Collections schemas define 11 Pydantic models; PaymentRiskResult auto-computes should_escalate via model_validator when score >= 60.0 (15-01)
+- Collections risk score is inverted from CSM/TAM: higher = more risk (0=safe, 100=critical) (15-01)
+- EscalationStage defined as Literal[0,1,2,3,4,5] type alias; 0=not started, 5=human handoff terminal (15-01)
+- arr_usd and tenure_years in PaymentRiskSignals are tone modifiers only -- not included in risk score computation (15-01)
+- collections_risk field added to CSMHealthSignals as Optional[Literal["GREEN","AMBER","RED","CRITICAL"]] = None; backward compatible (15-01)
 - CSM schemas define 8 Pydantic models; CSMHealthScore auto-computes should_alert via model_validator when rag==RED or churn_risk_level in (high, critical) (14-01)
 - CSM prompt builders use model_json_schema() from Pydantic models for embedded output schemas, unlike TAM which uses plain dicts (14-01)
 - CSMHealthSignals has 13 signal fields covering adoption, usage, engagement, support, financial, and TAM health dimensions (14-01)
@@ -148,8 +153,8 @@ Progress: [███████████████████████
 
 ## Session Continuity
 
-Last session: 2026-02-25
-Stopped at: Completed 14-07-PLAN.md (Phase 14 complete)
+Last session: 2026-02-25T17:44:21Z
+Stopped at: Completed 15-01-PLAN.md (Phase 15, plan 1 of 7)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 complete -- all 7 plans done, 72 CSM tests passing.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 started -- 15-01 done (schemas foundation), 6 plans remaining in phase.
