@@ -46,6 +46,9 @@ class CSMHealthSignals(BaseModel):
         escalation_count_90_days: Number of escalations in the trailing
             90-day window.
         tam_health_rag: TAM agent's latest RAG assessment, if available.
+        collections_risk: Collections agent's latest payment risk RAG status,
+            if available. Enables cross-agent health integration where
+            Collections payment risk feeds into CSM health scoring.
     """
 
     feature_adoption_rate: float = Field(ge=0.0, le=1.0)
@@ -65,6 +68,7 @@ class CSMHealthSignals(BaseModel):
     ] = "neutral"
     escalation_count_90_days: int = Field(ge=0, default=0)
     tam_health_rag: Optional[Literal["GREEN", "AMBER", "RED"]] = None
+    collections_risk: Optional[Literal["GREEN", "AMBER", "RED", "CRITICAL"]] = None
 
 
 # -- Health Score -------------------------------------------------------------
