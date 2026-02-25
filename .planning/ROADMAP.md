@@ -247,7 +247,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 | 12. Business Analyst Agent | v2.0 | 5/5 | Complete | 2026-02-24 |
 | 13. Technical Account Manager Agent | v2.0 | 7/7 | Complete | 2026-02-24 |
 | 14. Customer Success Agent | v2.0 | 7/7 | Complete | 2026-02-25 |
-| 15. Collections Agent | v2.0 | 0/7 | Planned | - |
+| 15. Collections Agent | v2.0 | 7/7 | Complete | 2026-02-25 |
 | 16. Business Operations Agent | v2.0 | 0/TBD | Not started | - |
 | 17. Sales Agent Voice Capability | v2.0 | 0/TBD | Not started | - |
 | 18. Sales Agent Advanced Methodology | v2.0 | 0/TBD | Not started | - |
@@ -256,4 +256,4 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 ---
 *Roadmap created: 2026-02-10*
 *v2.0 roadmap added: 2026-02-22*
-*Last updated: 2026-02-25*
+*Last updated: 2026-02-25 — Phase 15 complete*

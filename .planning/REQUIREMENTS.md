@@ -55,11 +55,11 @@
 
 ### Collections Agent (COL)
 
-- [ ] **COL-01**: Collections agent tracks AR aging per account — outstanding invoices, days overdue, amounts by aging bucket
-- [ ] **COL-02**: Collections agent predicts payment behavior and risk based on payment history and account signals
-- [ ] **COL-03**: Collections agent generates adaptive collection messages calibrated to payment stage, relationship, and account value
-- [ ] **COL-04**: Collections agent escalates delinquent accounts per configurable escalation policy — soft reminder → firm notice → human handoff
-- [ ] **COL-05**: Collections agent surfaces payment plan structuring options for accounts with genuine cash flow issues (humans approve terms)
+- [x] **COL-01**: Collections agent tracks AR aging per account — outstanding invoices, days overdue, amounts by aging bucket
+- [x] **COL-02**: Collections agent predicts payment behavior and risk based on payment history and account signals
+- [x] **COL-03**: Collections agent generates adaptive collection messages calibrated to payment stage, relationship, and account value
+- [x] **COL-04**: Collections agent escalates delinquent accounts per configurable escalation policy — soft reminder → firm notice → human handoff
+- [x] **COL-05**: Collections agent surfaces payment plan structuring options for accounts with genuine cash flow issues (humans approve terms)
 
 ### Business Operations / Sales Ops Agent (OPS)
 
@@ -158,11 +158,11 @@
 | CSM-03 | Phase 14 | Complete |
 | CSM-04 | Phase 14 | Complete |
 | CSM-05 | Phase 14 | Complete |
-| COL-01 | Phase 15 | Pending |
-| COL-02 | Phase 15 | Pending |
-| COL-03 | Phase 15 | Pending |
-| COL-04 | Phase 15 | Pending |
-| COL-05 | Phase 15 | Pending |
+| COL-01 | Phase 15 | Complete |
+| COL-02 | Phase 15 | Complete |
+| COL-03 | Phase 15 | Complete |
+| COL-04 | Phase 15 | Complete |
+| COL-05 | Phase 15 | Complete |
 | OPS-01 | Phase 16 | Pending |
 | OPS-02 | Phase 16 | Pending |
 | OPS-03 | Phase 16 | Pending |
