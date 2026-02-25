@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 15 of 19 (Collections Agent)
-Plan: 5 of 7 in current phase (plans 01, 02, 03, 04, 05 complete; 06, 07 remain)
+Plan: 6 of 7 in current phase (plans 01, 02, 03, 04, 05, 06 complete; 07 remains)
 Status: In progress
-Last activity: 2026-02-25 — Completed 15-05-PLAN.md
+Last activity: 2026-02-25 — Completed 15-06-PLAN.md
 
-Progress: [█████████████████████████████████████████████████████████░] 67% (37/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████████████████████████████████████████░] 69% (38/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -155,6 +155,10 @@ Progress: [███████████████████████
 - receive_collections_risk only dispatches RED/CRITICAL to CSM; GREEN/AMBER return immediately; fail-open wraps csm call in try/except (15-05)
 - CollectionsScheduler has 2 cron jobs: daily AR scan at 6am, daily escalation check at 7am (15-05)
 - CollectionsScheduler.start() wrapped in try/except returns False on any error including no event loop (15-05)
+- CollectionsAgent wired in main.py between Phase 14 (CSM) and Phase 5 (Deals), stored on app.state.collections (15-06)
+- CollectionsScheduler stored on app.state.col_scheduler with shutdown cleanup after csm_scheduler (15-06)
+- CSMHealthScorer applies collections_risk cap BEFORE TAM cap: CRITICAL=0.80x, RED=0.90x (15-06)
+- Col registration uses AgentRegistration direct import alias _ColAgentRegistration, same as Phase 14 pattern (15-06)
 
 ### Open Blockers/Concerns
 
@@ -170,8 +174,8 @@ Progress: [███████████████████████
 
 ## Session Continuity
 
-Last session: 2026-02-25T18:07:44Z
-Stopped at: Completed 15-05-PLAN.md (Phase 15, plan 5 of 7 — CollectionsAgent + CollectionsScheduler)
+Last session: 2026-02-25T18:13:05Z
+Stopped at: Completed 15-06-PLAN.md (Phase 15, plan 6 of 7 — wiring + CSMHealthScorer cap)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas), 15-02 (scorer TDD), 15-03 (prompt builders + handlers), 15-04 (NotionCollectionsAdapter), 15-05 (agent + scheduler) done; plans 06, 07 remaining.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 through 15-06 complete; plan 07 (integration tests) remaining.
