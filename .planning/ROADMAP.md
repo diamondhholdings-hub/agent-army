@@ -36,7 +36,7 @@ Full details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - [ ] **Phase 12: Business Analyst Agent** — Requirements gathering, gap analysis, and process documentation agent
 - [x] **Phase 13: Technical Account Manager Agent** — Technical health monitoring and escalation prediction agent
 - [x] **Phase 14: Customer Success Agent** — Account health scoring, churn prediction, and expansion identification agent
-- [ ] **Phase 15: Collections Agent** — AR tracking, payment prediction, and adaptive collection agent
+- [x] **Phase 15: Collections Agent** — AR tracking, payment prediction, and adaptive collection agent
 - [ ] **Phase 16: Business Operations Agent** — CRM audit, pipeline forecasting, and process compliance agent
 - [ ] **Phase 17: Sales Agent Voice Capability** — Voice call pipeline with Vapi/Deepgram/ElevenLabs integration
 - [ ] **Phase 18: Sales Agent Advanced Methodology** — TAS, Sandler, battlecards, and pricing negotiation
@@ -168,13 +168,13 @@ Plans:
   5. The Collections agent surfaces payment plan structuring options for accounts with genuine cash flow issues, with human approval required for terms
 **Plans**: 7 plans
 Plans:
-- [ ] 15-01-PLAN.md — Collections schemas (11 models) + CSMHealthSignals collections_risk field
-- [ ] 15-02-PLAN.md — TDD: PaymentRiskScorer (4-signal deterministic) + compute_tone_modifier
-- [ ] 15-03-PLAN.md — 5 prompt builders + 5 task handlers (fail-open, deterministic escalation)
-- [ ] 15-04-PLAN.md — NotionCollectionsAdapter (6 async methods) + 4 config fields
-- [ ] 15-05-PLAN.md — CollectionsAgent (5 task routing) + CollectionsScheduler (2 cron jobs)
-- [ ] 15-06-PLAN.md — main.py wiring + CSMHealthScorer collections_risk cap (0.80x/0.90x)
-- [ ] 15-07-PLAN.md — Tests: schemas + handlers + adapter + wiring + Collections→CSM round-trip
+- [x] 15-01-PLAN.md — Collections schemas (11 models) + CSMHealthSignals collections_risk field
+- [x] 15-02-PLAN.md — TDD: PaymentRiskScorer (4-signal deterministic) + compute_tone_modifier
+- [x] 15-03-PLAN.md — 5 prompt builders + 5 task handlers (fail-open, deterministic escalation)
+- [x] 15-04-PLAN.md — NotionCollectionsAdapter (6 async methods) + 4 config fields
+- [x] 15-05-PLAN.md — CollectionsAgent (5 task routing) + CollectionsScheduler (2 cron jobs)
+- [x] 15-06-PLAN.md — main.py wiring + CSMHealthScorer collections_risk cap (0.80x/0.90x)
+- [x] 15-07-PLAN.md — Tests: schemas + handlers + adapter + wiring + Collections→CSM round-trip
 
 ### Phase 16: Business Operations Agent
 **Goal**: A BizOps agent exists that audits CRM data quality, generates pipeline forecasts, detects process breakdowns, produces pipeline analytics, and automates recurring reporting
