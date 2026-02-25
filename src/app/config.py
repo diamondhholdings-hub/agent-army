@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     NOTION_TOKEN: str = ""
     NOTION_DATABASE_ID: str = ""
 
+    # Notion CSM (Customer Success Manager) Databases -- Phase 14
+    NOTION_CSM_HEALTH_DATABASE_ID: str = ""  # Notion DB for CSM account health records
+    NOTION_CSM_QBR_DATABASE_ID: str = ""  # Notion DB for CSM QBR pages
+    NOTION_CSM_EXPANSION_DATABASE_ID: str = ""  # Notion DB for CSM expansion opportunities
+
     # Base64-encoded Google service account JSON (for containerized deployments)
     GOOGLE_SERVICE_ACCOUNT_JSON_B64: str = ""
 
