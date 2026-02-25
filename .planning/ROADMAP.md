@@ -149,8 +149,8 @@ Plans:
 **Plans**: 7 plans
 Plans:
 - [x] 14-01-PLAN.md — CSM schemas (8 models) + prompt builders (5 functions) + config fields
-- [ ] 14-02-PLAN.md — CSMHealthScorer (11-signal deterministic) + NotionCSMAdapter (6 CRUD methods)
-- [ ] 14-03-PLAN.md — CustomerSuccessAgent (4 handlers) + CSMScheduler (3 cron jobs)
+- [x] 14-02-PLAN.md — CSMHealthScorer (11-signal deterministic) + NotionCSMAdapter (6 CRUD methods)
+- [x] 14-03-PLAN.md — CustomerSuccessAgent (4 handlers) + CSMScheduler (3 cron jobs)
 - [ ] 14-04-PLAN.md — TDD: CSMHealthScorer scoring tests + schema validation tests
 - [ ] 14-05-PLAN.md — Sales Agent expansion handler + main.py wiring (bidirectional handoff)
 - [ ] 14-06-PLAN.md — Tests: handlers + prompt builders + Notion adapter (22 tests)

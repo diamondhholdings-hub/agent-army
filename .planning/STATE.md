@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 14 of 19 (Customer Success Agent)
-Plan: 2 of 7 in current phase
+Plan: 3 of 7 in current phase
 Status: In progress
-Last activity: 2026-02-25 — Completed 14-02-PLAN.md
+Last activity: 2026-02-25 — Completed 14-03-PLAN.md
 
-Progress: [█████████████████████████████████████████████░░░] 49% (27/55 plans, v2.0 phases 9-19)
+Progress: [██████████████████████████████████████████████░░░] 51% (28/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -121,6 +121,12 @@ Progress: [███████████████████████
 - CSMHealthScorer support weight 10 merges sentiment base with open_ticket_count deduction (capped at 5 * 1pt, floor 0) (14-02)
 - NotionCSMAdapter.get_account returns both id and account_id keys for agent.py compat, mirrors TAM pattern (14-02)
 - CSM health scorer uses TAM correlation cap: RED=0.85x, AMBER=0.95x applied after raw score computation (14-02)
+- CSM agent raises ValueError for unknown task type, matching TAM/PM pattern not BA fail-open (14-03)
+- CSM never calls send_email -- all communications use gmail_service.create_draft() (14-03)
+- CSM holds sales_agent reference for expansion dispatch; if None, skip and log warning (14-03)
+- CSMScheduler has 3 cron jobs: daily scan (7am), daily contract check (8am), quarterly QBR (day=1, month=1,4,7,10) (14-03)
+- CSMScheduler.start() returns False gracefully if APScheduler not installed (14-03)
+- CSM->Sales expansion dispatch is the first reverse-direction cross-agent handoff (14-03)
 
 ### Open Blockers/Concerns
 
@@ -137,7 +143,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 14-02-PLAN.md
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 in progress -- 2/7 plans complete.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 in progress -- 3/7 plans complete.
