@@ -74,6 +74,12 @@ class Settings(BaseSettings):
     NOTION_CSM_QBR_DATABASE_ID: str = ""  # Notion DB for CSM QBR pages
     NOTION_CSM_EXPANSION_DATABASE_ID: str = ""  # Notion DB for CSM expansion opportunities
 
+    # Notion Collections Agent Databases -- Phase 15
+    NOTION_COLLECTIONS_AR_DATABASE_ID: str = ""  # AR invoices tracking DB
+    NOTION_COLLECTIONS_ESCALATION_DATABASE_ID: str = ""  # Escalation state per account DB
+    NOTION_COLLECTIONS_EVENTS_DATABASE_ID: str = ""  # Collections event log DB
+    FINANCE_TEAM_EMAIL: str = ""  # Finance team email for stage 5 human handoff
+
     # Base64-encoded Google service account JSON (for containerized deployments)
     GOOGLE_SERVICE_ACCOUNT_JSON_B64: str = ""
 
