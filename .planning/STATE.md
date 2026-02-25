@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 14 of 19 (Customer Success Agent)
-Plan: 4 of 7 in current phase
+Plan: 5 of 7 in current phase
 Status: In progress
-Last activity: 2026-02-25 — Completed 14-04-PLAN.md
+Last activity: 2026-02-25 — Completed 14-05-PLAN.md
 
-Progress: [███████████████████████████████████████████████░░] 53% (29/55 plans, v2.0 phases 9-19)
+Progress: [████████████████████████████████████████████████░░] 55% (30/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -128,6 +128,11 @@ Progress: [███████████████████████
 - CSMScheduler.start() returns False gracefully if APScheduler not installed (14-03)
 - CSM->Sales expansion dispatch is the first reverse-direction cross-agent handoff (14-03)
 - Real CSMHealthScorer used in tests (not mocked) since it's pure Python and deterministic, same pattern as TAM (14-04)
+- Sales Agent handle_expansion_opportunity creates Gmail draft for rep with expansion details -- receiving end of CSM->Sales reverse handoff (14-05)
+- CSM agent wired in main.py lifespan between Phase 13 (TAM) and Phase 5 (Deals), stored on app.state.customer_success (14-05)
+- CSMScheduler started and stored on app.state.csm_scheduler with shutdown cleanup in shutdown section (14-05)
+- CSM registration created inline in main.py (no capabilities.py yet) with agent_id="customer_success_manager" (14-05)
+- CustomerSuccessAgent receives sales_agent reference from app.state.sales_agent for expansion dispatch (14-05)
 
 ### Open Blockers/Concerns
 
@@ -144,7 +149,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 14-04-PLAN.md
+Stopped at: Completed 14-05-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 in progress -- 4/7 plans complete.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 in progress -- 5/7 plans complete.
