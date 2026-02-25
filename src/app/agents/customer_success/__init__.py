@@ -1,12 +1,10 @@
 """Customer Success Manager Agent for account health, churn prevention, and expansion.
 
 Exports:
-    CustomerSuccessAgent: Core CSM agent class (stub -- implemented in Plan 03).
+    CustomerSuccessAgent: Core CSM agent class with 4 capability handlers.
 """
 
-# Forward-compatible stub; actual class added in Plan 03.
-# This allows other modules to import from the package immediately.
-CustomerSuccessAgent = None
+from src.app.agents.customer_success.agent import CustomerSuccessAgent
 
 __all__ = [
     "CustomerSuccessAgent",
