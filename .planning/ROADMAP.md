@@ -148,7 +148,7 @@ Plans:
   5. The Customer Success agent tracks feature adoption per account and generates targeted adoption improvement recommendations
 **Plans**: 7 plans
 Plans:
-- [ ] 14-01-PLAN.md — CSM schemas (8 models) + prompt builders (5 functions) + config fields
+- [x] 14-01-PLAN.md — CSM schemas (8 models) + prompt builders (5 functions) + config fields
 - [ ] 14-02-PLAN.md — CSMHealthScorer (11-signal deterministic) + NotionCSMAdapter (6 CRUD methods)
 - [ ] 14-03-PLAN.md — CustomerSuccessAgent (4 handlers) + CSMScheduler (3 cron jobs)
 - [ ] 14-04-PLAN.md — TDD: CSMHealthScorer scoring tests + schema validation tests
@@ -238,7 +238,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 | 11. Project Manager Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
 | 12. Business Analyst Agent | v2.0 | 5/5 | Complete | 2026-02-24 |
 | 13. Technical Account Manager Agent | v2.0 | 7/7 | Complete | 2026-02-24 |
-| 14. Customer Success Agent | v2.0 | 0/7 | Not started | - |
+| 14. Customer Success Agent | v2.0 | 1/7 | In progress | - |
 | 15. Collections Agent | v2.0 | 0/TBD | Not started | - |
 | 16. Business Operations Agent | v2.0 | 0/TBD | Not started | - |
 | 17. Sales Agent Voice Capability | v2.0 | 0/TBD | Not started | - |
