@@ -381,6 +381,88 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         log.warning("phase13.technical_account_manager_init_failed", error=str(exc))
 
+    # -- Phase 14: Customer Success Manager Agent ----------------------------
+    # Account health, churn prevention, and expansion agent. Follows the
+    # TAM pattern: instantiate with shared services, register in AgentRegistry.
+    # CSM additionally needs gmail_service (for create_draft), chat_service,
+    # health_scorer, and a sales_agent reference for expansion dispatch
+    # (first reverse cross-agent handoff: CSM -> Sales).
+    # Includes CSMScheduler for daily health scans and quarterly QBRs.
+    # Fail-tolerant -- CSM unavailability does not prevent app startup.
+
+    try:
+        from src.app.agents.customer_success import CustomerSuccessAgent
+        from src.app.agents.customer_success.health_scorer import CSMHealthScorer
+        from src.app.agents.customer_success.scheduler import CSMScheduler
+        from src.app.agents.base import AgentRegistration as _CSMAgentRegistration
+
+        csm_registration = _CSMAgentRegistration(
+            agent_id="customer_success_manager",
+            name="Customer Success Manager",
+            description=(
+                "Customer success management agent that monitors account health, "
+                "prevents churn, generates QBRs, detects expansion opportunities, "
+                "and tracks feature adoption"
+            ),
+            capabilities=[],
+            backup_agent_id=None,
+            tags=[
+                "csm",
+                "health",
+                "churn",
+                "expansion",
+                "qbr",
+                "customer_success",
+            ],
+            max_concurrent_tasks=3,
+        )
+
+        csm_health_scorer = CSMHealthScorer()
+
+        # Get sales_agent reference for expansion dispatch (CSM -> Sales handoff)
+        sales_agent_ref = getattr(app.state, "sales_agent", None)
+
+        csm_agent = CustomerSuccessAgent(
+            registration=csm_registration,
+            llm_service=getattr(app.state, "llm_service", None)
+            or locals().get("llm_service"),
+            notion_csm=None,  # Configured when CSM Notion DB is initialized
+            gmail_service=getattr(app.state, "gmail_service", None)
+            or locals().get("gmail_service"),
+            chat_service=getattr(app.state, "chat_service", None)
+            or locals().get("chat_service"),
+            event_bus=getattr(app.state, "event_bus", None)
+            or locals().get("event_bus"),
+            health_scorer=csm_health_scorer,
+            sales_agent=sales_agent_ref,
+        )
+
+        # Register in agent registry
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(csm_registration)
+            csm_registration._agent_instance = csm_agent
+        app.state.customer_success = csm_agent
+
+        # Start CSMScheduler for daily health scans + quarterly QBRs
+        # Mirrors TAMScheduler pattern: instantiate, start, store on app.state
+        csm_scheduler = CSMScheduler(
+            csm_agent=csm_agent,
+            notion_csm=None,  # Configured when CSM Notion DB is initialized
+        )
+        csm_scheduler_started = csm_scheduler.start()
+        if csm_scheduler_started:
+            app.state.csm_scheduler = csm_scheduler
+            log.info("phase14.csm_scheduler_started")
+        else:
+            log.warning("phase14.csm_scheduler_not_started", reason="APScheduler unavailable or start failed")
+
+        log.info("phase14.customer_success_initialized")
+    except Exception as exc:
+        log.warning("phase14.customer_success_init_failed", error=str(exc))
+        app.state.customer_success = None
+        app.state.csm_scheduler = None
+
     # ── Phase 5: Deal Management Module Initialization ──────────────
     try:
         from src.app.deals.repository import DealRepository
@@ -710,6 +792,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     tam_scheduler_ref = getattr(app.state, "tam_scheduler", None)
     if tam_scheduler_ref:
         tam_scheduler_ref.stop()
+
+    # Clean up Phase 14 CSM scheduler
+    csm_scheduler_ref = getattr(app.state, "csm_scheduler", None)
+    if csm_scheduler_ref is not None:
+        csm_scheduler_ref.stop()
 
     # Clean up Phase 6 calendar monitor task
     calendar_monitor_task = getattr(app.state, "calendar_monitor_task", None)
