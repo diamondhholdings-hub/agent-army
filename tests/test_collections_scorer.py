@@ -11,7 +11,7 @@ higher = healthier).
 
 Covers:
     - Clean account (0 overdue, great history, small balance, far renewal) -> GREEN, no escalate
-    - Slightly late account (30d, neutral streak, small balance, 60d renewal) -> AMBER, escalate
+    - Slightly late account (30d, neutral streak, small balance, 60d renewal) -> AMBER, no escalate (score=37 < 60)
     - Serious delinquent (90d, 3 consecutive late, mid balance, 14d renewal) -> RED, escalate
     - Critical account (120d+, chronic late, large balance, 5d renewal) -> CRITICAL, escalate
     - High ARR clean (60d, streak=6, tiny balance, 100d renewal) -> GREEN (score=28), no escalate
@@ -89,8 +89,12 @@ class TestPaymentRiskScorer:
         assert result.rag == "GREEN"
         assert result.should_escalate is False
 
-    def test_slightly_late_is_amber_and_escalates(self) -> None:
-        """Slightly late: 30d, streak=0, $5k, 60d renewal -> score=37, AMBER, escalate."""
+    def test_slightly_late_is_amber_no_escalate(self) -> None:
+        """Slightly late: 30d, streak=0, $5k, 60d renewal -> score=37, AMBER, no escalate.
+
+        AMBER (score 30-59) does NOT trigger should_escalate.
+        Escalation threshold is score >= 60. Score=37 is AMBER but below escalation threshold.
+        """
         scorer = PaymentRiskScorer()
         signals = _signals(
             account_id="acc-late",
@@ -104,7 +108,7 @@ class TestPaymentRiskScorer:
         # 12 + 12 + 8 + 5 = 37
         assert result.score == 37.0
         assert result.rag == "AMBER"
-        assert result.should_escalate is True
+        assert result.should_escalate is False  # score < 60, escalation starts at 60
 
     def test_serious_delinquent_is_red(self) -> None:
         """Serious: 90d, streak=-3, $25k, 14d renewal -> score=79, RED, escalate."""
