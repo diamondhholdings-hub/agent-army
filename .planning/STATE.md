@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 14 of 19 (Customer Success Agent)
-Plan: 1 of 7 in current phase
+Plan: 2 of 7 in current phase
 Status: In progress
-Last activity: 2026-02-25 — Completed 14-01-PLAN.md
+Last activity: 2026-02-25 — Completed 14-02-PLAN.md
 
-Progress: [█████████████████████████████████████████░░░░░░] 47% (26/55 plans, v2.0 phases 9-19)
+Progress: [█████████████████████████████████████████████░░░] 49% (27/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -118,6 +118,9 @@ Progress: [███████████████████████
 - CSM schemas define 8 Pydantic models; CSMHealthScore auto-computes should_alert via model_validator when rag==RED or churn_risk_level in (high, critical) (14-01)
 - CSM prompt builders use model_json_schema() from Pydantic models for embedded output schemas, unlike TAM which uses plain dicts (14-01)
 - CSMHealthSignals has 13 signal fields covering adoption, usage, engagement, support, financial, and TAM health dimensions (14-01)
+- CSMHealthScorer support weight 10 merges sentiment base with open_ticket_count deduction (capped at 5 * 1pt, floor 0) (14-02)
+- NotionCSMAdapter.get_account returns both id and account_id keys for agent.py compat, mirrors TAM pattern (14-02)
+- CSM health scorer uses TAM correlation cap: RED=0.85x, AMBER=0.95x applied after raw score computation (14-02)
 
 ### Open Blockers/Concerns
 
@@ -134,7 +137,7 @@ Progress: [███████████████████████
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 14-01-PLAN.md
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 in progress -- 1/7 plans complete.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 14 in progress -- 2/7 plans complete.
