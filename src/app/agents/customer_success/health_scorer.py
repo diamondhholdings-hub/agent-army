@@ -2,7 +2,8 @@
 
 Computes a deterministic 0-100 health score from customer success signals
 across adoption, usage, engagement, support, financial, and TAM health
-dimensions. Applies TAM correlation cap and derives churn risk assessment.
+dimensions. Applies collections risk cap, TAM correlation cap, and derives
+churn risk assessment.
 
 IMPORTANT: Do NOT use LLM for score computation. The score is a deterministic
 numeric calculation. LLM adds latency, cost, and non-determinism for zero benefit.
@@ -33,7 +34,12 @@ class CSMHealthScorer:
         nps_score:                      3
         escalation_count_90_days:       2
 
-    TAM correlation cap (applied after raw score):
+    Collections risk cap (applied after raw score, before TAM cap):
+        CRITICAL -> raw * 0.80
+        RED      -> raw * 0.90
+        AMBER / GREEN / None -> raw (no cap)
+
+    TAM correlation cap (applied after collections risk cap):
         RED   -> raw * 0.85
         AMBER -> raw * 0.95
         GREEN / None -> raw (no cap)
@@ -255,11 +261,12 @@ class CSMHealthScorer:
 
         Steps:
         1. Compute raw 0-100 score from weighted signals.
-        2. Apply TAM correlation cap if tam_health_rag is set.
-        3. Derive RAG status from thresholds.
-        4. Assess churn risk level and trigger.
-        5. Build signal breakdown dict.
-        6. Return CSMHealthScore.
+        2. Apply collections_risk cap if collections_risk is RED or CRITICAL.
+        3. Apply TAM correlation cap if tam_health_rag is set.
+        4. Derive RAG status from thresholds.
+        5. Assess churn risk level and trigger.
+        6. Build signal breakdown dict.
+        7. Return CSMHealthScore.
 
         Args:
             signals: CSMHealthSignals with all 13 signal fields.
@@ -304,11 +311,20 @@ class CSMHealthScorer:
         raw_score = sum(breakdown.values())
         raw_score = max(0.0, min(100.0, raw_score))
 
-        # Step 2: Apply TAM correlation cap
+        # Step 2: Apply collections_risk cap (before TAM cap)
+        # CRITICAL → 0.80x (severe AR delinquency depresses health score significantly)
+        # RED      → 0.90x (elevated payment risk reduces health score)
+        # AMBER / GREEN / None → no cap
+        if signals.collections_risk == "CRITICAL":
+            raw_score = raw_score * 0.80
+        elif signals.collections_risk == "RED":
+            raw_score = raw_score * 0.90
+
+        # Step 3: Apply TAM correlation cap
         final_score = self._apply_tam_cap(raw_score, signals.tam_health_rag)
         final_score = max(0.0, min(100.0, final_score))
 
-        # Step 3: Derive RAG
+        # Step 4: Derive RAG
         if final_score >= self._green_threshold:
             rag = "GREEN"
         elif final_score >= self._amber_threshold:
@@ -316,10 +332,10 @@ class CSMHealthScorer:
         else:
             rag = "RED"
 
-        # Step 4: Assess churn risk
+        # Step 5: Assess churn risk
         churn_risk_level, churn_triggered_by = self._assess_churn(rag, signals)
 
-        # Step 5 & 6: Build and return result
+        # Step 6 & 7: Build and return result
         return CSMHealthScore(
             account_id=account_id,
             score=final_score,
