@@ -463,6 +463,96 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.customer_success = None
         app.state.csm_scheduler = None
 
+    # -- Phase 15: Collections Agent -----------------------------------------------
+    # AR tracking, payment risk scoring, and escalation management agent. Follows the
+    # CSM/TAM pattern: instantiate with shared services, register in AgentRegistry.
+    # Collections additionally needs a csm_agent reference for reverse risk notification
+    # (Collections -> CSM cross-agent handoff when RED/CRITICAL risk is detected).
+    # Includes CollectionsScheduler for daily AR scan (6am) and escalation check (7am).
+    # notion_collections=None until NOTION_COLLECTIONS_* env vars are configured.
+    # Fail-tolerant -- Collections unavailability does not prevent app startup.
+
+    try:
+        from src.app.agents.collections.agent import CollectionsAgent
+        from src.app.agents.collections.scheduler import CollectionsScheduler
+        from src.app.agents.collections.scorer import PaymentRiskScorer
+        from src.app.agents.base import AgentRegistration as _ColAgentRegistration
+
+        col_registration = _ColAgentRegistration(
+            agent_id="collections_agent",
+            name="Collections Agent",
+            description=(
+                "Collections agent for AR tracking, payment risk assessment, "
+                "collection message generation, escalation management, and "
+                "payment plan surfacing"
+            ),
+            capabilities=[],
+            backup_agent_id=None,
+            tags=[
+                "collections",
+                "ar",
+                "payment_risk",
+                "escalation",
+            ],
+            max_concurrent_tasks=3,
+        )
+
+        # Get CSM agent reference for cross-agent integration
+        # (Collections notifies CSM when RED/CRITICAL payment risk is detected)
+        csm_agent_ref = getattr(app.state, "customer_success", None)
+
+        col_agent = CollectionsAgent(
+            registration=col_registration,
+            llm_service=getattr(app.state, "llm_service", None)
+            or locals().get("llm_service"),
+            # notion_collections=None: Requires NOTION_COLLECTIONS_AR_DATABASE_ID,
+            # NOTION_COLLECTIONS_ESCALATION_DATABASE_ID, and
+            # NOTION_COLLECTIONS_EVENTS_DATABASE_ID env vars to activate.
+            # Until those are set, the adapter remains None and the agent runs
+            # in degraded mode (scheduler jobs skip, handlers return fail-open).
+            notion_collections=None,
+            gmail_service=getattr(app.state, "gmail_service", None)
+            or locals().get("gmail_service"),
+            chat_service=getattr(app.state, "chat_service", None)
+            or locals().get("chat_service"),
+            event_bus=getattr(app.state, "event_bus", None)
+            or locals().get("event_bus"),
+            scorer=PaymentRiskScorer(),
+            csm_agent=csm_agent_ref,
+        )
+
+        # Register in agent registry
+        agent_registry = getattr(app.state, "agent_registry", None)
+        if agent_registry is not None:
+            agent_registry.register(col_registration)
+            col_registration._agent_instance = col_agent
+        app.state.collections = col_agent
+
+        # Start CollectionsScheduler for daily AR scans + escalation checks
+        # Mirrors CSMScheduler pattern: instantiate, start, store on app.state
+        col_scheduler = CollectionsScheduler(
+            collections_agent=col_agent,
+            # notion_collections=None: same env var requirement as above.
+            # Set NOTION_COLLECTIONS_* env vars and reinitialize to activate
+            # the daily AR scan (6am) and escalation check (7am) cron jobs.
+            notion_collections=None,
+        )
+        col_scheduler_started = col_scheduler.start()
+        if col_scheduler_started:
+            app.state.col_scheduler = col_scheduler
+            log.info("phase15.col_scheduler_started")
+        else:
+            log.warning(
+                "phase15.col_scheduler_not_started",
+                reason="APScheduler unavailable or start failed",
+            )
+
+        log.info("phase15.collections_initialized")
+    except Exception as exc:
+        log.warning("phase15.collections_init_failed", error=str(exc))
+        app.state.collections = None
+        app.state.col_scheduler = None
+
     # ── Phase 5: Deal Management Module Initialization ──────────────
     try:
         from src.app.deals.repository import DealRepository
@@ -797,6 +887,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     csm_scheduler_ref = getattr(app.state, "csm_scheduler", None)
     if csm_scheduler_ref is not None:
         csm_scheduler_ref.stop()
+
+    # Clean up Phase 15 Collections scheduler
+    col_scheduler_ref = getattr(app.state, "col_scheduler", None)
+    if col_scheduler_ref is not None:
+        col_scheduler_ref.stop()
 
     # Clean up Phase 6 calendar monitor task
     calendar_monitor_task = getattr(app.state, "calendar_monitor_task", None)
