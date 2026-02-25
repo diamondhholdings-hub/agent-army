@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 15 of 19 (Collections Agent)
-Plan: 4 of 7 in current phase (plans 01, 04 complete; 02, 03, 05, 06, 07 remain)
+Plan: 3 of 7 in current phase (plans 01, 02, 04 complete; 03, 05, 06, 07 remain)
 Status: In progress
-Last activity: 2026-02-25 — Completed 15-04-PLAN.md
+Last activity: 2026-02-25 — Completed 15-02-PLAN.md
 
-Progress: [████████████████████████████████████████████████████░] 62% (34/55 plans, v2.0 phases 9-19)
+Progress: [█████████████████████████████████████████████████████░] 63% (35/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -120,6 +120,9 @@ Progress: [███████████████████████
 - EscalationStage defined as Literal[0,1,2,3,4,5] type alias; 0=not started, 5=human handoff terminal (15-01)
 - arr_usd and tenure_years in PaymentRiskSignals are tone modifiers only -- not included in risk score computation (15-01)
 - collections_risk field added to CSMHealthSignals as Optional[Literal["GREEN","AMBER","RED","CRITICAL"]] = None; backward compatible (15-01)
+- PaymentRiskScorer escalation threshold is score >= 60 (not AMBER onset at 30) -- AMBER (30-59) visible but does not auto-escalate (15-02)
+- STAGE_TIME_FLOORS exported as module-level dict {1:7, 2:10, 3:7, 4:5} -- direct import by handlers without scorer instantiation (15-02)
+- Real PaymentRiskScorer used in tests (not mocked) -- pure Python deterministic, same pattern as CSMHealthScorer tests (15-02)
 - CSM schemas define 8 Pydantic models; CSMHealthScore auto-computes should_alert via model_validator when rag==RED or churn_risk_level in (high, critical) (14-01)
 - CSM prompt builders use model_json_schema() from Pydantic models for embedded output schemas, unlike TAM which uses plain dicts (14-01)
 - CSMHealthSignals has 13 signal fields covering adoption, usage, engagement, support, financial, and TAM health dimensions (14-01)
@@ -158,8 +161,8 @@ Progress: [███████████████████████
 
 ## Session Continuity
 
-Last session: 2026-02-25T17:50:11Z
-Stopped at: Completed 15-04-PLAN.md (Phase 15, plan 4 of 7)
+Last session: 2026-02-25T17:50:45Z
+Stopped at: Completed 15-02-PLAN.md (Phase 15, plan 2 of 7 — TDD scorer)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas) and 15-04 (NotionCollectionsAdapter) done, plans 02, 03, 05, 06, 07 remaining.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas), 15-02 (scorer TDD), 15-04 (NotionCollectionsAdapter) done; plans 03, 05, 06, 07 remaining.
