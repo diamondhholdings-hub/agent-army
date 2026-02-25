@@ -153,11 +153,11 @@
 | TAM-03 | Phase 13 | Complete |
 | TAM-04 | Phase 13 | Complete |
 | TAM-05 | Phase 13 | Complete |
-| CSM-01 | Phase 14 | Pending |
-| CSM-02 | Phase 14 | Pending |
-| CSM-03 | Phase 14 | Pending |
-| CSM-04 | Phase 14 | Pending |
-| CSM-05 | Phase 14 | Pending |
+| CSM-01 | Phase 14 | Complete |
+| CSM-02 | Phase 14 | Complete |
+| CSM-03 | Phase 14 | Complete |
+| CSM-04 | Phase 14 | Complete |
+| CSM-05 | Phase 14 | Complete |
 | COL-01 | Phase 15 | Pending |
 | COL-02 | Phase 15 | Pending |
 | COL-03 | Phase 15 | Pending |
