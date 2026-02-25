@@ -146,7 +146,15 @@ Plans:
   3. The Customer Success agent identifies specific expansion and upsell opportunities based on usage patterns and stated needs
   4. The Customer Success agent produces QBR materials including health summary, ROI metrics, roadmap alignment, and recommendations
   5. The Customer Success agent tracks feature adoption per account and generates targeted adoption improvement recommendations
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 14-01-PLAN.md — CSM schemas (8 models) + prompt builders (5 functions) + config fields
+- [ ] 14-02-PLAN.md — CSMHealthScorer (11-signal deterministic) + NotionCSMAdapter (6 CRUD methods)
+- [ ] 14-03-PLAN.md — CustomerSuccessAgent (4 handlers) + CSMScheduler (3 cron jobs)
+- [ ] 14-04-PLAN.md — TDD: CSMHealthScorer scoring tests + schema validation tests
+- [ ] 14-05-PLAN.md — Sales Agent expansion handler + main.py wiring (bidirectional handoff)
+- [ ] 14-06-PLAN.md — Tests: handlers + prompt builders + Notion adapter (22 tests)
+- [ ] 14-07-PLAN.md — Tests: wiring + CSM→Sales expansion dispatch round-trip (15 tests)
 
 ### Phase 15: Collections Agent
 **Goal**: A Collections agent exists that tracks AR aging, predicts payment behavior, generates adaptive collection messages, escalates per configurable policy, and surfaces payment plan options
@@ -230,7 +238,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 | 11. Project Manager Agent | v2.0 | 5/5 | Complete | 2026-02-23 |
 | 12. Business Analyst Agent | v2.0 | 5/5 | Complete | 2026-02-24 |
 | 13. Technical Account Manager Agent | v2.0 | 7/7 | Complete | 2026-02-24 |
-| 14. Customer Success Agent | v2.0 | 0/TBD | Not started | - |
+| 14. Customer Success Agent | v2.0 | 0/7 | Not started | - |
 | 15. Collections Agent | v2.0 | 0/TBD | Not started | - |
 | 16. Business Operations Agent | v2.0 | 0/TBD | Not started | - |
 | 17. Sales Agent Voice Capability | v2.0 | 0/TBD | Not started | - |
@@ -240,4 +248,4 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 
 ---
 *Roadmap created: 2026-02-10*
 *v2.0 roadmap added: 2026-02-22*
-*Last updated: 2026-02-24*
+*Last updated: 2026-02-25*
