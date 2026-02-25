@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 15 of 19 (Collections Agent)
-Plan: 3 of 7 in current phase (plans 01, 02, 04 complete; 03, 05, 06, 07 remain)
+Plan: 4 of 7 in current phase (plans 01, 02, 03, 04 complete; 05, 06, 07 remain)
 Status: In progress
-Last activity: 2026-02-25 — Completed 15-02-PLAN.md
+Last activity: 2026-02-25 — Completed 15-03-PLAN.md
 
-Progress: [█████████████████████████████████████████████████████░] 63% (35/55 plans, v2.0 phases 9-19)
+Progress: [████████████████████████████████████████████████████████░] 65% (36/55 plans, v2.0 phases 9-19)
 
 ## Performance Metrics
 
@@ -146,6 +146,10 @@ Progress: [███████████████████████
 - NotionCollectionsAdapter create_payment_plan_page writes to events_db (3 DBs: AR, escalation, events -- no separate payments DB) (15-04)
 - EscalationState default on Notion not-found is EscalationState(account_id=account_id) with stage=0 (not None) (15-04)
 - FINANCE_TEAM_EMAIL added to Settings for stage 5 human handoff in collections workflow (15-04)
+- Collections prompt builders use model_json_schema() same as CSM; build_escalation_check_prompt generates Stage 5 email CONTENT only (not advancement decision) (15-03)
+- handle_run_escalation_check: deterministic STAGE_TIME_FLOORS + messages_unanswered check; stages 1-4 call handle_generate_collection_message internally; stage 5 calls build_escalation_check_prompt + LLM for rep+finance dual-draft (15-03)
+- Stage 0 has no time floor -- time_floor_met=True for stage 0, advance immediately if messages_unanswered >= 1 (15-03)
+- Finance team email priority: task dict → kwargs → settings.FINANCE_TEAM_EMAIL; missing = skip with warning, not error (15-03)
 
 ### Open Blockers/Concerns
 
@@ -161,8 +165,8 @@ Progress: [███████████████████████
 
 ## Session Continuity
 
-Last session: 2026-02-25T17:50:45Z
-Stopped at: Completed 15-02-PLAN.md (Phase 15, plan 2 of 7 — TDD scorer)
+Last session: 2026-02-25T18:00:18Z
+Stopped at: Completed 15-03-PLAN.md (Phase 15, plan 3 of 7 — prompt builders + handlers)
 Resume file: None
 
-**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas), 15-02 (scorer TDD), 15-04 (NotionCollectionsAdapter) done; plans 03, 05, 06, 07 remaining.
+**Note:** Phase 9 (09-03 Task 2) still pending human action for credential provisioning. Phase 15 in progress -- 15-01 (schemas), 15-02 (scorer TDD), 15-03 (prompt builders + handlers), 15-04 (NotionCollectionsAdapter) done; plans 05, 06, 07 remaining.
